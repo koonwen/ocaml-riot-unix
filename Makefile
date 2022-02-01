@@ -5,7 +5,7 @@ APPLICATION = ocaml
 BOARD ?= native
 
 # This has to be the absolute path to the RIOT base directory:
-RIOTBASE ?= $(CURDIR)/..
+RIOTBASE ?= $(CURDIR)/../RIOT
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
@@ -17,12 +17,13 @@ QUIET ?= 0
 
 all: main.c runtime
 
+include $(RIOTBASE)/Makefile.include
+
 main.c: example/main.ml example/dune example/dune-project
 	cd example && dune build
 	rm -f main.c
 	cp _build/default/example/main.bc.c ./main.c
 
-include $(RIOTBASE)/Makefile.include
 #
 ocaml/Makefile:
 	sed -i -e 's/oc_cflags="/oc_cflags="$$OC_CFLAGS /g' ocaml/configure
@@ -34,10 +35,10 @@ CFLAGS := $(subst -Wstrict-prototypes,,$(CFLAGS))
 CFLAGS := $(subst -Werror,,$(CFLAGS))
 CFLAGS := $(subst -Wold-style-definition,,$(CFLAGS))
 #CFLAGS := $(subst -fdiagnostics-color,,$(CFLAGS))
-#
+
 OCAML_CFLAGS := $(CFLAGS)
 OCAML_LIBS := $(LINKFLAGS)
-RIOTBUILD_H_FILE := $(absolute bin/native/riotbuild/riotbuild.h)
+RIOTBUILD_H_FILE := $(CURDIR)/bin/native/riotbuild/riotbuild.h
 .PHONY: runtime
 runtime: $(RIOTBUILD_H_FILE)
 	CC="$(CC)" \
@@ -50,3 +51,7 @@ runtime: $(RIOTBUILD_H_FILE)
 
 CFLAGS += -I$(CURDIR)/include/
 LINKFLAGS += -L$(CURDIR) -lcamlrun -lm
+
+clear :
+	git clean -dxf
+	
