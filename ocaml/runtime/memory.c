@@ -47,11 +47,11 @@ uintnat caml_use_huge_pages = 0;
    after that.
 */
 
-extern uintnat caml_percent_free;                   /* major_gc.c */
+extern uintnat caml_percent_free; /* major_gc.c */
 
 /* Page table management */
 
-#define Page(p) ((uintnat) (p) >> Page_log)
+#define Page(p) ((uintnat)(p) >> Page_log)
 #define Page_mask ((~(uintnat)0) << Page_log)
 
 #ifdef ARCH_SIXTYFOUR
@@ -60,12 +60,13 @@ extern uintnat caml_percent_free;                   /* major_gc.c */
    The page table is represented sparsely as a hash table
    with linear probing */
 
-struct page_table {
-  mlsize_t size;                /* size == 1 << (wordsize - shift) */
+struct page_table
+{
+  mlsize_t size; /* size == 1 << (wordsize - shift) */
   int shift;
-  mlsize_t mask;                /* mask == size - 1 */
+  mlsize_t mask; /* mask == size - 1 */
   mlsize_t occupancy;
-  uintnat * entries;            /* [size]  */
+  uintnat *entries; /* [size]  */
 };
 
 static struct page_table caml_page_table;
@@ -74,7 +75,7 @@ static struct page_table caml_page_table;
    - the key: address of a page (low Page_log bits = 0)
    - the data: a 8-bit integer */
 
-#define Page_entry_matches(entry,addr) \
+#define Page_entry_matches(entry, addr) \
   ((((entry) ^ (addr)) & Page_mask) == 0)
 
 /* Multiplicative Fibonacci hashing
@@ -85,21 +86,25 @@ static struct page_table caml_page_table;
 #else
 #define HASH_FACTOR 2654435769UL
 #endif
-#define Hash(v) (((v) * HASH_FACTOR) >> caml_page_table.shift)
+#define Hash(v) (((v)*HASH_FACTOR) >> caml_page_table.shift)
 
-int caml_page_table_lookup(void * addr)
+int caml_page_table_lookup(void *addr)
 {
   uintnat h, e;
 
   h = Hash(Page(addr));
   /* The first hit is almost always successful, so optimize for this case */
   e = caml_page_table.entries[h];
-  if (Page_entry_matches(e, (uintnat)addr)) return e & 0xFF;
-  while(1) {
-    if (e == 0) return 0;
+  if (Page_entry_matches(e, (uintnat)addr))
+    return e & 0xFF;
+  while (1)
+  {
+    if (e == 0)
+      return 0;
     h = (h + 1) & caml_page_table.mask;
     e = caml_page_table.entries[h];
-    if (Page_entry_matches(e, (uintnat)addr)) return e & 0xFF;
+    if (Page_entry_matches(e, (uintnat)addr))
+      return e & 0xFF;
   }
 }
 
@@ -110,14 +115,15 @@ int caml_page_table_initialize(mlsize_t bytesize)
   caml_page_table.size = 1;
   caml_page_table.shift = 8 * sizeof(uintnat);
   /* Aim for initial load factor between 1/4 and 1/2 */
-  while (caml_page_table.size < 2 * pagesize) {
+  while (caml_page_table.size < 2 * pagesize)
+  {
     caml_page_table.size <<= 1;
     caml_page_table.shift -= 1;
   }
   caml_page_table.mask = caml_page_table.size - 1;
   caml_page_table.occupancy = 0;
   caml_page_table.entries =
-    caml_stat_calloc_noexc(caml_page_table.size, sizeof(uintnat));
+      caml_stat_calloc_noexc(caml_page_table.size, sizeof(uintnat));
   if (caml_page_table.entries == NULL)
     return -1;
   else
@@ -127,16 +133,16 @@ int caml_page_table_initialize(mlsize_t bytesize)
 static int caml_page_table_resize(void)
 {
   struct page_table old = caml_page_table;
-  uintnat * new_entries;
+  uintnat *new_entries;
   uintnat i, h;
 
-  caml_gc_message (0x08, "Growing page table to %"
-                   ARCH_INTNAT_PRINTF_FORMAT "u entries\n",
-                   caml_page_table.size);
+  caml_gc_message(0x08, "Growing page table to %" ARCH_INTNAT_PRINTF_FORMAT "u entries\n",
+                  caml_page_table.size);
 
   new_entries = caml_stat_calloc_noexc(2 * old.size, sizeof(uintnat));
-  if (new_entries == NULL) {
-    caml_gc_message (0x08, "No room for growing page table\n");
+  if (new_entries == NULL)
+  {
+    caml_gc_message(0x08, "No room for growing page table\n");
     return -1;
   }
 
@@ -146,9 +152,11 @@ static int caml_page_table_resize(void)
   caml_page_table.occupancy = old.occupancy;
   caml_page_table.entries = new_entries;
 
-  for (i = 0; i < old.size; i++) {
+  for (i = 0; i < old.size; i++)
+  {
     uintnat e = old.entries[i];
-    if (e == 0) continue;
+    if (e == 0)
+      continue;
     h = Hash(Page(e));
     while (caml_page_table.entries[h] != 0)
       h = (h + 1) & caml_page_table.mask;
@@ -163,22 +171,27 @@ static int caml_page_table_modify(uintnat page, int toclear, int toset)
 {
   uintnat h;
 
-  CAMLassert ((page & ~Page_mask) == 0);
+  CAMLassert((page & ~Page_mask) == 0);
 
   /* Resize to keep load factor below 1/2 */
-  if (caml_page_table.occupancy * 2 >= caml_page_table.size) {
-    if (caml_page_table_resize() != 0) return -1;
+  if (caml_page_table.occupancy * 2 >= caml_page_table.size)
+  {
+    if (caml_page_table_resize() != 0)
+      return -1;
   }
   h = Hash(Page(page));
-  while (1) {
-    if (caml_page_table.entries[h] == 0) {
+  while (1)
+  {
+    if (caml_page_table.entries[h] == 0)
+    {
       caml_page_table.entries[h] = page | toset;
       caml_page_table.occupancy++;
       break;
     }
-    if (Page_entry_matches(caml_page_table.entries[h], page)) {
+    if (Page_entry_matches(caml_page_table.entries[h], page))
+    {
       caml_page_table.entries[h] =
-        (caml_page_table.entries[h] & ~toclear) | toset;
+          (caml_page_table.entries[h] & ~toclear) | toset;
       break;
     }
     h = (h + 1) & caml_page_table.mask;
@@ -191,8 +204,10 @@ static int caml_page_table_modify(uintnat page, int toclear, int toset)
 /* 32-bit implementation:
    The page table is represented as a 2-level array of unsigned char */
 
-CAMLexport unsigned char * caml_page_table[Pagetable1_size];
-static unsigned char caml_page_table_empty[Pagetable2_size] = { 0, };
+CAMLexport unsigned char *caml_page_table[Pagetable1_size];
+static unsigned char caml_page_table_empty[Pagetable2_size] = {
+    0,
+};
 
 int caml_page_table_initialize(mlsize_t bytesize)
 {
@@ -207,9 +222,11 @@ static int caml_page_table_modify(uintnat page, int toclear, int toset)
   uintnat i = Pagetable_index1(page);
   uintnat j = Pagetable_index2(page);
 
-  if (caml_page_table[i] == caml_page_table_empty) {
-    unsigned char * new_tbl = caml_stat_calloc_noexc(Pagetable2_size, 1);
-    if (new_tbl == 0) return -1;
+  if (caml_page_table[i] == caml_page_table_empty)
+  {
+    unsigned char *new_tbl = caml_stat_calloc_noexc(Pagetable2_size, 1);
+    if (new_tbl == 0)
+      return -1;
     caml_page_table[i] = new_tbl;
   }
   caml_page_table[i][j] = (caml_page_table[i][j] & ~toclear) | toset;
@@ -218,25 +235,27 @@ static int caml_page_table_modify(uintnat page, int toclear, int toset)
 
 #endif
 
-int caml_page_table_add(int kind, void * start, void * end)
+int caml_page_table_add(int kind, void *start, void *end)
 {
-  uintnat pstart = (uintnat) start & Page_mask;
-  uintnat pend = ((uintnat) end - 1) & Page_mask;
+  uintnat pstart = (uintnat)start & Page_mask;
+  uintnat pend = ((uintnat)end - 1) & Page_mask;
   uintnat p;
 
   for (p = pstart; p <= pend; p += Page_size)
-    if (caml_page_table_modify(p, 0, kind) != 0) return -1;
+    if (caml_page_table_modify(p, 0, kind) != 0)
+      return -1;
   return 0;
 }
 
-int caml_page_table_remove(int kind, void * start, void * end)
+int caml_page_table_remove(int kind, void *start, void *end)
 {
-  uintnat pstart = (uintnat) start & Page_mask;
-  uintnat pend = ((uintnat) end - 1) & Page_mask;
+  uintnat pstart = (uintnat)start & Page_mask;
+  uintnat pend = ((uintnat)end - 1) & Page_mask;
   uintnat p;
 
   for (p = pstart; p <= pend; p += Page_size)
-    if (caml_page_table_modify(p, kind, 0) != 0) return -1;
+    if (caml_page_table_modify(p, kind, 0) != 0)
+      return -1;
   return 0;
 }
 
@@ -249,38 +268,43 @@ int caml_page_table_remove(int kind, void * start, void * end)
    is a hp, but the header (and the contents) must be initialized by the
    caller.
 */
-char *caml_alloc_for_heap (asize_t request)
+char *caml_alloc_for_heap(asize_t request)
 {
-  if (caml_use_huge_pages){
+  if (caml_use_huge_pages)
+  {
 #ifdef HAS_HUGE_PAGES
-    uintnat size = Round_mmap_size (sizeof (heap_chunk_head) + request);
+    uintnat size = Round_mmap_size(sizeof(heap_chunk_head) + request);
     void *block;
     char *mem;
-    block = mmap (NULL, size, PROT_READ | PROT_WRITE,
-                  MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
-    if (block == MAP_FAILED) return NULL;
-    mem = (char *) block + sizeof (heap_chunk_head);
-    Chunk_size (mem) = size - sizeof (heap_chunk_head);
-    Chunk_block (mem) = block;
-    Chunk_redarken_start(mem) = (value*)(mem + Chunk_size(mem));
-    Chunk_redarken_end(mem) = (value*)mem;
+    block = mmap(NULL, size, PROT_READ | PROT_WRITE,
+                 MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, -1, 0);
+    if (block == MAP_FAILED)
+      return NULL;
+    mem = (char *)block + sizeof(heap_chunk_head);
+    Chunk_size(mem) = size - sizeof(heap_chunk_head);
+    Chunk_block(mem) = block;
+    Chunk_redarken_start(mem) = (value *)(mem + Chunk_size(mem));
+    Chunk_redarken_end(mem) = (value *)mem;
     return mem;
 #else
     return NULL;
 #endif
-  }else{
+  }
+  else
+  {
     char *mem;
     void *block;
 
     request = ((request + Page_size - 1) >> Page_log) << Page_log;
-    mem = caml_stat_alloc_aligned_noexc (request + sizeof (heap_chunk_head),
-                                         sizeof (heap_chunk_head), &block);
-    if (mem == NULL) return NULL;
-    mem += sizeof (heap_chunk_head);
-    Chunk_size (mem) = request;
-    Chunk_block (mem) = block;
-    Chunk_redarken_start(mem) = (value*)(mem + Chunk_size(mem));
-    Chunk_redarken_end(mem) = (value*)mem;
+    mem = caml_stat_alloc_aligned_noexc(request + sizeof(heap_chunk_head),
+                                        sizeof(heap_chunk_head), &block);
+    if (mem == NULL)
+      return NULL;
+    mem += sizeof(heap_chunk_head);
+    Chunk_size(mem) = request;
+    Chunk_block(mem) = block;
+    Chunk_redarken_start(mem) = (value *)(mem + Chunk_size(mem));
+    Chunk_redarken_end(mem) = (value *)mem;
     return mem;
   }
 }
@@ -288,16 +312,19 @@ char *caml_alloc_for_heap (asize_t request)
 /* Use this function to free a block allocated with [caml_alloc_for_heap]
    if you don't add it with [caml_add_to_heap].
 */
-void caml_free_for_heap (char *mem)
+void caml_free_for_heap(char *mem)
 {
-  if (caml_use_huge_pages){
+  if (caml_use_huge_pages)
+  {
 #ifdef HAS_HUGE_PAGES
-    munmap (Chunk_block (mem), Chunk_size (mem) + sizeof (heap_chunk_head));
+    munmap(Chunk_block(mem), Chunk_size(mem) + sizeof(heap_chunk_head));
 #else
-    CAMLassert (0);
+    CAMLassert(0);
 #endif
-  }else{
-    caml_stat_free (Chunk_block (mem));
+  }
+  else
+  {
+    caml_stat_free(Chunk_block(mem));
   }
 }
 
@@ -312,15 +339,14 @@ void caml_free_for_heap (char *mem)
 
    See also: caml_compact_heap, which duplicates most of this function.
 */
-int caml_add_to_heap (char *m)
+int caml_add_to_heap(char *m)
 {
 #ifdef DEBUG
   /* Should check the contents of the block. */
 #endif /* DEBUG */
 
-  caml_gc_message (0x04, "Growing heap to %"
-                   ARCH_INTNAT_PRINTF_FORMAT "uk bytes\n",
-     (Bsize_wsize (Caml_state->stat_heap_wsz) + Chunk_size (m)) / 1024);
+  caml_gc_message(0x04, "Growing heap to %" ARCH_INTNAT_PRINTF_FORMAT "uk bytes\n",
+                  (Bsize_wsize(Caml_state->stat_heap_wsz) + Chunk_size(m)) / 1024);
 
   /* Register block in page table */
   if (caml_page_table_add(In_heap, m, m + Chunk_size(m)) != 0)
@@ -331,18 +357,20 @@ int caml_add_to_heap (char *m)
     char **last = &caml_heap_start;
     char *cur = *last;
 
-    while (cur != NULL && cur < m){
-      last = &(Chunk_next (cur));
+    while (cur != NULL && cur < m)
+    {
+      last = &(Chunk_next(cur));
       cur = *last;
     }
-    Chunk_next (m) = cur;
+    Chunk_next(m) = cur;
     *last = m;
 
-    ++ Caml_state->stat_heap_chunks;
+    ++Caml_state->stat_heap_chunks;
   }
 
-  Caml_state->stat_heap_wsz += Wsize_bsize (Chunk_size (m));
-  if (Caml_state->stat_heap_wsz > Caml_state->stat_top_heap_wsz){
+  Caml_state->stat_heap_wsz += Wsize_bsize(Chunk_size(m));
+  if (Caml_state->stat_heap_wsz > Caml_state->stat_top_heap_wsz)
+  {
     Caml_state->stat_top_heap_wsz = Caml_state->stat_heap_wsz;
   }
   return 0;
@@ -358,58 +386,65 @@ int caml_add_to_heap (char *m)
    to [Max_wosize].
    Return NULL when out of memory.
 */
-static value *expand_heap (mlsize_t request)
+static value *expand_heap(mlsize_t request)
 {
   /* these point to headers, but we do arithmetic on them, hence [value *]. */
   value *mem, *hp, *prev;
   asize_t over_request, malloc_request, remain;
 
-  CAMLassert (request <= Max_wosize);
+  CAMLassert(request <= Max_wosize);
   over_request = request + request / 100 * caml_percent_free;
-  malloc_request = caml_clip_heap_chunk_wsz (over_request);
-  mem = (value *) caml_alloc_for_heap (Bsize_wsize (malloc_request));
-  if (mem == NULL){
-    caml_gc_message (0x04, "No room for growing heap\n");
+  malloc_request = caml_clip_heap_chunk_wsz(over_request);
+  mem = (value *)caml_alloc_for_heap(Bsize_wsize(malloc_request));
+  if (mem == NULL)
+  {
+    caml_gc_message(0x04, "No room for growing heap\n");
     return NULL;
   }
-  remain = Wsize_bsize (Chunk_size (mem));
+  remain = Wsize_bsize(Chunk_size(mem));
   prev = hp = mem;
   /* FIXME find a way to do this with a call to caml_make_free_blocks */
-  while (Wosize_whsize (remain) > Max_wosize){
-    Hd_hp (hp) = Make_header (Max_wosize, 0, Caml_blue);
+  while (Wosize_whsize(remain) > Max_wosize)
+  {
+    Hd_hp(hp) = Make_header(Max_wosize, 0, Caml_blue);
 #ifdef DEBUG
-    caml_set_fields (Val_hp (hp), 0, Debug_free_major);
+    caml_set_fields(Val_hp(hp), 0, Debug_free_major);
 #endif
-    hp += Whsize_wosize (Max_wosize);
-    remain -= Whsize_wosize (Max_wosize);
-    Field (Val_hp (mem), 1) = Field (Val_hp (prev), 0) = Val_hp (hp);
+    hp += Whsize_wosize(Max_wosize);
+    remain -= Whsize_wosize(Max_wosize);
+    Field(Val_hp(mem), 1) = Field(Val_hp(prev), 0) = Val_hp(hp);
     prev = hp;
   }
-  if (remain > 1){
-    Hd_hp (hp) = Make_header (Wosize_whsize (remain), 0, Caml_blue);
+  if (remain > 1)
+  {
+    Hd_hp(hp) = Make_header(Wosize_whsize(remain), 0, Caml_blue);
 #ifdef DEBUG
-    caml_set_fields (Val_hp (hp), 0, Debug_free_major);
+    caml_set_fields(Val_hp(hp), 0, Debug_free_major);
 #endif
-    Field (Val_hp (mem), 1) = Field (Val_hp (prev), 0) = Val_hp (hp);
-    Field (Val_hp (hp), 0) = (value) NULL;
-  }else{
-    Field (Val_hp (prev), 0) = (value) NULL;
-    if (remain == 1) {
-      Hd_hp (hp) = Make_header (0, 0, Caml_white);
+    Field(Val_hp(mem), 1) = Field(Val_hp(prev), 0) = Val_hp(hp);
+    Field(Val_hp(hp), 0) = (value)NULL;
+  }
+  else
+  {
+    Field(Val_hp(prev), 0) = (value)NULL;
+    if (remain == 1)
+    {
+      Hd_hp(hp) = Make_header(0, 0, Caml_white);
     }
   }
-  CAMLassert (Wosize_hp (mem) >= request);
-  if (caml_add_to_heap ((char *) mem) != 0){
-    caml_free_for_heap ((char *) mem);
+  CAMLassert(Wosize_hp(mem) >= request);
+  if (caml_add_to_heap((char *)mem) != 0)
+  {
+    caml_free_for_heap((char *)mem);
     return NULL;
   }
-  return Op_hp (mem);
+  return Op_hp(mem);
 }
 
 /* Remove the heap chunk [chunk] from the heap and give the memory back
    to [free].
 */
-void caml_shrink_heap (char *chunk)
+void caml_shrink_heap(char *chunk)
 {
   char **cp;
 
@@ -420,108 +455,116 @@ void caml_shrink_heap (char *chunk)
      (see compact.c)
      XXX FIXME this has become false with the fix to PR#5389 (see compact.c)
   */
-  if (chunk == caml_heap_start) return;
+  if (chunk == caml_heap_start)
+    return;
 
-  Caml_state->stat_heap_wsz -= Wsize_bsize (Chunk_size (chunk));
-  caml_gc_message (0x04, "Shrinking heap to %"
-                   ARCH_INTNAT_PRINTF_FORMAT "dk words\n",
-                   Caml_state->stat_heap_wsz / 1024);
+  Caml_state->stat_heap_wsz -= Wsize_bsize(Chunk_size(chunk));
+  caml_gc_message(0x04, "Shrinking heap to %" ARCH_INTNAT_PRINTF_FORMAT "dk words\n",
+                  Caml_state->stat_heap_wsz / 1024);
 
 #ifdef DEBUG
   {
     mlsize_t i;
-    for (i = 0; i < Wsize_bsize (Chunk_size (chunk)); i++){
-      ((value *) chunk) [i] = Debug_free_shrink;
+    for (i = 0; i < Wsize_bsize(Chunk_size(chunk)); i++)
+    {
+      ((value *)chunk)[i] = Debug_free_shrink;
     }
   }
 #endif
 
-  -- Caml_state->stat_heap_chunks;
+  --Caml_state->stat_heap_chunks;
 
   /* Remove [chunk] from the list of chunks. */
   cp = &caml_heap_start;
-  while (*cp != chunk) cp = &(Chunk_next (*cp));
-  *cp = Chunk_next (chunk);
+  while (*cp != chunk)
+    cp = &(Chunk_next(*cp));
+  *cp = Chunk_next(chunk);
 
   /* Remove the pages of [chunk] from the page table. */
-  caml_page_table_remove(In_heap, chunk, chunk + Chunk_size (chunk));
+  caml_page_table_remove(In_heap, chunk, chunk + Chunk_size(chunk));
 
   /* Free the [malloc] block that contains [chunk]. */
-  caml_free_for_heap (chunk);
+  caml_free_for_heap(chunk);
 }
 
-CAMLexport color_t caml_allocation_color (void *hp)
+CAMLexport color_t caml_allocation_color(void *hp)
 {
   if (caml_gc_phase == Phase_mark || caml_gc_phase == Phase_clean ||
-      (caml_gc_phase == Phase_sweep && (char *)hp >= (char *)caml_gc_sweep_hp)){
+      (caml_gc_phase == Phase_sweep && (char *)hp >= (char *)caml_gc_sweep_hp))
+  {
     return Caml_black;
-  }else{
-    CAMLassert (caml_gc_phase == Phase_idle
-            || (caml_gc_phase == Phase_sweep
-                && (char *)hp < (char *)caml_gc_sweep_hp));
+  }
+  else
+  {
+    CAMLassert(caml_gc_phase == Phase_idle || (caml_gc_phase == Phase_sweep && (char *)hp < (char *)caml_gc_sweep_hp));
     return Caml_white;
   }
 }
 
-Caml_inline value caml_alloc_shr_aux (mlsize_t wosize, tag_t tag, int track,
-                                      int raise_oom, uintnat profinfo)
+Caml_inline value caml_alloc_shr_aux(mlsize_t wosize, tag_t tag, int track,
+                                     int raise_oom, uintnat profinfo)
 {
   header_t *hp;
   value *new_block;
 
-  if (wosize > Max_wosize) {
+  if (wosize > Max_wosize)
+  {
     if (raise_oom)
-      caml_raise_out_of_memory ();
+      caml_raise_out_of_memory();
     else
       return 0;
   }
   CAML_EV_ALLOC(wosize);
-  hp = caml_fl_allocate (wosize);
-  if (hp == NULL){
-    new_block = expand_heap (wosize);
-    if (new_block == NULL) {
+  hp = caml_fl_allocate(wosize);
+  if (hp == NULL)
+  {
+    new_block = expand_heap(wosize);
+    if (new_block == NULL)
+    {
       if (!raise_oom)
         return 0;
       else if (Caml_state->in_minor_collection)
-        caml_fatal_error ("out of memory");
+        caml_fatal_error("out of memory");
       else
-        caml_raise_out_of_memory ();
+        caml_raise_out_of_memory();
     }
-    caml_fl_add_blocks ((value) new_block);
-    hp = caml_fl_allocate (wosize);
+    caml_fl_add_blocks((value)new_block);
+    hp = caml_fl_allocate(wosize);
   }
 
-  CAMLassert (Is_in_heap (Val_hp (hp)));
+  CAMLassert(Is_in_heap(Val_hp(hp)));
 
   /* Inline expansion of caml_allocation_color. */
   if (caml_gc_phase == Phase_mark || caml_gc_phase == Phase_clean ||
-      (caml_gc_phase == Phase_sweep && (char *)hp >= (char *)caml_gc_sweep_hp)){
-    Hd_hp (hp) = Make_header_with_profinfo (wosize, tag, Caml_black, profinfo);
-  }else{
-    CAMLassert (caml_gc_phase == Phase_idle
-            || (caml_gc_phase == Phase_sweep
-                && (char *)hp < (char *)caml_gc_sweep_hp));
-    Hd_hp (hp) = Make_header_with_profinfo (wosize, tag, Caml_white, profinfo);
+      (caml_gc_phase == Phase_sweep && (char *)hp >= (char *)caml_gc_sweep_hp))
+  {
+    Hd_hp(hp) = Make_header_with_profinfo(wosize, tag, Caml_black, profinfo);
   }
-  CAMLassert (Hd_hp (hp)
-    == Make_header_with_profinfo (wosize, tag, caml_allocation_color (hp),
-                                  profinfo));
-  caml_allocated_words += Whsize_wosize (wosize);
-  if (caml_allocated_words > Caml_state->minor_heap_wsz){
-    CAML_EV_COUNTER (EV_C_REQUEST_MAJOR_ALLOC_SHR, 1);
-    caml_request_major_slice ();
+  else
+  {
+    CAMLassert(caml_gc_phase == Phase_idle || (caml_gc_phase == Phase_sweep && (char *)hp < (char *)caml_gc_sweep_hp));
+    Hd_hp(hp) = Make_header_with_profinfo(wosize, tag, Caml_white, profinfo);
+  }
+  CAMLassert(Hd_hp(hp) == Make_header_with_profinfo(wosize, tag, caml_allocation_color(hp),
+                                                    profinfo));
+  caml_allocated_words += Whsize_wosize(wosize);
+  if (caml_allocated_words > Caml_state->minor_heap_wsz)
+  {
+    CAML_EV_COUNTER(EV_C_REQUEST_MAJOR_ALLOC_SHR, 1);
+    caml_request_major_slice();
   }
 #ifdef DEBUG
   {
     uintnat i;
-    for (i = 0; i < wosize; i++){
-      Field (Val_hp (hp), i) = Debug_uninit_major;
+    for (i = 0; i < wosize; i++)
+    {
+      Field(Val_hp(hp), i) = Debug_uninit_major;
     }
   }
 #endif
-  if(track)
-    caml_memprof_track_alloc_shr(Val_hp (hp));
-  return Val_hp (hp);
+  if (track)
+    caml_memprof_track_alloc_shr(Val_hp(hp));
+  return Val_hp(hp);
 }
 
 #ifdef WITH_PROFINFO
@@ -529,36 +572,36 @@ Caml_inline value caml_alloc_shr_aux (mlsize_t wosize, tag_t tag, int track,
 /* Use this to debug problems with macros... */
 #define NO_PROFINFO 0xff
 
-CAMLexport value caml_alloc_shr_with_profinfo (mlsize_t wosize, tag_t tag,
-                                               intnat profinfo)
+CAMLexport value caml_alloc_shr_with_profinfo(mlsize_t wosize, tag_t tag,
+                                              intnat profinfo)
 {
   return caml_alloc_shr_aux(wosize, tag, 1, 1, profinfo);
 }
 
-CAMLexport value caml_alloc_shr_for_minor_gc (mlsize_t wosize,
-                                              tag_t tag, header_t old_header)
+CAMLexport value caml_alloc_shr_for_minor_gc(mlsize_t wosize,
+                                             tag_t tag, header_t old_header)
 {
-  return caml_alloc_shr_aux (wosize, tag, 0, 1, Profinfo_hd(old_header));
+  return caml_alloc_shr_aux(wosize, tag, 0, 1, Profinfo_hd(old_header));
 }
 
 #else
 #define NO_PROFINFO 0
 
-CAMLexport value caml_alloc_shr_for_minor_gc (mlsize_t wosize,
-                                              tag_t tag, header_t old_header)
+CAMLexport value caml_alloc_shr_for_minor_gc(mlsize_t wosize,
+                                             tag_t tag, header_t old_header)
 {
-  return caml_alloc_shr_aux (wosize, tag, 0, 1, NO_PROFINFO);
+  return caml_alloc_shr_aux(wosize, tag, 0, 1, NO_PROFINFO);
 }
 #endif /* WITH_PROFINFO */
 
-CAMLexport value caml_alloc_shr (mlsize_t wosize, tag_t tag)
+CAMLexport value caml_alloc_shr(mlsize_t wosize, tag_t tag)
 {
-  return caml_alloc_shr_aux (wosize, tag, 1, 1, NO_PROFINFO);
+  return caml_alloc_shr_aux(wosize, tag, 1, 1, NO_PROFINFO);
 }
 
-CAMLexport value caml_alloc_shr_no_track_noexc (mlsize_t wosize, tag_t tag)
+CAMLexport value caml_alloc_shr_no_track_noexc(mlsize_t wosize, tag_t tag)
 {
-  return caml_alloc_shr_aux (wosize, tag, 0, 0, NO_PROFINFO);
+  return caml_alloc_shr_aux(wosize, tag, 0, 0, NO_PROFINFO);
 }
 
 /* Dependent memory is all memory blocks allocated out of the heap
@@ -570,18 +613,21 @@ CAMLexport value caml_alloc_shr_no_track_noexc (mlsize_t wosize, tag_t tag)
    free it.  In both cases, you pass as argument the size (in bytes)
    of the block being allocated or freed.
 */
-CAMLexport void caml_alloc_dependent_memory (mlsize_t nbytes)
+CAMLexport void caml_alloc_dependent_memory(mlsize_t nbytes)
 {
-  caml_dependent_size += nbytes / sizeof (value);
-  caml_dependent_allocated += nbytes / sizeof (value);
+  caml_dependent_size += nbytes / sizeof(value);
+  caml_dependent_allocated += nbytes / sizeof(value);
 }
 
-CAMLexport void caml_free_dependent_memory (mlsize_t nbytes)
+CAMLexport void caml_free_dependent_memory(mlsize_t nbytes)
 {
-  if (caml_dependent_size < nbytes / sizeof (value)){
+  if (caml_dependent_size < nbytes / sizeof(value))
+  {
     caml_dependent_size = 0;
-  }else{
-    caml_dependent_size -= nbytes / sizeof (value);
+  }
+  else
+  {
+    caml_dependent_size -= nbytes / sizeof(value);
   }
 }
 
@@ -593,15 +639,18 @@ CAMLexport void caml_free_dependent_memory (mlsize_t nbytes)
    Note that only [res/max] is relevant.  The units (and kind of
    resource) can change between calls to [caml_adjust_gc_speed].
 */
-CAMLexport void caml_adjust_gc_speed (mlsize_t res, mlsize_t max)
+CAMLexport void caml_adjust_gc_speed(mlsize_t res, mlsize_t max)
 {
-  if (max == 0) max = 1;
-  if (res > max) res = max;
-  caml_extra_heap_resources += (double) res / (double) max;
-  if (caml_extra_heap_resources > 1.0){
-    CAML_EV_COUNTER (EV_C_REQUEST_MAJOR_ADJUST_GC_SPEED, 1);
+  if (max == 0)
+    max = 1;
+  if (res > max)
+    res = max;
+  caml_extra_heap_resources += (double)res / (double)max;
+  if (caml_extra_heap_resources > 1.0)
+  {
+    CAML_EV_COUNTER(EV_C_REQUEST_MAJOR_ADJUST_GC_SPEED, 1);
     caml_extra_heap_resources = 1.0;
-    caml_request_major_slice ();
+    caml_request_major_slice();
   }
 }
 
@@ -613,12 +662,13 @@ CAMLexport void caml_adjust_gc_speed (mlsize_t res, mlsize_t max)
 /* [caml_initialize] never calls the GC, so you may call it while a block is
    unfinished (i.e. just after a call to [caml_alloc_shr].) */
 /* PR#6084 workaround: define it as a weak symbol */
-CAMLexport CAMLweakdef void caml_initialize (value *fp, value val)
+CAMLexport CAMLweakdef void caml_initialize(value *fp, value val)
 {
   CAMLassert(Is_in_heap_or_young(fp));
   *fp = val;
-  if (!Is_young((value)fp) && Is_block (val) && Is_young (val)) {
-    add_to_ref_table (Caml_state->ref_table, fp);
+  if (!Is_young((value)fp) && Is_block(val) && Is_young(val))
+  {
+    add_to_ref_table(Caml_state->ref_table, fp);
   }
 }
 
@@ -633,7 +683,7 @@ CAMLexport CAMLweakdef void caml_initialize (value *fp, value val)
    block being changed is in the minor heap or the major heap. */
 /* PR#6084 workaround: define it as a weak symbol */
 
-CAMLexport CAMLweakdef void caml_modify (value *fp, value val)
+CAMLexport CAMLweakdef void caml_modify(value *fp, value val)
 {
   /* The write barrier implemented by [caml_modify] checks for the
      following two conditions and takes appropriate action:
@@ -651,31 +701,37 @@ CAMLexport CAMLweakdef void caml_modify (value *fp, value val)
   */
   value old;
 
-  if (Is_young((value)fp)) {
+  if (Is_young((value)fp))
+  {
     /* The modified object resides in the minor heap.
        Conditions 1 and 2 cannot occur. */
     *fp = val;
-  } else {
+  }
+  else
+  {
     /* The modified object resides in the major heap. */
     CAMLassert(Is_in_heap(fp));
     old = *fp;
     *fp = val;
-    if (Is_block(old)) {
+    if (Is_block(old))
+    {
       /* If [old] is a pointer within the minor heap, we already
          have a major->minor pointer and [fp] is already in the
          remembered set.  Conditions 1 and 2 cannot occur. */
-      if (Is_young(old)) return;
+      if (Is_young(old))
+        return;
       /* Here, [old] can be a pointer within the major heap.
          Check for condition 2. */
-      if (caml_gc_phase == Phase_mark) caml_darken(old, NULL);
+      if (caml_gc_phase == Phase_mark)
+        caml_darken(old, NULL);
     }
     /* Check for condition 1. */
-    if (Is_block(val) && Is_young(val)) {
-      add_to_ref_table (Caml_state->ref_table, fp);
+    if (Is_block(val) && Is_young(val))
+    {
+      add_to_ref_table(Caml_state->ref_table, fp);
     }
   }
 }
-
 
 /* Global memory pool.
 
@@ -695,7 +751,8 @@ CAMLexport CAMLweakdef void caml_modify (value *fp, value val)
 */
 
 /* A type with the most strict alignment requirements */
-union max_align {
+union max_align
+{
   char c;
   short s;
   long l;
@@ -706,7 +763,8 @@ union max_align {
   void (*q)(void);
 };
 
-struct pool_block {
+struct pool_block
+{
 #ifdef DEBUG
   intnat magic;
 #endif
@@ -714,7 +772,7 @@ struct pool_block {
   struct pool_block *prev;
   /* Use C99's flexible array types if possible */
 #if (__STDC_VERSION__ >= 199901L)
-  union max_align data[];  /* not allocated, used for alignment purposes */
+  union max_align data[]; /* not allocated, used for alignment purposes */
 #else
   union max_align data[1];
 #endif
@@ -728,16 +786,16 @@ struct pool_block {
 
 static struct pool_block *pool = NULL;
 
-
 /* Returns a pointer to the block header, given a pointer to "data" */
-static struct pool_block* get_pool_block(caml_stat_block b)
+static struct pool_block *get_pool_block(caml_stat_block b)
 {
   if (b == NULL)
     return NULL;
 
-  else {
+  else
+  {
     struct pool_block *pb =
-      (struct pool_block*)(((char*)b) - SIZEOF_POOL_BLOCK);
+        (struct pool_block *)(((char *)b) - SIZEOF_POOL_BLOCK);
 #ifdef DEBUG
     CAMLassert(pb->magic == Debug_pool_magic);
 #endif
@@ -747,7 +805,8 @@ static struct pool_block* get_pool_block(caml_stat_block b)
 
 CAMLexport void caml_stat_create_pool(void)
 {
-  if (pool == NULL) {
+  if (pool == NULL)
+  {
     pool = malloc(SIZEOF_POOL_BLOCK);
     if (pool == NULL)
       caml_fatal_error("out of memory");
@@ -761,9 +820,11 @@ CAMLexport void caml_stat_create_pool(void)
 
 CAMLexport void caml_stat_destroy_pool(void)
 {
-  if (pool != NULL) {
+  if (pool != NULL)
+  {
     pool->prev->next = NULL;
-    while (pool != NULL) {
+    while (pool != NULL)
+    {
       struct pool_block *next = pool->next;
       free(pool);
       pool = next;
@@ -773,34 +834,38 @@ CAMLexport void caml_stat_destroy_pool(void)
 }
 
 /* [sz] and [modulo] are numbers of bytes */
-CAMLexport void* caml_stat_alloc_aligned_noexc(asize_t sz, int modulo,
+CAMLexport void *caml_stat_alloc_aligned_noexc(asize_t sz, int modulo,
                                                caml_stat_block *b)
 {
   char *raw_mem;
   uintnat aligned_mem;
-  CAMLassert (0 <= modulo && modulo < Page_size);
-  raw_mem = (char *) caml_stat_alloc_noexc(sz + Page_size);
-  if (raw_mem == NULL) return NULL;
+  CAMLassert(0 <= modulo && modulo < Page_size);
+  raw_mem = (char *)caml_stat_alloc_noexc(sz + Page_size);
+  if (raw_mem == NULL)
+    return NULL;
   *b = raw_mem;
-  raw_mem += modulo;                /* Address to be aligned */
-  aligned_mem = (((uintnat) raw_mem / Page_size + 1) * Page_size);
+  raw_mem += modulo; /* Address to be aligned */
+  aligned_mem = (((uintnat)raw_mem / Page_size + 1) * Page_size);
 #ifdef DEBUG
   {
     uintnat *p;
-    uintnat *p0 = (void *) *b;
-    uintnat *p1 = (void *) (aligned_mem - modulo);
-    uintnat *p2 = (void *) (aligned_mem - modulo + sz);
-    uintnat *p3 = (void *) ((char *) *b + sz + Page_size);
-    for (p = p0; p < p1; p++) *p = Debug_filler_align;
-    for (p = p1; p < p2; p++) *p = Debug_uninit_align;
-    for (p = p2; p < p3; p++) *p = Debug_filler_align;
+    uintnat *p0 = (void *)*b;
+    uintnat *p1 = (void *)(aligned_mem - modulo);
+    uintnat *p2 = (void *)(aligned_mem - modulo + sz);
+    uintnat *p3 = (void *)((char *)*b + sz + Page_size);
+    for (p = p0; p < p1; p++)
+      *p = Debug_filler_align;
+    for (p = p1; p < p2; p++)
+      *p = Debug_uninit_align;
+    for (p = p2; p < p3; p++)
+      *p = Debug_filler_align;
   }
 #endif
-  return (char *) (aligned_mem - modulo);
+  return (char *)(aligned_mem - modulo);
 }
 
 /* [sz] and [modulo] are numbers of bytes */
-CAMLexport void* caml_stat_alloc_aligned(asize_t sz, int modulo,
+CAMLexport void *caml_stat_alloc_aligned(asize_t sz, int modulo,
                                          caml_stat_block *b)
 {
   void *result = caml_stat_alloc_aligned_noexc(sz, modulo, b);
@@ -816,9 +881,11 @@ CAMLexport caml_stat_block caml_stat_alloc_noexc(asize_t sz)
   /* Backward compatibility mode */
   if (pool == NULL)
     return malloc(sz);
-  else {
+  else
+  {
     struct pool_block *pb = malloc(sz + SIZEOF_POOL_BLOCK);
-    if (pb == NULL) return NULL;
+    if (pb == NULL)
+      return NULL;
 #ifdef DEBUG
     memset(&(pb->data), Debug_uninit_stat, sz);
     pb->magic = Debug_pool_magic;
@@ -837,7 +904,6 @@ CAMLexport caml_stat_block caml_stat_alloc_noexc(asize_t sz)
 /* [sz] is a number of bytes */
 CAMLexport caml_stat_block caml_stat_alloc(asize_t sz)
 {
-  printf("caml_stat_alloc: %d\n", sz);
   void *result = caml_stat_alloc_noexc(sz);
   /* malloc() may return NULL if size is 0 */
   if ((result == NULL) && (sz != 0))
@@ -850,9 +916,11 @@ CAMLexport void caml_stat_free(caml_stat_block b)
   /* Backward compatibility mode */
   if (pool == NULL)
     free(b);
-  else {
+  else
+  {
     struct pool_block *pb = get_pool_block(b);
-    if (pb == NULL) return;
+    if (pb == NULL)
+      return;
 
     /* Unlinking the block from the ring */
     pb->prev->next = pb->next;
@@ -865,15 +933,17 @@ CAMLexport void caml_stat_free(caml_stat_block b)
 /* [sz] is a number of bytes */
 CAMLexport caml_stat_block caml_stat_resize_noexc(caml_stat_block b, asize_t sz)
 {
-  if(b == NULL)
+  if (b == NULL)
     return caml_stat_alloc_noexc(sz);
   /* Backward compatibility mode */
   if (pool == NULL)
     return realloc(b, sz);
-  else {
+  else
+  {
     struct pool_block *pb = get_pool_block(b);
     struct pool_block *pb_new = realloc(pb, sz + SIZEOF_POOL_BLOCK);
-    if (pb_new == NULL) return NULL;
+    if (pb_new == NULL)
+      return NULL;
 
     /* Relinking the new block into the ring in place of the old one */
     pb_new->prev->next = pb_new;
@@ -898,7 +968,8 @@ CAMLexport caml_stat_block caml_stat_calloc_noexc(asize_t num, asize_t sz)
   uintnat total;
   if (caml_umul_overflow(sz, num, &total))
     return NULL;
-  else {
+  else
+  {
     caml_stat_block result = caml_stat_alloc_noexc(total);
     if (result != NULL)
       memset(result, 0, total);
@@ -926,13 +997,13 @@ CAMLexport caml_stat_string caml_stat_strdup(const char *s)
 
 #ifdef _WIN32
 
-CAMLexport wchar_t * caml_stat_wcsdup(const wchar_t *s)
+CAMLexport wchar_t *caml_stat_wcsdup(const wchar_t *s)
 {
   int slen = wcslen(s);
-  wchar_t* result = caml_stat_alloc((slen + 1)*sizeof(wchar_t));
+  wchar_t *result = caml_stat_alloc((slen + 1) * sizeof(wchar_t));
   if (result == NULL)
     caml_raise_out_of_memory();
-  memcpy(result, s, (slen + 1)*sizeof(wchar_t));
+  memcpy(result, s, (slen + 1) * sizeof(wchar_t));
   return result;
 }
 
@@ -946,8 +1017,9 @@ CAMLexport caml_stat_string caml_stat_strconcat(int n, ...)
   int i;
 
   va_start(args, n);
-  for (i = 0; i < n; i++) {
-    const char *s = va_arg(args, const char*);
+  for (i = 0; i < n; i++)
+  {
+    const char *s = va_arg(args, const char *);
     len += strlen(s);
   }
   va_end(args);
@@ -956,8 +1028,9 @@ CAMLexport caml_stat_string caml_stat_strconcat(int n, ...)
 
   va_start(args, n);
   p = result;
-  for (i = 0; i < n; i++) {
-    const char *s = va_arg(args, const char*);
+  for (i = 0; i < n; i++)
+  {
+    const char *s = va_arg(args, const char *);
     size_t l = strlen(s);
     memcpy(p, s, l);
     p += l;
@@ -970,7 +1043,7 @@ CAMLexport caml_stat_string caml_stat_strconcat(int n, ...)
 
 #ifdef _WIN32
 
-CAMLexport wchar_t* caml_stat_wcsconcat(int n, ...)
+CAMLexport wchar_t *caml_stat_wcsconcat(int n, ...)
 {
   va_list args;
   wchar_t *result, *p;
@@ -978,20 +1051,22 @@ CAMLexport wchar_t* caml_stat_wcsconcat(int n, ...)
   int i;
 
   va_start(args, n);
-  for (i = 0; i < n; i++) {
-    const wchar_t *s = va_arg(args, const wchar_t*);
+  for (i = 0; i < n; i++)
+  {
+    const wchar_t *s = va_arg(args, const wchar_t *);
     len += wcslen(s);
   }
   va_end(args);
 
-  result = caml_stat_alloc((len + 1)*sizeof(wchar_t));
+  result = caml_stat_alloc((len + 1) * sizeof(wchar_t));
 
   va_start(args, n);
   p = result;
-  for (i = 0; i < n; i++) {
-    const wchar_t *s = va_arg(args, const wchar_t*);
+  for (i = 0; i < n; i++)
+  {
+    const wchar_t *s = va_arg(args, const wchar_t *);
     size_t l = wcslen(s);
-    memcpy(p, s, l*sizeof(wchar_t));
+    memcpy(p, s, l * sizeof(wchar_t));
     p += l;
   }
   va_end(args);

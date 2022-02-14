@@ -1,8 +1,14 @@
 (executable
  (name main)
- (foreign_stubs (language c) (names stubs))
+ (libraries mirage-runtime psq lwt duration)
+ ;  (foreign_stubs (language c) (names stubs))
  (modes
   (byte c)))
+
+(env
+ (dev
+  (flags
+   (:standard -w -33-26))))
 
 ;(rule
 ; (target main.c)

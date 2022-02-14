@@ -69,7 +69,7 @@
 #define SEEK_END 2
 #endif
 
-static char magicstr[EXEC_MAGIC_LENGTH+1];
+static char magicstr[EXEC_MAGIC_LENGTH + 1];
 static int print_magic = 0;
 
 /* Print the specified error message followed by an end-of-line and exit */
@@ -77,7 +77,7 @@ static void error(char *msg, ...)
 {
   va_list ap;
   va_start(ap, msg);
-  vfprintf (stderr, msg, ap);
+  vfprintf(stderr, msg, ap);
   va_end(ap);
   fprintf(stderr, "\n");
   exit(127);
@@ -85,7 +85,7 @@ static void error(char *msg, ...)
 
 /* Read the trailer of a bytecode file */
 
-static void fixup_endianness_trailer(uint32_t * p)
+static void fixup_endianness_trailer(uint32_t *p)
 {
 #ifndef ARCH_BIG_ENDIAN
   Reverse_32(p, p);
@@ -94,21 +94,22 @@ static void fixup_endianness_trailer(uint32_t * p)
 
 static int read_trailer(int fd, struct exec_trailer *trail)
 {
-  if (lseek(fd, (long) -TRAILER_SIZE, SEEK_END) == -1)
+  if (lseek(fd, (long)-TRAILER_SIZE, SEEK_END) == -1)
     return BAD_BYTECODE;
-  if (read(fd, (char *) trail, TRAILER_SIZE) < TRAILER_SIZE)
+  if (read(fd, (char *)trail, TRAILER_SIZE) < TRAILER_SIZE)
     return BAD_BYTECODE;
   fixup_endianness_trailer(&trail->num_sections);
   memcpy(magicstr, trail->magic, EXEC_MAGIC_LENGTH);
   magicstr[EXEC_MAGIC_LENGTH] = 0;
 
-  if (print_magic) {
+  if (print_magic)
+  {
     printf("%s\n", magicstr);
     exit(0);
   }
-  return
-    (strncmp(trail->magic, EXEC_MAGIC, sizeof(trail->magic)) == 0)
-      ? 0 : WRONG_MAGIC;
+  return (strncmp(trail->magic, EXEC_MAGIC, sizeof(trail->magic)) == 0)
+             ? 0
+             : WRONG_MAGIC;
 }
 
 enum caml_byte_program_mode caml_byte_program_mode = STANDARD;
@@ -116,17 +117,18 @@ enum caml_byte_program_mode caml_byte_program_mode = STANDARD;
 int caml_attempt_open(char_os **name, struct exec_trailer *trail,
                       int do_open_script)
 {
-  char_os * truename;
+  char_os *truename;
   int fd;
   int err;
-  char buf [2], * u8;
+  char buf[2], *u8;
 
   truename = caml_search_exe_in_path(*name);
   u8 = caml_stat_strdup_of_os(truename);
   caml_gc_message(0x100, "Opening bytecode executable %s\n", u8);
   caml_stat_free(u8);
   fd = open_os(truename, O_RDONLY | O_BINARY);
-  if (fd == -1) {
+  if (fd == -1)
+  {
     caml_stat_free(truename);
     caml_gc_message(0x100, "Cannot open file\n");
     if (errno == EMFILE)
@@ -134,9 +136,11 @@ int caml_attempt_open(char_os **name, struct exec_trailer *trail,
     else
       return FILE_NOT_FOUND;
   }
-  if (!do_open_script) {
-    err = read (fd, buf, 2);
-    if (err < 2 || (buf [0] == '#' && buf [1] == '!')) {
+  if (!do_open_script)
+  {
+    err = read(fd, buf, 2);
+    if (err < 2 || (buf[0] == '#' && buf[1] == '!'))
+    {
       close(fd);
       caml_stat_free(truename);
       caml_gc_message(0x100, "Rejected #! script\n");
@@ -144,7 +148,8 @@ int caml_attempt_open(char_os **name, struct exec_trailer *trail,
     }
   }
   err = read_trailer(fd, trail);
-  if (err != 0) {
+  if (err != 0)
+  {
     close(fd);
     caml_stat_free(truename);
     caml_gc_message(0x100, "Not a bytecode executable\n");
@@ -162,8 +167,8 @@ void caml_read_section_descriptors(int fd, struct exec_trailer *trail)
 
   toc_size = trail->num_sections * 8;
   trail->section = caml_stat_alloc(toc_size);
-  lseek(fd, - (long) (TRAILER_SIZE + toc_size), SEEK_END);
-  if (read(fd, (char *) trail->section, toc_size) != toc_size)
+  lseek(fd, -(long)(TRAILER_SIZE + toc_size), SEEK_END);
+  if (read(fd, (char *)trail->section, toc_size) != toc_size)
     caml_fatal_error("cannot read section table");
   /* Fixup endianness of lengths */
   for (i = 0; i < trail->num_sections; i++)
@@ -181,9 +186,11 @@ int32_t caml_seek_optional_section(int fd, struct exec_trailer *trail,
   int i;
 
   ofs = TRAILER_SIZE + trail->num_sections * 8;
-  for (i = trail->num_sections - 1; i >= 0; i--) {
+  for (i = trail->num_sections - 1; i >= 0; i--)
+  {
     ofs += trail->section[i].len;
-    if (strncmp(trail->section[i].name, name, 4) == 0) {
+    if (strncmp(trail->section[i].name, name, 4) == 0)
+    {
       lseek(fd, -ofs, SEEK_END);
       return trail->section[i].len;
     }
@@ -205,13 +212,14 @@ int32_t caml_seek_section(int fd, struct exec_trailer *trail, char *name)
 /* Read and return the contents of the section having the given name.
    Add a terminating 0.  Return NULL if no such section. */
 
-static char * read_section(int fd, struct exec_trailer *trail, char *name)
+static char *read_section(int fd, struct exec_trailer *trail, char *name)
 {
   int32_t len;
-  char * data;
+  char *data;
 
   len = caml_seek_optional_section(fd, trail, name);
-  if (len == -1) return NULL;
+  if (len == -1)
+    return NULL;
   data = caml_stat_alloc(len + 1);
   if (read(fd, data, len) != len)
     caml_fatal_error("error reading section %s", name);
@@ -221,21 +229,22 @@ static char * read_section(int fd, struct exec_trailer *trail, char *name)
 
 #ifdef _WIN32
 
-static char_os * read_section_to_os(int fd, struct exec_trailer *trail,
-                                    char *name)
+static char_os *read_section_to_os(int fd, struct exec_trailer *trail,
+                                   char *name)
 {
   int32_t len, wlen;
-  char * data;
-  wchar_t * wdata;
+  char *data;
+  wchar_t *wdata;
 
   len = caml_seek_optional_section(fd, trail, name);
-  if (len == -1) return NULL;
+  if (len == -1)
+    return NULL;
   data = caml_stat_alloc(len + 1);
   if (read(fd, data, len) != len)
     caml_fatal_error("error reading section %s", name);
   data[len] = 0;
   wlen = win_multi_byte_to_wide_char(data, len, NULL, 0);
-  wdata = caml_stat_alloc((wlen + 1)*sizeof(wchar_t));
+  wdata = caml_stat_alloc((wlen + 1) * sizeof(wchar_t));
   win_multi_byte_to_wide_char(data, len, wdata, wlen);
   wdata[wlen] = 0;
   caml_stat_free(data);
@@ -279,20 +288,27 @@ static int parse_command_line(char_os **argv)
 {
   int i, j;
 
-  for(i = 1; argv[i] != NULL && argv[i][0] == '-'; i++) {
-    switch(argv[i][1]) {
+  for (i = 1; argv[i] != NULL && argv[i][0] == '-'; i++)
+  {
+    switch (argv[i][1])
+    {
     case 't':
-      ++ caml_trace_level; /* ignored unless DEBUG mode */
+      ++caml_trace_level; /* ignored unless DEBUG mode */
       break;
     case 'v':
-      if (!strcmp_os (argv[i], T("-version"))){
-        printf ("%s\n", "The OCaml runtime, version " OCAML_VERSION_STRING);
-        exit (0);
-      }else if (!strcmp_os (argv[i], T("-vnum"))){
-        printf ("%s\n", OCAML_VERSION_STRING);
-        exit (0);
-      }else{
-        caml_verb_gc = 0x001+0x004+0x008+0x010+0x020;
+      if (!strcmp_os(argv[i], T("-version")))
+      {
+        printf("%s\n", "The OCaml runtime, version " OCAML_VERSION_STRING);
+        exit(0);
+      }
+      else if (!strcmp_os(argv[i], T("-vnum")))
+      {
+        printf("%s\n", OCAML_VERSION_STRING);
+        exit(0);
+      }
+      else
+      {
+        caml_verb_gc = 0x001 + 0x004 + 0x008 + 0x010 + 0x020;
       }
       break;
     case 'p':
@@ -304,7 +320,8 @@ static int parse_command_line(char_os **argv)
       caml_record_backtrace(Val_true);
       break;
     case 'I':
-      if (argv[i + 1] != NULL) {
+      if (argv[i + 1] != NULL)
+      {
         caml_ext_table_add(&caml_shared_libs_path, argv[i + 1]);
         i++;
       }
@@ -313,7 +330,7 @@ static int parse_command_line(char_os **argv)
       print_magic = 1;
       break;
     case 'M':
-      printf ( "%s\n", EXEC_MAGIC);
+      printf("%s\n", EXEC_MAGIC);
       exit(0);
       break;
     default:
@@ -324,7 +341,7 @@ static int parse_command_line(char_os **argv)
 }
 
 #ifdef _WIN32
-extern void caml_signal_thread(void * lpParam);
+extern void caml_signal_thread(void *lpParam);
 #endif
 
 #if defined(_MSC_VER) && __STDC_SECURE_LIB__ >= 200411L
@@ -340,11 +357,11 @@ CAMLexport void caml_main(char_os **argv)
 {
   int fd, pos;
   struct exec_trailer trail;
-  struct channel * chan;
+  struct channel *chan;
   value res;
-  char * req_prims;
-  char_os * shared_lib_path, * shared_libs;
-  char_os * exe_name, * proc_self_exe;
+  char *req_prims;
+  char_os *shared_lib_path, *shared_libs;
+  char_os *exe_name, *proc_self_exe;
 
   /* Initialize the domain */
   caml_init_domain();
@@ -356,7 +373,7 @@ CAMLexport void caml_main(char_os **argv)
   caml_parse_ocamlrunparam();
   CAML_EVENTLOG_INIT();
 #ifdef DEBUG
-  caml_gc_message (-1, "### OCaml runtime: debug mode ###\n");
+  caml_gc_message(-1, "### OCaml runtime: debug mode ###\n");
 #endif
   if (!caml_startup_aux(/* pooling */ caml_cleanup_on_exit))
     return;
@@ -381,47 +398,51 @@ CAMLexport void caml_main(char_os **argv)
      With -custom, we have an executable that is ocamlrun itself
      concatenated with the bytecode.  So, if the attempt with argv[0]
      failed, it is worth trying again with executable_name. */
-  if (fd < 0 && (proc_self_exe = caml_executable_name()) != NULL) {
+  if (fd < 0 && (proc_self_exe = caml_executable_name()) != NULL)
+  {
     exe_name = proc_self_exe;
     fd = caml_attempt_open(&exe_name, &trail, 0);
   }
 
-  if (fd < 0) {
+  if (fd < 0)
+  {
     pos = parse_command_line(argv);
-    if (argv[pos] == 0) {
+    if (argv[pos] == 0)
+    {
       error("no bytecode file specified");
     }
     exe_name = argv[pos];
     fd = caml_attempt_open(&exe_name, &trail, 1);
-    switch(fd) {
+    switch (fd)
+    {
     case FILE_NOT_FOUND:
       error("cannot find file '%s'",
-                       caml_stat_strdup_of_os(argv[pos]));
+            caml_stat_strdup_of_os(argv[pos]));
       break;
     case BAD_BYTECODE:
       error(
-        "the file '%s' is not a bytecode executable file",
-        caml_stat_strdup_of_os(exe_name));
+          "the file '%s' is not a bytecode executable file",
+          caml_stat_strdup_of_os(exe_name));
       break;
     case WRONG_MAGIC:
       error(
-        "the file '%s' has not the right magic number: "\
-        "expected %s, got %s",
-        caml_stat_strdup_of_os(exe_name),
-        EXEC_MAGIC,
-        magicstr);
+          "the file '%s' has not the right magic number: "
+          "expected %s, got %s",
+          caml_stat_strdup_of_os(exe_name),
+          EXEC_MAGIC,
+          magicstr);
       break;
     }
   }
   /* Read the table of contents (section descriptors) */
   caml_read_section_descriptors(fd, &trail);
   /* Initialize the abstract machine */
-  caml_init_gc (caml_init_minor_heap_wsz, caml_init_heap_wsz,
-                caml_init_heap_chunk_sz, caml_init_percent_free,
-                caml_init_max_percent_free, caml_init_major_window,
-                caml_init_custom_major_ratio, caml_init_custom_minor_ratio,
-                caml_init_custom_minor_max_bsz);
-  caml_init_stack (caml_init_max_stack_wsz);
+  caml_init_gc(caml_init_minor_heap_wsz, caml_init_heap_wsz,
+               caml_init_heap_chunk_sz, caml_init_percent_free,
+               caml_init_max_percent_free, caml_init_major_window,
+               caml_init_custom_major_ratio, caml_init_custom_minor_ratio,
+               caml_init_custom_minor_max_bsz);
+  caml_init_stack(caml_init_max_stack_wsz);
   caml_init_atom_table();
   caml_init_backtrace();
   /* Initialize the interpreter */
@@ -436,7 +457,8 @@ CAMLexport void caml_main(char_os **argv)
   shared_lib_path = read_section_to_os(fd, &trail, "DLPT");
   shared_libs = read_section_to_os(fd, &trail, "DLLS");
   req_prims = read_section(fd, &trail, "PRIM");
-  if (req_prims == NULL) caml_fatal_error("no PRIM section");
+  if (req_prims == NULL)
+    caml_fatal_error("no PRIM section");
   caml_build_primitive_table(shared_lib_path, shared_libs, req_prims);
   caml_stat_free(shared_lib_path);
   caml_stat_free(shared_libs);
@@ -450,8 +472,8 @@ CAMLexport void caml_main(char_os **argv)
   caml_close_channel(chan); /* this also closes fd */
   caml_stat_free(trail.section);
   /* Ensure that the globals are in the major heap. */
-  caml_oldify_one (caml_global_data, &caml_global_data);
-  caml_oldify_mopup ();
+  caml_oldify_one(caml_global_data, &caml_global_data);
+  caml_oldify_mopup();
   /* Initialize system libraries */
   caml_sys_init(exe_name, argv + pos);
   /* Load debugging info, if b>=2 */
@@ -464,9 +486,11 @@ CAMLexport void caml_main(char_os **argv)
   /* Execute the program */
   caml_debugger(PROGRAM_START, Val_unit);
   res = caml_interprete(caml_start_code, caml_code_size);
-  if (Is_exception_result(res)) {
+  if (Is_exception_result(res))
+  {
     Caml_state->exn_bucket = Extract_exception(res);
-    if (caml_debugger_in_use) {
+    if (caml_debugger_in_use)
+    {
       Caml_state->extern_sp = &Caml_state->exn_bucket; /* The debugger needs the
                                             exception value.*/
       caml_debugger(UNCAUGHT_EXC, Val_unit);
@@ -478,16 +502,14 @@ CAMLexport void caml_main(char_os **argv)
 /* Main entry point when code is linked in as initialized data */
 
 CAMLexport value caml_startup_code_exn(
-           code_t code, asize_t code_size,
-           char *data, asize_t data_size,
-           char *section_table, asize_t section_table_size,
-           int pooling,
-           char_os **argv)
+    code_t code, asize_t code_size,
+    char *data, asize_t data_size,
+    char *section_table, asize_t section_table_size,
+    int pooling,
+    char_os **argv)
 {
-  char_os * cds_file;
-  char_os * exe_name;
-
-  printf("caml_init_domain\n");
+  char_os *cds_file;
+  char_os *exe_name;
   /* Initialize the domain */
   caml_init_domain();
   /* Determine options */
@@ -497,87 +519,80 @@ CAMLexport value caml_startup_code_exn(
   caml_parse_ocamlrunparam();
   CAML_EVENTLOG_INIT();
 #ifdef DEBUG
-  caml_gc_message (-1, "### OCaml runtime: debug mode ###\n");
+  caml_gc_message(-1, "### OCaml runtime: debug mode ###\n");
 #endif
   if (caml_cleanup_on_exit)
     pooling = 1;
   if (!caml_startup_aux(pooling))
     return Val_unit;
 
-  printf("caml_init_locale\n");
   caml_init_locale();
 #if defined(_MSC_VER) && __STDC_SECURE_LIB__ >= 200411L
   caml_install_invalid_parameter_handler();
 #endif
   caml_init_custom_operations();
   cds_file = caml_secure_getenv(T("CAML_DEBUG_FILE"));
-  if (cds_file != NULL) {
+  if (cds_file != NULL)
+  {
     caml_cds_file = caml_stat_strdup_os(cds_file);
   }
   exe_name = caml_executable_name();
-  if (exe_name == NULL) exe_name = caml_search_exe_in_path(argv[0]);
-  printf("caml_init_gc\n");
+  if (exe_name == NULL)
+    exe_name = caml_search_exe_in_path(argv[0]);
   /* Initialize the abstract machine */
-  caml_init_gc (caml_init_minor_heap_wsz, caml_init_heap_wsz,
-                caml_init_heap_chunk_sz, caml_init_percent_free,
-                caml_init_max_percent_free, caml_init_major_window,
-                caml_init_custom_major_ratio, caml_init_custom_minor_ratio,
-                caml_init_custom_minor_max_bsz);
-  printf("caml_init_stack\n");
-  caml_init_stack (caml_init_max_stack_wsz);
-  printf("caml_init_atom_table\n");
+  caml_init_gc(caml_init_minor_heap_wsz, caml_init_heap_wsz,
+               caml_init_heap_chunk_sz, caml_init_percent_free,
+               caml_init_max_percent_free, caml_init_major_window,
+               caml_init_custom_major_ratio, caml_init_custom_minor_ratio,
+               caml_init_custom_minor_max_bsz);
+  caml_init_stack(caml_init_max_stack_wsz);
   caml_init_atom_table();
-  printf("caml_init_backtrace\n");
   caml_init_backtrace();
-  printf("caml_interprete\n");
   /* Initialize the interpreter */
   caml_interprete(NULL, 0);
-  printf("caml_debugger_init\n");
   /* Initialize the debugger, if needed */
   caml_debugger_init();
-  printf("caml_init_code_fragments\n");
   /* Load the code */
   caml_start_code = code;
   caml_code_size = code_size;
   caml_init_code_fragments();
-  printf("caml_init_debug_info\n");
   caml_init_debug_info();
   /* Use the builtin table of primitives */
   caml_build_primitive_table_builtin();
   /* Load the globals */
   caml_global_data = caml_input_value_from_block(data, data_size);
   /* Ensure that the globals are in the major heap. */
-  caml_oldify_one (caml_global_data, &caml_global_data);
-  caml_oldify_mopup ();
+  caml_oldify_one(caml_global_data, &caml_global_data);
+  caml_oldify_mopup();
   /* Record the sections (for caml_get_section_table in meta.c) */
   caml_section_table = section_table;
   caml_section_table_size = section_table_size;
   /* Initialize system libraries */
-  printf("caml_sys_init\n");
   caml_sys_init(exe_name, argv);
   /* Load debugging info, if b>=2 */
   caml_load_main_debug_info();
   /* Execute the program */
   caml_debugger(PROGRAM_START, Val_unit);
-  printf("caml_interprete\n");
   return caml_interprete(caml_start_code, caml_code_size);
 }
 
 CAMLexport void caml_startup_code(
-           code_t code, asize_t code_size,
-           char *data, asize_t data_size,
-           char *section_table, asize_t section_table_size,
-           int pooling,
-           char_os **argv)
+    code_t code, asize_t code_size,
+    char *data, asize_t data_size,
+    char *section_table, asize_t section_table_size,
+    int pooling,
+    char_os **argv)
 {
   value res;
 
   res = caml_startup_code_exn(code, code_size, data, data_size,
                               section_table, section_table_size,
                               pooling, argv);
-  if (Is_exception_result(res)) {
+  if (Is_exception_result(res))
+  {
     Caml_state->exn_bucket = Extract_exception(res);
-    if (caml_debugger_in_use) {
+    if (caml_debugger_in_use)
+    {
       Caml_state->extern_sp = &Caml_state->exn_bucket; /* The debugger needs the
                                             exception value.*/
       caml_debugger(UNCAUGHT_EXC, Val_unit);
