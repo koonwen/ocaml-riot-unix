@@ -40,9 +40,6 @@ end = struct
   let to_event_ptr v = v
 end
 
-(* type microseconds = Abstract.microseconds
-   type event_queue_ptr = Abstract.event_queue_ptr
-   type event_ptr = Abstract.event_ptr *)
 open Abstract
 
 external init_event_queue : unit -> event_queue_ptr
