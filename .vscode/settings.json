@@ -9,6 +9,8 @@
         "implementation.h": "c",
         "stdio.h": "c",
         "custom.h": "c",
-        "thread.h": "c"
+        "thread.h": "c",
+        "console_reader.h": "c",
+        "event_queue.h": "c"
     }
 }
