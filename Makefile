@@ -15,20 +15,25 @@ DEVELHELP ?= 1
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 0
 
-all: main.c stubs.c runtime
-
 USEMODULE += xtimer
 USEMODULE += event
+USEMODULE += stdin
+
+FEATURES_REQUIRED += periph_uart
+
+
+all: runtime.c stubs.c runtimelib
 
 include $(RIOTBASE)/Makefile.include
 
 stubs.c : example/stubs.c
 	cp $(^) .
 
-main.c: example/main.ml example/dune example/dune-project
+# example/main.ml example/dune example/dune-project
+runtime.c: example/* 
 	cd example && dune build --profile release
-	rm -f main.c
-	cp _build/default/example/main.bc.c ./main.c
+	rm -f runtime.c
+	cp _build/default/example/main.bc.c ./runtime.c
 
 #
 ocaml/Makefile:
@@ -46,8 +51,8 @@ CFLAGS := $(subst -Wold-style-definition,,$(CFLAGS))
 OCAML_CFLAGS := $(CFLAGS)
 OCAML_LIBS := $(LINKFLAGS)
 RIOTBUILD_H_FILE := $(CURDIR)/bin/native/riotbuild/riotbuild.h
-.PHONY: runtime
-runtime: $(RIOTBUILD_H_FILE)
+.PHONY: runtimelib
+runtimelib: $(RIOTBUILD_H_FILE)
 	CC="$(CC)" \
 	CFLAGS="" \
 	AS="$(AS)" \

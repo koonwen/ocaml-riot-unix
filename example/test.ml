@@ -3,7 +3,7 @@ let p : unit Lwt.t =
   let open Lwt.Syntax in
   let open Lwt in
   let rec timer ~(name : string) ~(time : int) : unit Lwt.t =
-    Time.sleep_ns 2_000_000_000L >>= fun _ ->
+    Time.sleep_ms 2_000_000L >>= fun _ ->
     if time > 0 then (
       Printf.printf "%s: %d\n%!" name time;
       timer ~name ~time:(time - 1))
