@@ -18,7 +18,7 @@ QUIET ?= 0
 USEMODULE += xtimer
 USEMODULE += event
 USEMODULE += stdin
-
+USEMODULE += event_callback
 FEATURES_REQUIRED += periph_uart
 
 
@@ -66,3 +66,6 @@ LINKFLAGS += -L$(CURDIR) -lcamlrun -lm
 
 clear :
 	git clean -dxf
+	
+run :
+	/home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf -c `tty`
