@@ -1,5 +1,13 @@
-_build
-libcamlrun.a
-/main.c
-bin/
+# Configs
 .vscode
+
+# Build directories
+_build
+bin/
+
+# Runtime
+libcamlrun.a
+
+# Output files
+stubs.c
+runtime.c
