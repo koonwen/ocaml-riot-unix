@@ -57,17 +57,17 @@ mirage_riot_yield(value v_queue, value v_timeout)
     uint64_t timeout = Int64_val(v_timeout);
 
     event_t *new_event;
-    printf("Waiting for event for %ld microseconds\n", timeout);
+    printf("Waiting for event for %ld microseconds\n\r", timeout);
     if (new_event = event_wait_timeout64(queue, timeout))
         new_event->handler(new_event);
     else
-        printf("No event triggered, timeout expired\n");
+        printf("No event triggered, timeout expired\n\r");
     CAMLreturn(caml_copy_int64(new_event));
 }
 
-static void handler(event_t *event)
+static void handler(void *arg)
 {
-    printf("triggered 0x%08x before timeout expired\n", (unsigned)event);
+    printf("triggered 0x%08x before timeout expired\n\r", (unsigned)arg);
 }
 
 // Add an event to the event queue with a default callback handler which prints the address of the event
@@ -85,32 +85,8 @@ mirage_riot_post_event(value v_queue)
 }
 
 CAMLprim value
-mirage_riot_console_event(value v_queue)
+mirage_riot_getbyte(value v_unit)
 {
-    CAMLparam1(v_queue);
-
-    event_queue_t *queue = Int64_val(v_queue);
-    event_t *event = (event_t *)calloc(sizeof(1), sizeof(event_t));
-    event->handler = handler;
-    event_post(queue, event);
-
-    CAMLreturn(Val_unit);
+    CAMLparam1(v_unit);
+    CAMLreturn(Val_int(BYTE_CONTAINER));
 }
-
-// void myhandler(void *arg)
-// {
-//     printf("event called\n");
-// }
-
-// CAMLprim value
-// mirage_riot_console_interrupt_handler(value v_queue)
-// {
-//     CAMLparam1(v_queue);
-
-//     event_queue_t *queue = Int64_val(v_queue);
-//     event_t *event = (event_t *)calloc(sizeof(1), sizeof(event_t));
-//     event->handler = myhandler;
-//     event_post(queue, event);
-
-//     CAMLreturn(Val_unit);
-// }

@@ -30,6 +30,7 @@ module Abstract : sig
   val to_microseconds : int64 -> microseconds
   val to_event_queue_ptr : int64 -> event_queue_ptr
   val to_event_ptr : int64 -> event_ptr
+  val of_event_ptr : event_ptr -> int64
 end = struct
   type microseconds = int64
   type event_queue_ptr = int64
@@ -38,6 +39,7 @@ end = struct
   let to_microseconds v = v
   let to_event_queue_ptr v = v
   let to_event_ptr v = v
+  let of_event_ptr v = v
 end
 
 open Abstract
@@ -109,21 +111,26 @@ let run t =
     Time.restart_threads Time.Monotonic.time;
     match Lwt.poll t with
     | Some () ->
-        Printf.printf "main (): Program exitted\n%!";
+        Printf.printf "main (): Program exitted\r\n%!";
         ()
     | None ->
         let timeout =
+          (* Call enter hooks. *)
+          Mirage_runtime.run_enter_iter_hooks ();
           match Time.select_next () with
           | None -> Int64.add (Time.Monotonic.time ()) (Duration.of_day 1)
           | Some tm -> tm
         in
-        (* change to yield *)
         (* waits for console events *)
         let remaining_time =
           timeout - Time.Monotonic.time () |> to_microseconds
         in
         (* sleep remaining_time; *)
-        let _ = riot_yield event_queue_ptr remaining_time in
+        let event = riot_yield event_queue_ptr remaining_time in
+        (* NEED TO DEFINE READY SET EVENTS *)
+        if of_event_ptr event > 0L then Event.resolve ();
+        (* Call leave hooks. *)
+        Mirage_runtime.run_leave_iter_hooks ();
         aux ()
   in
   aux ()
@@ -133,22 +140,18 @@ let run t =
      Lwt.abandon_wakeups () ;
      run (Mirage_runtime.run_exit_hooks ())) *)
 
-(* let () = run Test.p *)
 let () =
   let open Syntax in
   run
     (let a =
+       let _ =
+         Event.readline () >>= fun c -> Printf.printf "%s%!" c |> Lwt.return
+       in
+
        Time.sleep_ms 10_000_000L >>= fun _ ->
-       return @@ print_endline "Im done\n"
+       return @@ print_endline "Im done\r\n"
      in
      Lwt.join [ a ])
-
-(* let _ = riot_yield event_queue_ptr (to_microseconds 2_000_000L) in *)
-(*
-       post_event event_queue;
-       let _ = riot_yield event_queue (to_microseconds 2_000_000L) in*)
-(* let line = read_line () in
-   return @@ print_endline line) *)
 
 (* set up 32bit ocaml *)
 (* Use 64bit integers *)
@@ -162,3 +165,9 @@ let () =
 (* Take note that for interrupt lines, these are at the hardware
    level that just turns on and off an interrupt line to signal that there
    is something waiting or not. *)
+
+(* Add in Mirage hooks *)
+(* Move events into OCaml code *)
+(* Reimplement Handle Map to respond to events *)
+(* Responding to network events *)
+(* See if RIOT has console writing APIs with carridge return moving pointer to beginning *)

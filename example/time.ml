@@ -53,7 +53,6 @@ let new_id () =
 let sleep_ms d =
   let res, w = Lwt.task () in
   let t = Monotonic.(time () + d) in
-  Printf.printf "time elapsed = %Ld us, d = %Ld us\n" (Monotonic.time ()) d;
   let sleeper = { time = t; canceled = false; thread = w } in
   new_sleeps := sleeper :: !new_sleeps;
   Lwt.on_cancel res (fun _ -> sleeper.canceled <- true);
