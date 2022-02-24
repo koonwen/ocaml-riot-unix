@@ -143,15 +143,21 @@ let run t =
 let () =
   let open Syntax in
   run
-    (let a =
-       let _ =
-         Event.readline () >>= fun c -> Printf.printf "%s%!" c |> Lwt.return
-       in
+    (let read_and_print =
+       (Event.read `UART >>= function
+        | Ok w -> (
+            match w with
+            | `Data d -> return (Cstruct.to_string d)
+            | _ -> return "Nothing")
+        | _ -> return "Failed")
+       >>= fun s -> return @@ Printf.printf "%s%!" s
+     in
 
-       Time.sleep_ms 10_000_000L >>= fun _ ->
+     let sleeper =
+       Time.sleep_ms 5_000_000L >>= fun _ ->
        return @@ print_endline "Im done\r\n"
      in
-     Lwt.join [ a ])
+     Lwt.join [ read_and_print; sleeper ])
 
 (* set up 32bit ocaml *)
 (* Use 64bit integers *)

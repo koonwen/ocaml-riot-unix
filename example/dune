@@ -8,7 +8,7 @@
 (env
  (dev
   (flags
-   (:standard -w -33-26))))
+   (:standard -w -33-26-37-27))))
 
 ;(rule
 ; (target main.c)

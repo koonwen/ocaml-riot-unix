@@ -8,6 +8,7 @@
 #include "periph/uart.h"
 #include "event/callback.h"
 #include "stdio_uart.h"
+#include "tty_uart.h"
 
 extern event_queue_t QUEUE;
 extern uint8_t BYTE_CONTAINER;
