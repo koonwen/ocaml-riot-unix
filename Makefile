@@ -15,18 +15,30 @@ DEVELHELP ?= 1
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 0
 
-USEMODULE += xtimer
-USEMODULE += event
-USEMODULE += stdin
-USEMODULE += event_callback
+USEMODULE += xtimer event stdin event_callback
 FEATURES_REQUIRED += periph_uart
 
+# Include network device module and auto init
+USEMODULE += netdev_default
+USEMODULE += auto_init_gnrc_netif
+# # Include RIOT gnrc network layer
+USEMODULE += gnrc_ipv6_default
+# USEMODULE += gnrc_icmpv6_echo
+# # Add a routing protocol
+# # USEMODULE += gnrc_rpl
+# # USEMODULE += auto_init_gnrc_rpl
+# USEMODULE += gnrc_sock_ip
 
-all: runtime.c stubs.c runtimelib
+USEMODULE += shell
+USEMODULE += shell_commands
+USEMODULE += ps
+
+all: runtime.c stubs runtimelib
 
 include $(RIOTBASE)/Makefile.include
 
-stubs.c : example/stubs.c
+# example/net/netstubs.c
+stubs: example/stubs.c
 	cp $(^) .
 
 # example/main.ml example/dune example/dune-project
@@ -35,18 +47,15 @@ runtime.c: example/*
 	rm -f runtime.c
 	cp _build/default/example/main.bc.c ./runtime.c
 
-#
 ocaml/Makefile:
 	sed -i -e 's/oc_cflags="/oc_cflags="$$OC_CFLAGS /g' ocaml/configure
 	sed -i -e 's/ocamlc_cflags="/ocamlc_cflags="$$OCAMLC_CFLAGS /g' ocaml/configure
-#
+
 CFLAGS := $(subst \",",$(CFLAGS))
 CFLAGS := $(subst ',,$(CFLAGS))
 CFLAGS := $(subst -Wstrict-prototypes,,$(CFLAGS))
 CFLAGS := $(subst -Werror,,$(CFLAGS))
 CFLAGS := $(subst -Wold-style-definition,,$(CFLAGS))
-# CFLAGS += -I$(RIOTBASE)
-#CFLAGS := $(subst -fdiagnostics-color,,$(CFLAGS))
 
 OCAML_CFLAGS := $(CFLAGS)
 OCAML_LIBS := $(LINKFLAGS)

@@ -44,6 +44,8 @@ end
 
 open Abstract
 
+(* TODO ADD IN THE external C function for getting the shell! *)
+
 external init_event_queue : unit -> event_queue_ptr
   = "mirage_initialize_event_queue"
 
@@ -140,24 +142,22 @@ let run t =
      Lwt.abandon_wakeups () ;
      run (Mirage_runtime.run_exit_hooks ())) *)
 
-let () =
-  let open Syntax in
-  run
-    (let read_and_print =
-       (Event.read `UART >>= function
-        | Ok w -> (
-            match w with
-            | `Data d -> return (Cstruct.to_string d)
-            | _ -> return "Nothing")
-        | _ -> return "Failed")
-       >>= fun s -> return @@ Printf.printf "%s%!" s
-     in
+let () = run (Time.sleep_ms 10_00_000_000L)
+(* (let read_and_print =
+     (Event.read `UART >>= function
+      | Ok w -> (
+          match w with
+          | `Data d -> return (Cstruct.to_string d)
+          | _ -> return "Nothing")
+      | _ -> return "Failed")
+     >>= fun s -> return @@ Printf.printf "%s%!" s
+   in
 
-     let sleeper =
-       Time.sleep_ms 5_000_000L >>= fun _ ->
-       return @@ print_endline "Im done\r\n"
-     in
-     Lwt.join [ read_and_print; sleeper ])
+   let sleeper =
+     Time.sleep_ms 5_000_000L >>= fun _ ->
+     return @@ print_endline "Im done\r\n"
+   in
+   Lwt.join [ read_and_print; sleeper ]) *)
 
 (* set up 32bit ocaml *)
 (* Use 64bit integers *)
