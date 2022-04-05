@@ -21,13 +21,14 @@ FEATURES_REQUIRED += periph_uart
 # Include network device module and auto init
 USEMODULE += netdev_default
 USEMODULE += auto_init_gnrc_netif
-# # Include RIOT gnrc network layer
+# # # Include RIOT gnrc network layer
 USEMODULE += gnrc_ipv6_default
-# USEMODULE += gnrc_icmpv6_echo
+USEMODULE += gnrc_icmpv6_echo
 # # Add a routing protocol
-# # USEMODULE += gnrc_rpl
-# # USEMODULE += auto_init_gnrc_rpl
-# USEMODULE += gnrc_sock_ip
+# USEMODULE += gnrc_rpl
+# USEMODULE += auto_init_gnrc_rpl
+USEMODULE += gnrc_sock_ip
+USEMODULE += gnrc_pktdump
 
 USEMODULE += shell
 USEMODULE += shell_commands
@@ -72,9 +73,6 @@ runtimelib: $(RIOTBUILD_H_FILE)
 
 CFLAGS += -I$(CURDIR)/include/
 LINKFLAGS += -L$(CURDIR) -lcamlrun -lm
-
-clear :
-	git clean -dxf
 	
 run :
 	/home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf -c `tty`

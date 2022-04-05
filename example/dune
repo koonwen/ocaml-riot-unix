@@ -1,6 +1,18 @@
 (executable
  (name main)
- (libraries mirage-runtime psq lwt duration cstruct tcpip)
+ (libraries
+  mirage-runtime
+  psq
+  lwt
+  duration
+  cstruct
+  ipaddr
+  tcpip
+  tcpip.tcp
+  mirage-clock-unix
+  mirage-random-stdlib)
+ (preprocess
+  (pps ppx_cstruct))
  ;  (foreign_stubs (language c) (names stubs))
  (modes
   (byte c)))

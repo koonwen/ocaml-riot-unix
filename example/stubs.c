@@ -19,13 +19,13 @@ caml_get_monotonic_time(value v_unit)
 
 // Sleep for given time in microseconds
 CAMLprim value
-mirage_riot_sleep(value v_microseconds)
+mirage_riot_sleep(value v_nanoseconds)
 {
-    CAMLparam1(v_microseconds);
+    CAMLparam1(v_nanoseconds);
 
-    uint64_t microseconds = Int64_val(v_microseconds);
-    printf("Sleeping for %ld microseconds\n", microseconds);
-    xtimer_usleep64(microseconds);
+    uint64_t nanoseconds = Int64_val(v_nanoseconds);
+    printf("Sleeping for %ld nanoseconds\n", nanoseconds);
+    xtimer_usleep64(nanoseconds / 1000);
 
     CAMLreturn(Val_unit);
 }
@@ -57,7 +57,7 @@ mirage_riot_yield(value v_queue, value v_timeout)
     uint64_t timeout = Int64_val(v_timeout);
 
     event_t *new_event;
-    printf("Waiting for event for %ld microseconds\n\r", timeout);
+    printf("Waiting for event for %lld microseconds\n\r", timeout);
     if (new_event = event_wait_timeout64(queue, timeout))
         new_event->handler(new_event);
     else
@@ -65,7 +65,7 @@ mirage_riot_yield(value v_queue, value v_timeout)
     CAMLreturn(caml_copy_int64(new_event));
 }
 
-static void handler(void *arg)
+void handler(void *arg)
 {
     printf("triggered 0x%08x before timeout expired\n\r", (unsigned)arg);
 }

@@ -20,19 +20,20 @@
   * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
  *)
+
 open Lwt
 
 module Abstract : sig
-  type microseconds
+  type nanoseconds
   type event_queue_ptr
   type event_ptr
 
-  val to_microseconds : int64 -> microseconds
+  val to_microseconds : int64 -> nanoseconds
   val to_event_queue_ptr : int64 -> event_queue_ptr
   val to_event_ptr : int64 -> event_ptr
   val of_event_ptr : event_ptr -> int64
 end = struct
-  type microseconds = int64
+  type nanoseconds = int64
   type event_queue_ptr = int64
   type event_ptr = int64
 
@@ -44,18 +45,17 @@ end
 
 open Abstract
 
-(* TODO ADD IN THE external C function for getting the shell! *)
-
 external init_event_queue : unit -> event_queue_ptr
   = "mirage_initialize_event_queue"
 
 external get_event_queue : unit -> event_queue_ptr = "mirage_get_event_queue"
 
-external riot_yield : event_queue_ptr -> microseconds -> event_ptr
+external riot_yield : event_queue_ptr -> nanoseconds -> event_ptr
   = "mirage_riot_yield"
 
-external sleep : microseconds -> unit = "mirage_riot_sleep"
+external sleep : nanoseconds -> unit = "mirage_riot_sleep"
 external post_event : event_queue_ptr -> unit = "mirage_riot_post_event"
+external get_event_set : unit -> int = "caml_mirage_riot_event_set"
 (* A Map from Int64 (solo5_handle_t) to an Lwt_condition. *)
 (* module HandleMap = Map.Make (Int64)
 
@@ -123,41 +123,42 @@ let run t =
           | None -> Int64.add (Time.Monotonic.time ()) (Duration.of_day 1)
           | Some tm -> tm
         in
-        (* waits for console events *)
+        (* waits for events *)
         let remaining_time =
           timeout - Time.Monotonic.time () |> to_microseconds
         in
         (* sleep remaining_time; *)
         let event = riot_yield event_queue_ptr remaining_time in
         (* NEED TO DEFINE READY SET EVENTS *)
-        if of_event_ptr event > 0L then Event.resolve ();
+        (if of_event_ptr event > 0L then
+         match get_event_set () with
+         | 0 -> (*Uart.resolve*) failwith "got 0"
+         | 1 -> Ip.resolve ()
+         | _ -> raise Not_found);
         (* Call leave hooks. *)
         Mirage_runtime.run_leave_iter_hooks ();
         aux ()
   in
   aux ()
 
+let print_callback ~src ~dst cs =
+  Format.printf "\nsrc ip: %a | dst ip: %a\n%!" Ip.RIOT_IP.pp_ipaddr src
+    Ip.RIOT_IP.pp_ipaddr dst;
+  Tcp_riot.print_pkt cs;
+  Lwt.return_unit
+
 (* let () =
    at_exit (fun () ->
      Lwt.abandon_wakeups () ;
      run (Mirage_runtime.run_exit_hooks ())) *)
 
-let () = run (Time.sleep_ms 10_00_000_000L)
-(* (let read_and_print =
-     (Event.read `UART >>= function
-      | Ok w -> (
-          match w with
-          | `Data d -> return (Cstruct.to_string d)
-          | _ -> return "Nothing")
-      | _ -> return "Failed")
-     >>= fun s -> return @@ Printf.printf "%s%!" s
-   in
-
-   let sleeper =
-     Time.sleep_ms 5_000_000L >>= fun _ ->
-     return @@ print_endline "Im done\r\n"
-   in
-   Lwt.join [ read_and_print; sleeper ]) *)
+let () =
+  (* let q = init_event_queue () in *)
+  let open Ip.RIOT_IP in
+  let open Lwt.Syntax in
+  run
+    (let* internal_state = connect () in
+     listen internal_state ~tcp:print_callback)
 
 (* set up 32bit ocaml *)
 (* Use 64bit integers *)

@@ -50,7 +50,7 @@ let new_id () =
   incr id;
   !id
 
-let sleep_ms d =
+let sleep_ns d =
   let res, w = Lwt.task () in
   let t = Monotonic.(time () + d) in
   let sleeper = { time = t; canceled = false; thread = w } in
@@ -60,7 +60,7 @@ let sleep_ms d =
 
 exception Timeout
 
-let timeout d = sleep_ms d >>= fun () -> Lwt.fail Timeout
+let timeout d = sleep_ns d >>= fun () -> Lwt.fail Timeout
 let with_timeout d f = Lwt.pick [ timeout d; Lwt.apply f () ]
 let in_the_past now t = t = 0L || t <= now ()
 let unpack = function Some t -> t | None -> failwith "time.ml: unpack failed."

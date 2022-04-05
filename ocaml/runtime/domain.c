@@ -19,17 +19,17 @@
 #include "caml/domain_state.h"
 #include "caml/memory.h"
 
-CAMLexport caml_domain_state* Caml_state;
+CAMLexport caml_domain_state *Caml_state;
 
-void caml_init_domain ()
+void caml_init_domain()
 {
   if (Caml_state != NULL)
     return;
 
   Caml_state =
-    (caml_domain_state*)caml_stat_alloc_noexc(sizeof(caml_domain_state));
+      (caml_domain_state *)caml_stat_alloc_noexc(sizeof(caml_domain_state));
   if (Caml_state == NULL)
-    caml_fatal_error ("cannot initialize domain state");
+    caml_fatal_error("cannot initialize domain state");
 
   Caml_state->young_limit = NULL;
   Caml_state->exception_pointer = NULL;
@@ -57,7 +57,7 @@ void caml_init_domain ()
   Caml_state->exn_bucket = Val_unit;
 
   Caml_state->top_of_stack = NULL;
-  Caml_state->bottom_of_stack = NULL; /* no stack initially */
+  Caml_state->bottom_of_stack = NULL;  /* no stack initially */
   Caml_state->last_return_address = 1; /* not in OCaml code initially */
   Caml_state->gc_regs = NULL;
 
@@ -90,5 +90,5 @@ void caml_init_domain ()
 
 #if defined(NAKED_POINTERS_CHECKER) && !defined(_WIN32)
   Caml_state->checking_pointer_pc = NULL;
-  #endif
+#endif
 }

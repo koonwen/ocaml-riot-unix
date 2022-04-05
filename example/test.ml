@@ -1,26 +1,23 @@
-(* Lwt test program *)
-let p : unit Lwt.t =
-  let open Lwt.Syntax in
-  let open Lwt in
-  let rec timer ~(name : string) ~(time : int) : unit Lwt.t =
-    Time.sleep_ms 2_000_000L >>= fun _ ->
-    if time > 0 then (
-      Printf.printf "%s: %d\n%!" name time;
-      timer ~name ~time:(time - 1))
-    else (
-      print_endline "TIMER DONE";
-      return ())
-  in
-  let me = timer ~name:"foo" ~time:5 in
-  let you = timer ~name:"bar" ~time:5 in
-  Lwt.join [ me; you ]
+(* module Make (TCP : Tcpip.Tcp.S) (Ipv6 : Ip.S) = struct
+        type t = { ipv6 : Ipv6.t; tcpv6 : TCP.t }
 
-(* Test program for adding events *)
-(* let q =
-   let event_queue = init_event_queue () in
-   post_event event_queue;
-   let result = riot_yield event_queue 2_000_000L in
-   post_event event_queue;
-   let result2 = riot_yield event_queue 2_000_000L in
-   (* let _ = riot_yield event_queue 2_000_000L in *)
-   print_endline "IM FINISHED" *)
+        let connect ipv6 tcpv6 =
+          let t = { ipv6; tcpv6 } in
+          Lwt.return t
+
+        let listen t = Ipv6.listen t.ipv6 ~tcp:(TCP.input t.tcpv6)
+      end *)
+
+module TCP = Tcp.Flow.Make (Ip.RIOT_IP) (Time) (Mclock) (Mirage_random_stdlib)
+open Lwt.Syntax
+open Lwt
+
+let cb flow = return_unit
+let listen ip tcp = Ip.RIOT_IP.listen ip ~tcp:(TCP.input tcp)
+
+let () =
+  Main.run
+    (let* ip = Ip.RIOT_IP.connect () in
+     let* tcp = TCP.connect ip in
+     TCP.listen tcp ~port:8000 cb;
+     listen ip tcp >>= fun _ -> return_unit)
