@@ -1,4 +1,5 @@
 #include "event_queue.h"
+#include "raw_tcp_sock.h"
 
 void savebyte(void *arg);
 uint8_t BYTE_CONTAINER;
@@ -24,7 +25,7 @@ void savebyte(void *arg)
 // Need to change this to copying information into a packet queue
 void net_handler(void *arg)
 {
-    printf("triggered netevent in thread context\n", (unsigned)arg);
+    DEBUG("(Riot callback) triggered netevent handler in thread context\n", (unsigned)arg);
     event_set = 1;
     // Maybe add a lock on the event set
 }

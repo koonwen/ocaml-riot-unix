@@ -19,19 +19,27 @@ caml_mirage_riot_get_packet(value v_bigarray)
     CAMLreturn(0);
 }
 
-// Make an ECHO SERVER!
+CAMLprim value
+caml_mirage_riot_get_tcp_hdr_size(value v_unit)
+{
+    CAMLparam0();
+    // printf("(netstubs): tcp_hdr_size = %lu\n", tcp_hdr_size);
+
+    CAMLreturn(Val_int(tcp_hdr_size));
+}
+
 CAMLprim value
 caml_mirage_riot_write(value v_bigarray, value v_protnum, value v_len)
 {
     CAMLparam3(v_bigarray, v_protnum, v_len);
     void *data_ptr = Caml_ba_data_val(v_bigarray);
     ssize_t bytes_written =
-        sock_ip_send(&tcp_sock, data_ptr, v_len, v_protnum, &tcp_remote);
-    if (bytes_written == v_len)
+        sock_ip_send(&tcp_sock, data_ptr, Int_val(v_len), v_protnum, &tcp_remote);
+    if (bytes_written == Int_val(v_len))
     {
-        CAMLreturn0;
+        CAMLreturn(Val_int(1));
     }
-    CAMLreturn(-1);
+    CAMLreturn(Val_int(-1));
 }
 
 CAMLprim value

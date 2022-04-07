@@ -2,11 +2,17 @@ open Cstruct
 open Map
 open Lwt
 
+let protocol_to_int = function `ICMP -> 58 | `TCP -> 6 | `UDP -> 17
+
 type origin = Src | Dst
 
 let of_origin = function Src -> 0 | Dst -> 1
 
 external riot_get_packet : Cstruct.buffer -> int = "caml_mirage_riot_get_packet"
+
+external riot_get_tcp_hdr_size : unit -> int
+  = "caml_mirage_riot_get_tcp_hdr_size"
+
 external riot_get_ips : Cstruct.buffer -> int = "caml_mirage_riot_get_ips"
 external riot_get_mtu : unit -> int = "caml_mirage_riot_get_mtu"
 external riot_write : Cstruct.buffer -> int -> int = "caml_mirage_riot_write"
@@ -19,6 +25,13 @@ module IpUtils = struct
     let pre = Cstruct.BE.get_uint64 cs ((8 * off) + 0) in
     let mul = Cstruct.BE.get_uint64 cs ((8 * off) + 8) in
     Ipaddr.V6.of_int64 (pre, mul)
+
+  let ipaddr_to_cstruct_raw i cs off =
+    let a, b, c, d = Ipaddr.V6.to_int32 i in
+    Cstruct.BE.set_uint32 cs (0 + off) a;
+    Cstruct.BE.set_uint32 cs (4 + off) b;
+    Cstruct.BE.set_uint32 cs (8 + off) c;
+    Cstruct.BE.set_uint32 cs (12 + off) d
 end
 
 let cs = ref (Cstruct.create 128)
@@ -69,16 +82,27 @@ module RIOT_IP : S = struct
     if size > default_payload_size then Lwt.return_error `Would_fragment
     else
       let cs = Cstruct.create size in
-      let cs_buf = Cstruct.to_bigarray cs in
+      let i = headerf cs in
+      let cs = Cstruct.sub cs 0 i in
+      let pkt = cs :: payloads in
+      let buf = Cstruct.concat pkt in
       match proto with
       | `TCP ->
-          if riot_write cs_buf size > 0 then Lwt.return_ok ()
+          if riot_write (buf |> Cstruct.to_bigarray) i > 0 then Lwt.return_ok ()
           else Lwt.return_error `Unimplemented
       | _ -> Lwt.return_error `Unimplemented
 
-  let pseudoheader (t : t) ?(src : ipaddr = List.hd t.ip_lst) (ipaddr : ipaddr)
-      (proto : Tcpip.Ip.proto) (i : int) : Cstruct.t =
-    failwith "pseudoheader Not implemented"
+  let pseudoheader (t : t) ?(src : ipaddr = List.hd t.ip_lst) (dst : ipaddr)
+      (proto : Tcpip.Ip.proto) (len : int) : Cstruct.t =
+    let ph = Cstruct.create (16 + 16 + 8) in
+    IpUtils.ipaddr_to_cstruct_raw src ph 0;
+    IpUtils.ipaddr_to_cstruct_raw dst ph 16;
+    Cstruct.BE.set_uint32 ph 32 (Int32.of_int len);
+    Cstruct.set_uint8 ph 36 0;
+    Cstruct.set_uint8 ph 37 0;
+    Cstruct.set_uint8 ph 38 0;
+    Cstruct.set_uint8 ph 39 (protocol_to_int `TCP);
+    ph
 
   let src (t : t) ~(dst : ipaddr) : ipaddr = List.hd t.ip_lst
   let get_ip (t : t) : ipaddr list = t.ip_lst
@@ -109,16 +133,23 @@ module RIOT_IP : S = struct
     let src_cs = Cstruct.create 16 in
     let dst_cs = Cstruct.create 16 in
     let payload_cs = Cstruct.create 128 in
+    let src_buf = Cstruct.to_bigarray src_cs in
+    let dst_buf = Cstruct.to_bigarray dst_cs in
+    let payload_buf = Cstruct.to_bigarray payload_cs in
     let open Lwt.Syntax in
     let rec aux () =
       Printf.printf "Looping\n%!";
       let* _ = Lwt_condition.wait con in
-      assert (riot_get_addrs (Cstruct.to_bigarray src_cs) (of_origin Src) = 0);
-      assert (riot_get_addrs (Cstruct.to_bigarray dst_cs) (of_origin Dst) = 0);
-      assert (riot_get_packet (Cstruct.to_bigarray payload_cs) = 0);
-      let src = IpUtils.ip_of_cs src_cs in
+      assert (riot_get_addrs src_buf (of_origin Src) = 0);
+      assert (riot_get_addrs dst_buf (of_origin Dst) = 0);
+      assert (riot_get_packet payload_buf = 0);
+      Tcp_riot.print_pkt payload_cs;
+      Printf.printf "\nResizing packet to %d\n%!" (riot_get_tcp_hdr_size ());
+      let new_cs = Cstruct.sub payload_cs 0 (riot_get_tcp_hdr_size ()) in
+      let src = t.ip_lst |> List.hd in
       let dst = IpUtils.ip_of_cs dst_cs in
-      tcp ~src ~dst payload_cs >>= aux
+      Lwt.async (fun () -> tcp ~src ~dst new_cs);
+      aux ()
     in
     aux ()
 end
@@ -130,12 +161,7 @@ end
 
 let resolve () =
   let get_data () = riot_get_packet (Cstruct.to_bigarray !cs) in
-  (match get_data () with
-  | 0 -> print_endline "successfully got data"
-  | _ -> raise Not_found);
+  (match get_data () with 0 -> () | _ -> raise Not_found);
   Lwt_condition.signal con 1
-(* Lwt_mvar.put mbox !cs; *)
-(* let w = Queue.pop !netq in
-   let w = Option.get !glb_w in
-      glb_w := None;
-      Lwt.wakeup w !cs *)
+
+(* Print out packets recieved in riot by our RIOT *)

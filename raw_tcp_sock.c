@@ -8,8 +8,10 @@ uint8_t tcpbuf[128];
 sock_ip_t tcp_sock;
 sock_ip_ep_t tcp_local = SOCK_IPV6_EP_ANY;
 sock_ip_ep_t tcp_remote;
+ssize_t tcp_hdr_size;
 
-void *raw_tcp_sock_thread(void *args)
+void *
+raw_tcp_sock_thread(void *args)
 {
 
     if (sock_ip_create(&tcp_sock, &tcp_local, NULL, PROTNUM_TCP, 0) < 0)
@@ -29,7 +31,9 @@ void *raw_tcp_sock_thread(void *args)
 
         if ((res = sock_ip_recv(&tcp_sock, tcpbuf, sizeof(tcpbuf), SOCK_NO_TIMEOUT, &tcp_remote)) >= 0)
         {
-            puts("\nReceived a message");
+            DEBUG("\n(RIOT Raw Tcp Socket loop) Received a message\n");
+            printf("Size of TCP header = %d\n", res);
+            tcp_hdr_size = res;
             add_net_event(NULL);
             // if (sock_ip_send(&tcp_sock, "Hello!", sizeof("Hello!"), 0, &remote) < 0)
             // {
@@ -50,18 +54,6 @@ uint16_t get_netif_id(void)
     netif_t *netif_p = netif_get_by_id(ep.netif);
     printf("%p\n", netif_p);
     return ep.netif;
-}
-
-void send_tcp_packet(void)
-{
-    uint8_t data[] = {
-        1,
-        2,
-        3,
-        4,
-        5,
-    };
-    ssize_t l = sock_ip_send(&tcp_sock, data, sizeof(data), NULL, NULL);
 }
 
 unsigned int get_ips(void *buf)

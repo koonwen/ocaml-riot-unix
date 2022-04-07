@@ -1,6 +1,9 @@
+(vendored_dirs ocplib-endian)
+
 (executable
  (name main)
  (libraries
+  riot_net
   mirage-runtime
   psq
   lwt
@@ -9,8 +12,10 @@
   ipaddr
   tcpip
   tcpip.tcp
-  mirage-clock-unix
-  mirage-random-stdlib)
+  mirage-clock
+  mirage-random-stdlib
+  logs.fmt)
+ (forbidden_libraries unix)
  (preprocess
   (pps ppx_cstruct))
  ;  (foreign_stubs (language c) (names stubs))

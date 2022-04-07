@@ -20,6 +20,7 @@
 extern sock_ip_ep_t tcp_local;
 extern sock_ip_ep_t tcp_remote;
 extern sock_ip_t tcp_sock;
+extern ssize_t tcp_hdr_size;
 
 // Add sock_buffer_queue
 // extern glb_tcp_queue_buf;

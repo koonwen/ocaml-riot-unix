@@ -44,3 +44,5 @@
    (progn
     (copy ../../s.h s.h)
     (copy ../../m.h m.h)))))
+
+(data_only_dirs ocplib_endian)

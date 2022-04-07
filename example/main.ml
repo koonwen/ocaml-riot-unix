@@ -28,7 +28,7 @@ module Abstract : sig
   type event_queue_ptr
   type event_ptr
 
-  val to_microseconds : int64 -> nanoseconds
+  val to_nanoseconds : int64 -> nanoseconds
   val to_event_queue_ptr : int64 -> event_queue_ptr
   val to_event_ptr : int64 -> event_ptr
   val of_event_ptr : event_ptr -> int64
@@ -37,7 +37,7 @@ end = struct
   type event_queue_ptr = int64
   type event_ptr = int64
 
-  let to_microseconds v = v
+  let to_nanoseconds v = v
   let to_event_queue_ptr v = v
   let to_event_ptr v = v
   let of_event_ptr v = v
@@ -112,9 +112,7 @@ let run t =
     Lwt.wakeup_paused ();
     Time.restart_threads Time.Monotonic.time;
     match Lwt.poll t with
-    | Some () ->
-        Printf.printf "main (): Program exitted\r\n%!";
-        ()
+    | Some () -> Printf.printf "main ()"
     | None ->
         let timeout =
           (* Call enter hooks. *)
@@ -125,16 +123,20 @@ let run t =
         in
         (* waits for events *)
         let remaining_time =
-          timeout - Time.Monotonic.time () |> to_microseconds
+          timeout - Time.Monotonic.time () |> to_nanoseconds
         in
         (* sleep remaining_time; *)
         let event = riot_yield event_queue_ptr remaining_time in
         (* NEED TO DEFINE READY SET EVENTS *)
-        (if of_event_ptr event > 0L then
-         match get_event_set () with
-         | 0 -> (*Uart.resolve*) failwith "got 0"
-         | 1 -> Ip.resolve ()
-         | _ -> raise Not_found);
+        if of_event_ptr event > 0L then
+          match get_event_set () with
+          | 0 -> (*Uart.resolve*) failwith "got 0"
+          | 1 -> Ip.resolve ()
+          | _ -> raise Not_found
+        else (
+          Printf.printf "got event pointer %Ld " (of_event_ptr event);
+          failwith "eror");
+
         (* Call leave hooks. *)
         Mirage_runtime.run_leave_iter_hooks ();
         aux ()
@@ -152,13 +154,46 @@ let print_callback ~src ~dst cs =
      Lwt.abandon_wakeups () ;
      run (Mirage_runtime.run_exit_hooks ())) *)
 
+module TCP =
+  Tcp.Flow.Make (Ip.RIOT_IP) (Time) (Riot_clock) (Mirage_random_stdlib)
+
 let () =
-  (* let q = init_event_queue () in *)
-  let open Ip.RIOT_IP in
-  let open Lwt.Syntax in
+  Logs.set_level (Some Debug);
+  Logs.set_reporter (Logs_fmt.reporter ())
+
+open Lwt.Syntax
+open Lwt
+
+let cb (flow : TCP.flow) =
+  (* TCP.write_nodelay flow response >>= fun _ -> return_unit *)
+  let rec aux flow =
+    let* res = TCP.read flow in
+    let data_in =
+      match res with Ok v -> v | Error e -> failwith "Failed to read data"
+    in
+    let* write_out =
+      match data_in with
+      | `Data d -> TCP.write_nodelay flow d
+      | `Eof -> failwith "End of file!"
+    in
+    match write_out with Ok _ -> aux flow | _ -> failwith "Write Error!"
+  in
+  (* let rec aux flow =
+       TCP.read flow >>= fun _ ->
+       Printf.printf "Got data\n%!";
+       return_unit >>= fun _ -> aux flow
+     in *)
+  aux flow
+
+let listen ip tcp = Ip.RIOT_IP.listen ip ~tcp:(TCP.input tcp)
+
+let () =
   run
-    (let* internal_state = connect () in
-     listen internal_state ~tcp:print_callback)
+    (let* ip = Ip.RIOT_IP.connect () in
+     let* tcp = TCP.connect ip in
+     (* Registering the callback into TCP.t? *)
+     TCP.listen tcp ~port:8000 cb;
+     listen ip tcp >>= fun _ -> return_unit)
 
 (* set up 32bit ocaml *)
 (* Use 64bit integers *)
@@ -178,3 +213,6 @@ let () =
 (* Reimplement Handle Map to respond to events *)
 (* Responding to network events *)
 (* See if RIOT has console writing APIs with carridge return moving pointer to beginning *)
+
+(* What is the difference between the Tcp.flow and the Tcp.t *)
+(* Is the callback suppose to be called on every packet reception? *)

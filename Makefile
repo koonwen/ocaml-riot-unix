@@ -2,6 +2,7 @@
 APPLICATION = ocaml
 
 # If no BOARD is found in the environment, use this default:
+# BOARD ?= nrf52840-mdk
 BOARD ?= native
 
 # This has to be the absolute path to the RIOT base directory:
@@ -60,6 +61,7 @@ CFLAGS := $(subst -Wold-style-definition,,$(CFLAGS))
 
 OCAML_CFLAGS := $(CFLAGS)
 OCAML_LIBS := $(LINKFLAGS)
+# RIOTBUILD_H_FILE := $(CURDIR)/bin/nrf52840-mdk/riotbuild/riotbuild.h
 RIOTBUILD_H_FILE := $(CURDIR)/bin/native/riotbuild/riotbuild.h
 .PHONY: runtimelib
 runtimelib: $(RIOTBUILD_H_FILE)
@@ -72,6 +74,7 @@ runtimelib: $(RIOTBUILD_H_FILE)
 	dune build include/ libcamlrun.a --verbose
 
 CFLAGS += -I$(CURDIR)/include/
+CFLAGS += -mrdrnd -mrdseed #for x86
 LINKFLAGS += -L$(CURDIR) -lcamlrun -lm
 	
 run :
