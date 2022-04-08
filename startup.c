@@ -44,7 +44,8 @@
 //     shell_run(NULL, line_buf, SHELL_DEFAULT_BUFSIZE);
 // }
 
-#include "raw_tcp_sock.h"
+#include "external_modules/ocaml_event_sig/ocaml_event_sig.h"
+#include "external_modules/raw_tcp_sock/raw_tcp_sock.h"
 
 extern void caml_startup(char **argv);
 char *argv[] = {"mirage", NULL};

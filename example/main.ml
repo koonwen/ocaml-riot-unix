@@ -22,6 +22,7 @@
  *)
 
 open Lwt
+open Riot_net
 
 module Abstract : sig
   type nanoseconds

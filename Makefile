@@ -3,7 +3,7 @@ APPLICATION = ocaml
 
 # If no BOARD is found in the environment, use this default:
 # BOARD ?= nrf52840-mdk
-BOARD ?= native
+BOARD ?= native 
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../RIOT
@@ -15,6 +15,8 @@ DEVELHELP ?= 1
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 0
+`
+# Our own modules that perform event handling
 
 USEMODULE += xtimer event stdin event_callback
 FEATURES_REQUIRED += periph_uart
@@ -22,7 +24,7 @@ FEATURES_REQUIRED += periph_uart
 # Include network device module and auto init
 USEMODULE += netdev_default
 USEMODULE += auto_init_gnrc_netif
-# # # Include RIOT gnrc network layer
+# # Include RIOT gnrc network layer
 USEMODULE += gnrc_ipv6_default
 USEMODULE += gnrc_icmpv6_echo
 # # Add a routing protocol
@@ -35,13 +37,20 @@ USEMODULE += shell
 USEMODULE += shell_commands
 USEMODULE += ps
 
-all: runtime.c stubs runtimelib
+USEMODULE += raw_tcp_sock
+USEMODULE += ocaml_event_sig
+USEMODULE += stubs
+EXTERNAL_MODULE_DIRS += external_modules
+
+all: runtime.c stubs netstubs runtimelib
 
 include $(RIOTBASE)/Makefile.include
 
-# example/net/netstubs.c
 stubs: example/stubs.c
-	cp $(^) .
+	cp $(^) ./external_modules/ocaml_event_sig
+
+netstubs: example/riot_net/netstubs.c
+	cp $(^) ./external_modules/raw_tcp_sock
 
 # example/main.ml example/dune example/dune-project
 runtime.c: example/* 
@@ -76,6 +85,11 @@ runtimelib: $(RIOTBUILD_H_FILE)
 CFLAGS += -I$(CURDIR)/include/
 CFLAGS += -mrdrnd -mrdseed #for x86
 LINKFLAGS += -L$(CURDIR) -lcamlrun -lm
+
+print :
+	echo $(BASELIBS)
 	
 run :
 	/home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf -c `tty`
+
+# What math courses do you think are important to take?

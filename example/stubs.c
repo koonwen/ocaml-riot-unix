@@ -4,7 +4,7 @@
 #include <caml/alloc.h>
 #include <caml/custom.h>
 
-#include "event_queue.h"
+#include "ocaml_event_sig.h"
 
 // Get monotonic time in microseconds since timer started
 CAMLprim value
