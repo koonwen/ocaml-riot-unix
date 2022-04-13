@@ -1,0 +1,12 @@
+(library
+ (name riot_net)
+ (libraries
+  lwt
+  cstruct
+  ipaddr
+  tcpip
+  tcpip.tcp
+  mirage-clock
+  mirage-random-stdlib)
+ (preprocess
+  (pps ppx_cstruct)))
