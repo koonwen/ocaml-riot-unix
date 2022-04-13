@@ -1,6 +1,7 @@
 open Cstruct
 open Map
 open Lwt
+open Netutils
 
 let protocol_to_int = function `ICMP -> 58 | `TCP -> 6 | `UDP -> 17
 
@@ -20,32 +21,16 @@ external riot_write : Cstruct.buffer -> int -> int = "caml_mirage_riot_write"
 external riot_get_addrs : Cstruct.buffer -> int -> int
   = "caml_mirage_riot_get_addr"
 
-module IpUtils = struct
-  let ip_of_cs ?(off = 0) cs =
-    let pre = Cstruct.BE.get_uint64 cs ((8 * off) + 0) in
-    let mul = Cstruct.BE.get_uint64 cs ((8 * off) + 8) in
-    Ipaddr.V6.of_int64 (pre, mul)
-
-  let ipaddr_to_cstruct_raw i cs off =
-    let a, b, c, d = Ipaddr.V6.to_int32 i in
-    Cstruct.BE.set_uint32 cs (0 + off) a;
-    Cstruct.BE.set_uint32 cs (4 + off) b;
-    Cstruct.BE.set_uint32 cs (8 + off) c;
-    Cstruct.BE.set_uint32 cs (12 + off) d
-end
-
 let cs = ref (Cstruct.create 128)
 let con = Lwt_condition.create ()
 
-module type S = sig
+module S : sig
   include Tcpip.Ip.S
 
   (* Connect only to TCPIP stack, UDP not yet implemented *)
   val connect : unit -> t Lwt.t
   val listen : t -> tcp:callback -> unit Lwt.t
-end
-
-module RIOT_IP : S = struct
+end = struct
   type ipaddr = Ipaddr.V6.t
 
   let pp_ipaddr = Ipaddr.V6.pp

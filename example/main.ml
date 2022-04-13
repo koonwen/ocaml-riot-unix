@@ -20,200 +20,45 @@
   * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
  * 02111-1307, USA.
  *)
-
+open Lwt.Syntax
 open Lwt
-open Riot_net
-
-module Abstract : sig
-  type nanoseconds
-  type event_queue_ptr
-  type event_ptr
-
-  val to_nanoseconds : int64 -> nanoseconds
-  val to_event_queue_ptr : int64 -> event_queue_ptr
-  val to_event_ptr : int64 -> event_ptr
-  val of_event_ptr : event_ptr -> int64
-end = struct
-  type nanoseconds = int64
-  type event_queue_ptr = int64
-  type event_ptr = int64
-
-  let to_nanoseconds v = v
-  let to_event_queue_ptr v = v
-  let to_event_ptr v = v
-  let of_event_ptr v = v
-end
-
-open Abstract
-
-external init_event_queue : unit -> event_queue_ptr
-  = "mirage_initialize_event_queue"
-
-external get_event_queue : unit -> event_queue_ptr = "mirage_get_event_queue"
-
-external riot_yield : event_queue_ptr -> nanoseconds -> event_ptr
-  = "mirage_riot_yield"
-
-external sleep : nanoseconds -> unit = "mirage_riot_sleep"
-external post_event : event_queue_ptr -> unit = "mirage_riot_post_event"
-external get_event_set : unit -> int = "caml_mirage_riot_event_set"
-(* A Map from Int64 (solo5_handle_t) to an Lwt_condition. *)
-(* module HandleMap = Map.Make (Int64)
-
-   let work = ref HandleMap.empty *)
-
-(* Wait for work on handle [h]. The Lwt_condition and HandleMap binding are
- * created lazily the first time [h] is waited on. *)
-(* let wait_for_work_on_handle h =
-   match HandleMap.find h !work with
-   | exception Not_found ->
-       let cond = Lwt_condition.create () in
-       work := HandleMap.add h cond !work;
-       Lwt_condition.wait cond
-   | cond -> Lwt_condition.wait cond *)
-
-(* Execute one iteration and register a callback function *)
-
-(* let run t =
-   let rec aux () =
-     Lwt.wakeup_paused ();
-     Time.restart_threads Time.time;
-     match Lwt.poll t with
-     | Some () -> ()
-     | None ->
-         (* Call enter hooks. *)
-         Mirage_runtime.run_enter_iter_hooks ();
-         let timeout =
-           match Time.select_next () with
-           | None -> Int64.add (Time.time ()) (Duration.of_day 1)
-           | Some tm -> tm
-         in
-         let ready_set = riot_yield timeout in
-         (if not (Int64.equal 0L ready_set) then
-          (* Some I/O is possible, wake up threads and continue. *)
-          let is_in_set set x =
-            not Int64.(equal 0L (logand set (shift_left 1L (to_int x))))
-          in
-          HandleMap.iter
-            (fun k v ->
-              if is_in_set ready_set k then Lwt_condition.broadcast v ())
-            !work);
-         (* Call leave hooks. *)
-         Mirage_runtime.run_leave_iter_hooks () ;
-         aux ()
-   in
-   aux () *)
-
-let ( / ) = Int64.div
-let ( - ) = Int64.sub
-let event_queue_ptr = get_event_queue ()
-
-let run t =
-  let rec aux () =
-    Lwt.wakeup_paused ();
-    Time.restart_threads Time.Monotonic.time;
-    match Lwt.poll t with
-    | Some () -> Printf.printf "main ()"
-    | None ->
-        let timeout =
-          (* Call enter hooks. *)
-          Mirage_runtime.run_enter_iter_hooks ();
-          match Time.select_next () with
-          | None -> Int64.add (Time.Monotonic.time ()) (Duration.of_day 1)
-          | Some tm -> tm
-        in
-        (* waits for events *)
-        let remaining_time =
-          timeout - Time.Monotonic.time () |> to_nanoseconds
-        in
-        (* sleep remaining_time; *)
-        let event = riot_yield event_queue_ptr remaining_time in
-        (* NEED TO DEFINE READY SET EVENTS *)
-        if of_event_ptr event > 0L then
-          match get_event_set () with
-          | 0 -> (*Uart.resolve*) failwith "got 0"
-          | 1 -> Ip.resolve ()
-          | _ -> raise Not_found
-        else (
-          Printf.printf "got event pointer %Ld " (of_event_ptr event);
-          failwith "eror");
-
-        (* Call leave hooks. *)
-        Mirage_runtime.run_leave_iter_hooks ();
-        aux ()
-  in
-  aux ()
-
-let print_callback ~src ~dst cs =
-  Format.printf "\nsrc ip: %a | dst ip: %a\n%!" Ip.RIOT_IP.pp_ipaddr src
-    Ip.RIOT_IP.pp_ipaddr dst;
-  Tcp_riot.print_pkt cs;
-  Lwt.return_unit
-
-(* let () =
-   at_exit (fun () ->
-     Lwt.abandon_wakeups () ;
-     run (Mirage_runtime.run_exit_hooks ())) *)
-
-module TCP =
-  Tcp.Flow.Make (Ip.RIOT_IP) (Time) (Riot_clock) (Mirage_random_stdlib)
 
 let () =
   Logs.set_level (Some Debug);
   Logs.set_reporter (Logs_fmt.reporter ())
 
-open Lwt.Syntax
-open Lwt
+module RIOT_stack = struct
+  module IP = Riot_ip.S
 
-let cb (flow : TCP.flow) =
-  (* TCP.write_nodelay flow response >>= fun _ -> return_unit *)
+  module TCP =
+    Tcp.Flow.Make (Riot_ip.S) (Time) (Riot_clock) (Mirage_random_stdlib)
+
+  let listen ip tcp = Riot_ip.S.listen ip ~tcp:(TCP.input tcp)
+end
+
+let echo_cb (flow : RIOT_stack.TCP.flow) =
   let rec aux flow =
-    let* res = TCP.read flow in
+    let* res = RIOT_stack.TCP.read flow in
     let data_in =
       match res with Ok v -> v | Error e -> failwith "Failed to read data"
     in
     let* write_out =
       match data_in with
-      | `Data d -> TCP.write_nodelay flow d
+      | `Data d -> RIOT_stack.TCP.write_nodelay flow d
       | `Eof -> failwith "End of file!"
     in
     match write_out with Ok _ -> aux flow | _ -> failwith "Write Error!"
   in
-  (* let rec aux flow =
-       TCP.read flow >>= fun _ ->
-       Printf.printf "Got data\n%!";
-       return_unit >>= fun _ -> aux flow
-     in *)
   aux flow
 
-let listen ip tcp = Ip.RIOT_IP.listen ip ~tcp:(TCP.input tcp)
-
 let () =
-  run
-    (let* ip = Ip.RIOT_IP.connect () in
-     let* tcp = TCP.connect ip in
-     (* Registering the callback into TCP.t? *)
-     TCP.listen tcp ~port:8000 cb;
-     listen ip tcp >>= fun _ -> return_unit)
+  Event_loop.run
+    (let* ip = RIOT_stack.IP.connect () in
+     let* tcp = RIOT_stack.TCP.connect ip in
+     RIOT_stack.TCP.listen tcp ~port:8000 echo_cb;
+     RIOT_stack.listen ip tcp >>= fun _ -> return_unit)
 
-(* set up 32bit ocaml *)
-(* Use 64bit integers *)
-(* Change to yield *)
-(* wait for console events *)
-(* Unix doesn't use UART, therefore the API for
-   checking for a stdio event's are not available to be tested on
-   Linux, hence the alternative is to spawn a separate thread
-   that busy waits to check if there's an available IO and puts it
-    on the event queue *)
-(* Take note that for interrupt lines, these are at the hardware
-   level that just turns on and off an interrupt line to signal that there
-   is something waiting or not. *)
-
-(* Add in Mirage hooks *)
-(* Move events into OCaml code *)
-(* Reimplement Handle Map to respond to events *)
-(* Responding to network events *)
-(* See if RIOT has console writing APIs with carridge return moving pointer to beginning *)
-
-(* What is the difference between the Tcp.flow and the Tcp.t *)
-(* Is the callback suppose to be called on every packet reception? *)
+(* let () =
+   at_exit (fun () ->
+     Lwt.abandon_wakeups () ;
+     run (Mirage_runtime.run_exit_hooks ())) *)

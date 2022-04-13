@@ -3,7 +3,6 @@
 (executable
  (name main)
  (libraries
-  riot_net
   mirage-runtime
   psq
   lwt
@@ -18,7 +17,6 @@
  (forbidden_libraries unix)
  (preprocess
   (pps ppx_cstruct))
- ;  (foreign_stubs (language c) (names stubs))
  (modes
   (byte c)))
 

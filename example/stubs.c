@@ -3,9 +3,10 @@
 #include <caml/memory.h>
 #include <caml/alloc.h>
 #include <caml/custom.h>
+#include <caml/bigarray.h>
 
-#include "ocaml_event_sig.h"
-
+// ======================== time.ml stubs ======================
+#include "xtimer.h"
 // Get monotonic time in microseconds since timer started
 CAMLprim value
 caml_get_monotonic_time(value v_unit)
@@ -17,76 +18,89 @@ caml_get_monotonic_time(value v_unit)
     CAMLreturn(caml_copy_int64(time));
 }
 
-// Sleep for given time in microseconds
-CAMLprim value
-mirage_riot_sleep(value v_nanoseconds)
-{
-    CAMLparam1(v_nanoseconds);
-
-    uint64_t nanoseconds = Int64_val(v_nanoseconds);
-    printf("Sleeping for %ld nanoseconds\n", nanoseconds);
-    xtimer_usleep64(nanoseconds / 1000);
-
-    CAMLreturn(Val_unit);
-}
+// ======================== event_loop.ml stubs ======================
+#include "../ocaml_event_sig/ocaml_event_sig.h"
 
 CAMLprim value
-mirage_initialize_event_queue(value v_unit)
+riot_event_timeout(value v_timeout)
 {
-    CAMLparam1(v_unit);
-
-    event_queue_t *queue = (event_queue_t *)malloc(sizeof(event_queue_t));
-    event_queue_init(queue);
-    QUEUE = *queue;
-
-    CAMLreturn(caml_copy_int64(queue));
-}
-
-CAMLprim value
-mirage_get_event_queue(value v_unit)
-{
-    CAMLparam1(v_unit);
-    CAMLreturn(caml_copy_int64(&QUEUE));
-}
-
-CAMLprim value
-mirage_riot_yield(value v_queue, value v_timeout)
-{
-    CAMLparam2(v_queue, v_timeout);
-    event_queue_t *queue = Int64_val(v_queue);
+    CAMLparam1(v_timeout);
     uint64_t timeout = Int64_val(v_timeout);
 
     event_t *new_event;
     printf("Waiting for event for %lld microseconds\n\r", timeout);
-    if (new_event = event_wait_timeout64(queue, timeout))
+    if (new_event = event_wait_timeout64(&QUEUE, timeout))
         new_event->handler(new_event);
     else
         printf("No event triggered, timeout expired\n\r");
     CAMLreturn(caml_copy_int64(new_event));
 }
 
-void handler(void *arg)
-{
-    printf("triggered 0x%08x before timeout expired\n\r", (unsigned)arg);
-}
+// ======================== riot_ip.ml stubs ======================
+#include "../raw_tcp_sock/raw_tcp_sock.h"
+#define MTU (IPV6_MIN_MTU)
 
-// Add an event to the event queue with a default callback handler which prints the address of the event
 CAMLprim value
-mirage_riot_post_event(value v_queue)
+caml_mirage_riot_get_packet(value v_bigarray)
 {
-    CAMLparam1(v_queue);
-
-    event_queue_t *queue = Int64_val(v_queue);
-    event_t *event = (event_t *)calloc(sizeof(1), sizeof(event_t));
-    event->handler = handler;
-    event_post(queue, event);
-
-    CAMLreturn(Val_unit);
+    CAMLparam1(v_bigarray);
+    uint8_t *ptr = (uint8_t *)Caml_ba_data_val(v_bigarray);
+    memcpy(ptr, tcpbuf, sizeof(tcpbuf));
+    CAMLreturn(0);
 }
 
 CAMLprim value
-mirage_riot_getbyte(value v_unit)
+caml_mirage_riot_get_tcp_hdr_size(value v_unit)
 {
-    CAMLparam1(v_unit);
-    CAMLreturn(Val_int(BYTE_CONTAINER));
+    CAMLparam0();
+    // printf("(netstubs): tcp_hdr_size = %lu\n", tcp_hdr_size);
+
+    CAMLreturn(Val_int(tcp_hdr_size));
+}
+
+CAMLprim value
+caml_mirage_riot_write(value v_bigarray, value v_protnum, value v_len)
+{
+    CAMLparam3(v_bigarray, v_protnum, v_len);
+    void *data_ptr = Caml_ba_data_val(v_bigarray);
+    ssize_t bytes_written =
+        sock_ip_send(&tcp_sock, data_ptr, Int_val(v_len), v_protnum, &tcp_remote);
+    if (bytes_written == Int_val(v_len))
+    {
+        CAMLreturn(Val_int(1));
+    }
+    CAMLreturn(Val_int(-1));
+}
+
+CAMLprim value
+caml_mirage_riot_get_mtu(value v_unit)
+{
+    CAMLparam0();
+    CAMLreturn(Val_int(MTU));
+}
+
+// deprecated
+CAMLprim value
+caml_mirage_riot_event_set(value v_unit)
+{
+    CAMLparam0();
+    CAMLreturn(Val_int(event_set));
+}
+
+CAMLprim value
+caml_mirage_riot_get_ips(value v_bigarray)
+{
+    CAMLparam0();
+    void *data_ptr = Caml_ba_data_val(v_bigarray);
+    unsigned int n = get_ips(data_ptr);
+    CAMLreturn(Val_int(n));
+}
+
+CAMLprim value
+caml_mirage_riot_get_addr(value v_bigarray, value v_mode)
+{
+    CAMLparam2(v_bigarray, v_mode);
+    void *buf_ptr = Caml_ba_data_val(v_bigarray);
+    int res = get_addr(buf_ptr, Int_val(v_mode));
+    CAMLreturn(Val_int(res));
 }

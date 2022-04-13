@@ -43,17 +43,13 @@ USEMODULE += ocaml_runtime
 USEMODULE += stubs
 EXTERNAL_MODULE_DIRS += external_modules
 
-all: runtime.c stubs netstubs runtimelib
+all: runtime.c stubs runtimelib
 
 include $(RIOTBASE)/Makefile.include
 
 stubs: example/stubs.c
-	cp $(^) ./external_modules/ocaml_event_sig
+	cp $(^) ./external_modules/stubs/stubs.c
 
-netstubs: example/riot_net/netstubs.c
-	cp $(^) ./external_modules/raw_tcp_sock
-
-# example/main.ml example/dune example/dune-project
 runtime.c: example/* 
 	cd example && dune build --profile release
 	rm -f ./external_modules/ocaml_runtime/runtime.c

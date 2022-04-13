@@ -1,6 +1,5 @@
-#ifndef COLLECTION_H
-#define COLLECTION_H
-
+#ifndef RAW_TCP_SOCK_H
+#define RAW_TCP_SOCK_H
 #include <stdio.h>
 #include <string.h>
 
@@ -10,13 +9,10 @@
 #include "net/sock/ip.h"
 
 #include "msg.h"
-#include "debug.h"
-#include "shell.h"
 #include "sched.h"
 
 #include "../ocaml_event_sig/ocaml_event_sig.h"
 
-#define ENABLE_DEBUG (1)
 #define TCP_EVENTLOOP_PRIO (THREAD_PRIORITY_MAIN - 2)
 #define MIN_MTU (IPV6_MIN_MTU)
 
