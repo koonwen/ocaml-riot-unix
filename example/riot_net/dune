@@ -10,3 +10,8 @@
   mirage-random-stdlib)
  (preprocess
   (pps ppx_cstruct)))
+
+(env
+ (dev
+  (flags
+   (:standard -w -26))))

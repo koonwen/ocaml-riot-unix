@@ -6,7 +6,7 @@ APPLICATION = ocaml
 BOARD ?= native 
 
 # This has to be the absolute path to the RIOT base directory:
-RIOTBASE ?= $(CURDIR)/../RIOT
+RIOTBASE ?= $(CURDIR)/RIOT
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
@@ -15,7 +15,7 @@ DEVELHELP ?= 1
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 0
-`
+
 # Our own modules that perform event handling
 
 USEMODULE += xtimer event stdin event_callback
@@ -91,5 +91,3 @@ print :
 	
 run :
 	/home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf -c `tty`
-
-# What math courses do you think are important to take?
