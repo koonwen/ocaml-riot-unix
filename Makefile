@@ -15,7 +15,7 @@ DEVELHELP ?= 1
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 0
-`
+
 # Our own modules that perform event handling
 
 USEMODULE += xtimer event stdin event_callback
@@ -39,6 +39,7 @@ USEMODULE += ps
 
 USEMODULE += raw_tcp_sock
 USEMODULE += ocaml_event_sig
+USEMODULE += ocaml_runtime
 USEMODULE += stubs
 EXTERNAL_MODULE_DIRS += external_modules
 
@@ -55,8 +56,8 @@ netstubs: example/riot_net/netstubs.c
 # example/main.ml example/dune example/dune-project
 runtime.c: example/* 
 	cd example && dune build --profile release
-	rm -f runtime.c
-	cp _build/default/example/main.bc.c ./runtime.c
+	rm -f ./external_modules/ocaml_runtime/runtime.c
+	cp _build/default/example/main.bc.c ./external_modules/ocaml_runtime/runtime.c
 
 ocaml/Makefile:
 	sed -i -e 's/oc_cflags="/oc_cflags="$$OC_CFLAGS /g' ocaml/configure
@@ -80,16 +81,14 @@ runtimelib: $(RIOTBUILD_H_FILE)
 	ASPP="$(CC) $(OCAML_CFLAGS) -c" \
 	CPPFLAGS="$(OCAML_CFLAGS)" \
 	LIBS="$(OCAML_LIBS) --entry main" \
-	dune build include/ libcamlrun.a --verbose
+	dune build include/ ./external_modules/ocaml_runtime/libcamlrun.a --verbose
 
 CFLAGS += -I$(CURDIR)/include/
 CFLAGS += -mrdrnd -mrdseed #for x86
-LINKFLAGS += -L$(CURDIR) -lcamlrun -lm
+LINKFLAGS += -L$(CURDIR) -L$(CURDIR)/external_modules/ocaml_runtime -lcamlrun -lm
 
 print :
 	echo $(BASELIBS)
 	
 run :
 	/home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf -c `tty`
-
-# What math courses do you think are important to take?
