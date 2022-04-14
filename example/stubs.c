@@ -5,7 +5,7 @@
 #include <caml/custom.h>
 #include <caml/bigarray.h>
 
-// ======================== time.ml stubs ======================
+// ======================== riot_time.ml stubs ======================
 #include "xtimer.h"
 // Get monotonic time in microseconds since timer started
 CAMLprim value
@@ -42,30 +42,11 @@ caml_riot_event_timeout(value v_timeout)
     CAMLreturn(Val_int(0));
 }
 
-// ======================== riot_ip.ml stubs ======================
+// ======================== netutils.ml stubs ======================
 #include "../raw_tcp_sock/raw_tcp_sock.h"
-#define MTU (IPV6_MIN_MTU)
 
 CAMLprim value
-caml_mirage_riot_get_packet(value v_bigarray)
-{
-    CAMLparam1(v_bigarray);
-    uint8_t *ptr = (uint8_t *)Caml_ba_data_val(v_bigarray);
-    memcpy(ptr, tcpbuf, sizeof(tcpbuf));
-    CAMLreturn(0);
-}
-
-CAMLprim value
-caml_mirage_riot_get_tcp_hdr_size(value v_unit)
-{
-    CAMLparam0();
-    // printf("(netstubs): tcp_hdr_size = %lu\n", tcp_hdr_size);
-
-    CAMLreturn(Val_int(tcp_hdr_size));
-}
-
-CAMLprim value
-caml_mirage_riot_write(value v_bigarray, value v_protnum, value v_len)
+caml_riot_write(value v_bigarray, value v_protnum, value v_len)
 {
     CAMLparam3(v_bigarray, v_protnum, v_len);
     void *data_ptr = Caml_ba_data_val(v_bigarray);
@@ -79,26 +60,43 @@ caml_mirage_riot_write(value v_bigarray, value v_protnum, value v_len)
 }
 
 CAMLprim value
-caml_mirage_riot_get_mtu(value v_unit)
+caml_riot_get_pkt(value v_bigarray)
 {
-    CAMLparam0();
-    CAMLreturn(Val_int(MTU));
+    CAMLparam1(v_bigarray);
+    uint8_t *ptr = (uint8_t *)Caml_ba_data_val(v_bigarray);
+    memcpy(ptr, tcpbuf, sizeof(tcpbuf));
+    CAMLreturn(0);
 }
 
 CAMLprim value
-caml_mirage_riot_get_ips(value v_bigarray)
+caml_riot_get_pkt_ips(value v_bigarray)
+{
+    CAMLparam1(v_bigarray);
+    void *buf_ptr = Caml_ba_data_val(v_bigarray);
+    get_addrs(buf_ptr);
+}
+
+CAMLprim value
+caml_riot_get_tp_hdr_size(value v_unit)
+{
+    CAMLparam0();
+    // printf("(netstubs): tcp_hdr_size = %lu\n", tcp_hdr_size);
+
+    CAMLreturn(Val_int(tcp_hdr_size));
+}
+
+CAMLprim value
+caml_riot_get_mtu(value v_unit)
+{
+    CAMLparam0();
+    CAMLreturn(Val_int(IPV6_MIN_MTU));
+}
+
+CAMLprim value
+caml_riot_get_host_ips(value v_bigarray)
 {
     CAMLparam0();
     void *data_ptr = Caml_ba_data_val(v_bigarray);
     unsigned int n = get_ips(data_ptr);
     CAMLreturn(Val_int(n));
-}
-
-CAMLprim value
-caml_mirage_riot_get_addr(value v_bigarray, value v_mode)
-{
-    CAMLparam2(v_bigarray, v_mode);
-    void *buf_ptr = Caml_ba_data_val(v_bigarray);
-    int res = get_addr(buf_ptr, Int_val(v_mode));
-    CAMLreturn(Val_int(res));
 }
