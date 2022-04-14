@@ -22,7 +22,7 @@ caml_get_monotonic_time(value v_unit)
 #include "../ocaml_event_sig/ocaml_event_sig.h"
 
 CAMLprim value
-riot_event_timeout(value v_timeout)
+caml_riot_event_timeout(value v_timeout)
 {
     CAMLparam1(v_timeout);
     uint64_t timeout = Int64_val(v_timeout);
@@ -30,10 +30,16 @@ riot_event_timeout(value v_timeout)
     event_t *new_event;
     printf("Waiting for event for %lld microseconds\n\r", timeout);
     if (new_event = event_wait_timeout64(&QUEUE, timeout))
+    {
         new_event->handler(new_event);
+        uint16_t copy = event_flags;
+        event_flags &= 0;
+        CAMLreturn(Val_int(copy));
+    }
     else
         printf("No event triggered, timeout expired\n\r");
-    CAMLreturn(caml_copy_int64(new_event));
+
+    CAMLreturn(Val_int(0));
 }
 
 // ======================== riot_ip.ml stubs ======================
@@ -77,14 +83,6 @@ caml_mirage_riot_get_mtu(value v_unit)
 {
     CAMLparam0();
     CAMLreturn(Val_int(MTU));
-}
-
-// deprecated
-CAMLprim value
-caml_mirage_riot_event_set(value v_unit)
-{
-    CAMLparam0();
-    CAMLreturn(Val_int(event_set));
 }
 
 CAMLprim value
