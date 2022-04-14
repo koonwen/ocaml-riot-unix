@@ -9,17 +9,12 @@ type origin = Src | Dst
 
 let of_origin = function Src -> 0 | Dst -> 1
 
-external riot_get_packet : Cstruct.buffer -> int = "caml_mirage_riot_get_packet"
-
-external riot_get_tcp_hdr_size : unit -> int
-  = "caml_mirage_riot_get_tcp_hdr_size"
-
-external riot_get_ips : Cstruct.buffer -> int = "caml_mirage_riot_get_ips"
-external riot_get_mtu : unit -> int = "caml_mirage_riot_get_mtu"
-external riot_write : Cstruct.buffer -> int -> int = "caml_mirage_riot_write"
-
-external riot_get_addrs : Cstruct.buffer -> int -> int
-  = "caml_mirage_riot_get_addr"
+external riot_get_pkt : Cstruct.buffer -> int = "caml_riot_get_pkt"
+external riot_get_pkt_ips : Cstruct.buffer -> int = "caml_riot_get_pkt_ips"
+external riot_get_tp_hdr_size : unit -> int = "caml_riot_get_tp_hdr_size"
+external riot_get_mtu : unit -> int = "caml_riot_get_mtu"
+external riot_write : Cstruct.buffer -> int -> int = "caml_riot_write"
+external riot_get_host_ips : Cstruct.buffer -> int = "caml_riot_get_host_ips"
 
 let cs = ref (Cstruct.create 128)
 let con = Lwt_condition.create ()
@@ -102,7 +97,7 @@ end = struct
         udp = false;
         ip_lst =
           (let cs = Cstruct.create 32 in
-           match riot_get_ips (Cstruct.to_bigarray cs) with
+           match riot_get_host_ips (Cstruct.to_bigarray cs) with
            | 0 -> failwith "Error occured getting ips"
            | n ->
                let ipaddr_lst = ref [] in
@@ -125,12 +120,11 @@ end = struct
     let rec aux () =
       Printf.printf "Looping\n%!";
       let* _ = Lwt_condition.wait con in
-      assert (riot_get_addrs src_buf (of_origin Src) = 0);
-      assert (riot_get_addrs dst_buf (of_origin Dst) = 0);
-      assert (riot_get_packet payload_buf = 0);
+      assert (riot_get_pkt_ips dst_buf = 0);
+      assert (riot_get_pkt payload_buf = 0);
       (* Tcp_riot.print_pkt payload_cs; *)
-      Printf.printf "\nResizing packet to %d\n%!" (riot_get_tcp_hdr_size ());
-      let new_cs = Cstruct.sub payload_cs 0 (riot_get_tcp_hdr_size ()) in
+      Printf.printf "\nResizing packet to %d\n%!" (riot_get_tp_hdr_size ());
+      let new_cs = Cstruct.sub payload_cs 0 (riot_get_tp_hdr_size ()) in
       let src = t.ip_lst |> List.hd in
       let dst = IpUtils.ip_of_cs dst_cs in
       Lwt.async (fun () -> tcp ~src ~dst new_cs);
@@ -145,7 +139,7 @@ end
    res *)
 
 let resolve () =
-  let get_data () = riot_get_packet (Cstruct.to_bigarray !cs) in
+  let get_data () = riot_get_pkt (Cstruct.to_bigarray !cs) in
   (match get_data () with 0 -> () | _ -> raise Not_found);
   Lwt_condition.signal con 1
 
