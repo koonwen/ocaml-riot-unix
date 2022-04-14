@@ -1,4 +1,6 @@
 module TcpUtils = struct
+  external riot_write : Cstruct.buffer -> int -> int = "caml_riot_write"
+
   [%%cstruct
   type tcp_hdr_t = {
     src_port : uint8_t; [@len 2]
@@ -48,10 +50,23 @@ module TcpUtils = struct
 end
 
 module IpUtils = struct
-  let ip_of_cs ?(off = 0) cs =
+  external riot_get_pkt : Cstruct.buffer -> int = "caml_riot_get_pkt"
+  external riot_get_pkt_ips : Cstruct.buffer -> unit = "caml_riot_get_pkt_ips"
+  external riot_get_tp_hdr_size : unit -> int = "caml_riot_get_tp_hdr_size"
+  external riot_get_mtu : unit -> int = "caml_riot_get_mtu"
+
+  let ipv6_of_cs ?(off = 0) cs =
     let pre = Cstruct.BE.get_uint64 cs ((8 * off) + 0) in
     let mul = Cstruct.BE.get_uint64 cs ((8 * off) + 8) in
     Ipaddr.V6.of_int64 (pre, mul)
+
+  let get_pkt_ips () =
+    let cs = Cstruct.create 32 in
+    let buf = Cstruct.to_bigarray cs in
+    riot_get_pkt_ips buf;
+    let src = ipv6_of_cs ~off:0 cs in
+    let dst = ipv6_of_cs ~off:1 cs in
+    (src, dst)
 
   let ipaddr_to_cstruct_raw i cs off =
     let a, b, c, d = Ipaddr.V6.to_int32 i in
@@ -59,4 +74,8 @@ module IpUtils = struct
     Cstruct.BE.set_uint32 cs (4 + off) b;
     Cstruct.BE.set_uint32 cs (8 + off) c;
     Cstruct.BE.set_uint32 cs (12 + off) d
+end
+
+module NetifUtils = struct
+  external riot_get_host_ips : Cstruct.buffer -> int = "caml_riot_get_host_ips"
 end

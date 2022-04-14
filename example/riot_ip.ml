@@ -4,18 +4,7 @@ open Lwt
 open Netutils
 
 let protocol_to_int = function `ICMP -> 58 | `TCP -> 6 | `UDP -> 17
-
-type origin = Src | Dst
-
-let of_origin = function Src -> 0 | Dst -> 1
-
-external riot_get_pkt : Cstruct.buffer -> int = "caml_riot_get_pkt"
-external riot_get_pkt_ips : Cstruct.buffer -> int = "caml_riot_get_pkt_ips"
-external riot_get_tp_hdr_size : unit -> int = "caml_riot_get_tp_hdr_size"
-external riot_get_mtu : unit -> int = "caml_riot_get_mtu"
-external riot_write : Cstruct.buffer -> int -> int = "caml_riot_write"
-external riot_get_host_ips : Cstruct.buffer -> int = "caml_riot_get_host_ips"
-
+let of_origin = function `Src -> 0 | `Dst -> 1
 let cs = ref (Cstruct.create 128)
 let con = Lwt_condition.create ()
 
@@ -51,14 +40,10 @@ end = struct
 
   type callback = src:ipaddr -> dst:ipaddr -> Cstruct.t -> unit Lwt.t
 
-  let input t ~(tcp : callback) ~(udp : callback)
-      ~(default : proto:int -> callback) (buf : Cstruct.t) : unit Lwt.t =
-    failwith "Not implemented"
+  let input t ~tcp ~udp ~default buf = failwith "Not required for RIOT stack"
 
-  let write (t : t) ?(fragment : bool = false) ?(ttl : int = 1)
-      ?(src : ipaddr = List.hd t.ip_lst) (ipaddr : ipaddr)
-      (proto : Tcpip.Ip.proto) ?(size : int = default_payload_size)
-      (headerf : Cstruct.t -> int) (payloads : Cstruct.t list) =
+  let write t ?(fragment = false) ?(ttl = 1) ?(src = List.hd t.ip_lst) ipaddr
+      proto ?(size = default_payload_size) headerf payloads =
     if size > default_payload_size then Lwt.return_error `Would_fragment
     else
       let cs = Cstruct.create size in
@@ -68,12 +53,12 @@ end = struct
       let buf = Cstruct.concat pkt in
       match proto with
       | `TCP ->
-          if riot_write (buf |> Cstruct.to_bigarray) i > 0 then Lwt.return_ok ()
+          if TcpUtils.riot_write (buf |> Cstruct.to_bigarray) i > 0 then
+            Lwt.return_ok ()
           else Lwt.return_error `Unimplemented
       | _ -> Lwt.return_error `Unimplemented
 
-  let pseudoheader (t : t) ?(src : ipaddr = List.hd t.ip_lst) (dst : ipaddr)
-      (proto : Tcpip.Ip.proto) (len : int) : Cstruct.t =
+  let pseudoheader t ?(src = List.hd t.ip_lst) dst proto len =
     let ph = Cstruct.create (16 + 16 + 8) in
     IpUtils.ipaddr_to_cstruct_raw src ph 0;
     IpUtils.ipaddr_to_cstruct_raw dst ph 16;
@@ -84,9 +69,9 @@ end = struct
     Cstruct.set_uint8 ph 39 (protocol_to_int `TCP);
     ph
 
-  let src (t : t) ~(dst : ipaddr) : ipaddr = List.hd t.ip_lst
-  let get_ip (t : t) : ipaddr list = t.ip_lst
-  let mtu (t : t) ~(dst : ipaddr) : int = riot_get_mtu ()
+  let src t ~(dst : ipaddr) = List.hd t.ip_lst
+  let get_ip t = t.ip_lst
+  let mtu t ~(dst : ipaddr) = IpUtils.riot_get_mtu ()
 
   let connect () =
     Lwt.return
@@ -97,50 +82,65 @@ end = struct
         udp = false;
         ip_lst =
           (let cs = Cstruct.create 32 in
-           match riot_get_host_ips (Cstruct.to_bigarray cs) with
+           match NetifUtils.riot_get_host_ips (Cstruct.to_bigarray cs) with
            | 0 -> failwith "Error occured getting ips"
            | n ->
                let ipaddr_lst = ref [] in
                for off = 0 to n - 1 do
-                 let ip = IpUtils.ip_of_cs ~off cs in
+                 let ip = IpUtils.ipv6_of_cs ~off cs in
                  (* Printf.printf "IP = %s\n%!" @@ Ipaddr.V6.to_string ip; *)
                  ipaddr_lst := !ipaddr_lst @ [ ip ]
                done;
                !ipaddr_lst);
       }
 
+  (* let listen t ~(tcp : callback) =
+         let payload_cs = Cstruct.create 128 in
+         let payload_buf = Cstruct.to_bigarray payload_cs in
+         let open Lwt.Syntax in
+         let rec aux () =
+           Printf.printf "Looping\n%!";
+           let* _ = Lwt_condition.wait con in
+           assert (IpUtils.riot_get_pkt payload_buf = 0);
+           (* Tcp_riot.print_pkt payload_cs; *)
+           let tp_hdr_size = IpUtils.riot_get_tp_hdr_size () in
+           Printf.printf "\nResizing packet to %d\n%!" tp_hdr_size;
+           let _, dst = IpUtils.get_pkt_ips () in
+           let new_cs = Cstruct.sub payload_cs 0 (IpUtils.riot_get_tp_hdr_size ()) in
+           let src = t.ip_lst |> List.hd in
+           Lwt.async (fun () -> tcp ~src ~dst new_cs);
+           aux ()
+         in
+         aux ()
+     end *)
+
+  external riot_get_pkt : Cstruct.buffer -> int = "caml_riot_get_pkt"
+  external riot_get_pkt_ips : Cstruct.buffer -> int = "caml_riot_get_pkt_ips"
+  external riot_get_tp_hdr_size : unit -> int = "caml_riot_get_tp_hdr_size"
+
   let listen t ~(tcp : callback) =
-    let src_cs = Cstruct.create 16 in
-    let dst_cs = Cstruct.create 16 in
+    let ip_cs = Cstruct.create 32 in
+    let ip_buf = Cstruct.to_bigarray ip_cs in
     let payload_cs = Cstruct.create 128 in
-    let src_buf = Cstruct.to_bigarray src_cs in
-    let dst_buf = Cstruct.to_bigarray dst_cs in
     let payload_buf = Cstruct.to_bigarray payload_cs in
     let open Lwt.Syntax in
     let rec aux () =
       Printf.printf "Looping\n%!";
       let* _ = Lwt_condition.wait con in
-      assert (riot_get_pkt_ips dst_buf = 0);
+      assert (riot_get_pkt_ips ip_buf = 0);
       assert (riot_get_pkt payload_buf = 0);
       (* Tcp_riot.print_pkt payload_cs; *)
       Printf.printf "\nResizing packet to %d\n%!" (riot_get_tp_hdr_size ());
       let new_cs = Cstruct.sub payload_cs 0 (riot_get_tp_hdr_size ()) in
       let src = t.ip_lst |> List.hd in
-      let dst = IpUtils.ip_of_cs dst_cs in
+      let dst = IpUtils.ipv6_of_cs ~off:1 ip_cs in
       Lwt.async (fun () -> tcp ~src ~dst new_cs);
       aux ()
     in
     aux ()
 end
 
-(* let reg_net_event () =
-   let res, w = Lwt.wait () in
-   glb_w := Some w;
-   res *)
-
 let resolve () =
-  let get_data () = riot_get_pkt (Cstruct.to_bigarray !cs) in
+  let get_data () = IpUtils.riot_get_pkt (Cstruct.to_bigarray !cs) in
   (match get_data () with 0 -> () | _ -> raise Not_found);
   Lwt_condition.signal con 1
-
-(* Print out packets recieved in riot by our RIOT *)
