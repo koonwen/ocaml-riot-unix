@@ -22,7 +22,6 @@ let run t =
         in
         (* sleep remaining_time; *)
         let event_flags = riot_event_timeout timeout in
-        Printf.printf "I got %d for my event_flags\n" event_flags;
         if (event_flags & net_ev) > 0 then Riot_ip.resolve ();
 
         (* if (event_flags & uart_ev) > 0 then Riot_uart.resolve (); *)

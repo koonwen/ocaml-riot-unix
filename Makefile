@@ -19,7 +19,7 @@ QUIET ?= 0
 # Our own modules that perform event handling
 
 USEMODULE += xtimer event stdin event_callback
-FEATURES_REQUIRED += periph_uart
+# FEATURES_REQUIRED += periph_uart
 
 # Include network device module and auto init
 USEMODULE += netdev_default
@@ -31,14 +31,9 @@ USEMODULE += gnrc_icmpv6_echo
 # USEMODULE += gnrc_rpl
 # USEMODULE += auto_init_gnrc_rpl
 USEMODULE += gnrc_sock_ip
-USEMODULE += gnrc_pktdump
 
-USEMODULE += shell
-USEMODULE += shell_commands
-USEMODULE += ps
-
+USEMODULE += shared
 USEMODULE += raw_tcp_sock
-USEMODULE += ocaml_event_sig
 USEMODULE += ocaml_runtime
 USEMODULE += stubs
 EXTERNAL_MODULE_DIRS += external_modules

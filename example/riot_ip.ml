@@ -36,7 +36,7 @@ end = struct
     | `Unimplemented -> Fmt.pf ppf "Unimplemented"
     | (`No_route _ | `Would_fragment) as v -> Tcpip.Ip.pp_error ppf v
 
-  let disconnect t = Lwt.return_unit
+  let disconnect t = fail_with "Not implemented"
 
   type callback = src:ipaddr -> dst:ipaddr -> Cstruct.t -> unit Lwt.t
 

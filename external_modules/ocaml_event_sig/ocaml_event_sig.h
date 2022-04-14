@@ -1,9 +1,7 @@
 #ifndef EVENT_QUEUE_H
 #define EVENT_QUEUE_H
 #include "event.h"
-
-#include "debug.h"
-#define ENABLE_DEBUG (1)
+#include "shared.h"
 
 #define UART_EV 01
 #define NET_EV 02

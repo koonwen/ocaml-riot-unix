@@ -11,7 +11,8 @@
 #include "msg.h"
 #include "sched.h"
 
-#include "../ocaml_event_sig/ocaml_event_sig.h"
+#include "ocaml_event_sig.h"
+#include "shared.h"
 
 #define TCP_EVENTLOOP_PRIO (THREAD_PRIORITY_MAIN - 2)
 

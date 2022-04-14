@@ -28,8 +28,7 @@ raw_tcp_sock_thread(void *args)
 
         if ((res = sock_ip_recv(&tcp_sock, tcpbuf, sizeof(tcpbuf), SOCK_NO_TIMEOUT, &tcp_remote)) >= 0)
         {
-            DEBUG("\n(RIOT Raw Tcp Socket loop) Received a message\n");
-            printf("Size of TCP header = %d\n", res);
+            DEBUG("\n(RIOT Raw Tcp Socket loop) Received a message | Size of TCP header = %d\n", res);
             tcp_hdr_size = res;
             add_net_event(NULL);
         }
@@ -45,7 +44,7 @@ uint16_t get_netif_id(void)
         return -1;
 
     netif_t *netif_p = netif_get_by_id(ep.netif);
-    printf("%p\n", netif_p);
+    DEBUG("%p\n", netif_p);
     return ep.netif;
 }
 
@@ -53,7 +52,7 @@ unsigned int get_ips(void *buf)
 {
     // uint16_t netif_id = tcp_sock.local.netif;
     gnrc_netif_t *netif = gnrc_netif_iter(netif);
-    printf("Netif id = %d\n", netif->pid);
+    DEBUG("Netif id = %d\n", netif->pid);
     ipv6_addr_t ipv6_addrs[CONFIG_GNRC_NETIF_IPV6_ADDRS_NUMOF];
     int res = gnrc_netapi_get(netif->pid, NETOPT_IPV6_ADDR, 0, ipv6_addrs,
                               sizeof(ipv6_addrs));
@@ -63,7 +62,7 @@ unsigned int get_ips(void *buf)
     {
         char ipv6_addr[IPV6_ADDR_MAX_STR_LEN];
         ipv6_addr_to_str(ipv6_addr, &ipv6_addrs[i], IPV6_ADDR_MAX_STR_LEN);
-        printf("My address is %s\n", ipv6_addr);
+        DEBUG("My address is %s\n", ipv6_addr);
     }
     return res / sizeof(ipv6_addr_t);
 }

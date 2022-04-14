@@ -5,6 +5,8 @@
 #include <caml/custom.h>
 #include <caml/bigarray.h>
 
+#include "shared.h"
+
 // ======================== riot_time.ml stubs ======================
 #include "xtimer.h"
 // Get monotonic time in microseconds since timer started
@@ -43,7 +45,7 @@ caml_riot_event_timeout(value v_timeout)
 }
 
 // ======================== netutils.ml stubs ======================
-#include "../raw_tcp_sock/raw_tcp_sock.h"
+#include "raw_tcp_sock.h"
 
 CAMLprim value
 caml_riot_write(value v_bigarray, value v_protnum, value v_len)
