@@ -95,23 +95,14 @@ end = struct
       }
 
   let listen t ~(tcp : callback) =
-    let ip_cs = Cstruct.create 16 in
-    let ip_buf = Cstruct.to_bigarray ip_cs in
-    let payload_cs = Cstruct.create 128 in
-    let payload_buf = Cstruct.to_bigarray payload_cs in
     let open Lwt.Syntax in
     let rec aux () =
       Printf.printf "Looping\n%!";
       let* _ = Lwt_condition.wait con in
-      assert (IpUtils.riot_get_pkt_ips ip_buf = 0);
-      assert (IpUtils.riot_get_pkt payload_buf = 0);
-      (* Tcp_riot.print_pkt payload_cs; *)
-      Printf.printf "\nResizing packet to %d\n%!"
-        (IpUtils.riot_get_tp_hdr_size ());
-      let new_cs = Cstruct.sub payload_cs 0 (IpUtils.riot_get_tp_hdr_size ()) in
-      let src = t.ip_lst |> List.hd in
-      let dst = IpUtils.ipv6_of_cs ip_cs in
-      Lwt.async (fun () -> tcp ~src ~dst new_cs);
+      let payload = IpUtils.get_payload () in
+      let _, dst = IpUtils.get_pkt_ips () in
+      let src = List.hd t.ip_lst in
+      Lwt.async (fun () -> tcp ~src ~dst payload);
       aux ()
     in
     aux ()

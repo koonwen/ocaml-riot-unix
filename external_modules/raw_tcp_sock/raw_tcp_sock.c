@@ -68,22 +68,12 @@ unsigned int get_ips(void *buf)
     return res / sizeof(ipv6_addr_t);
 }
 
-int get_addr(void *buf, enum ip_origin mode)
+void get_addrs(void *buf)
 {
-    sock_ip_ep_t ep;
-    // For some reason, this doesnt work
-    char ipv6[IPV6_ADDR_MAX_STR_LEN];
-    uint16_t port;
-    switch (mode)
-    {
-    case src:
-        memcpy(buf, tcp_local.addr.ipv6, IPV6_ADDR_MAX_STR_LEN);
-        break;
-    case dst:
-        memcpy(buf, tcp_remote.addr.ipv6, IPV6_ADDR_MAX_STR_LEN);
-        break;
-    default:
-        return -1;
-    }
-    return 0;
+    size_t ipv6_len = sizeof(ipv6_addr_t);
+    uint8_t *bufp = (uint8_t *)buf;
+    memcpy(bufp, tcp_local.addr.ipv6, ipv6_len);
+    bufp += ipv6_len;
+    memcpy(bufp, tcp_remote.addr.ipv6, ipv6_len);
+    return;
 }

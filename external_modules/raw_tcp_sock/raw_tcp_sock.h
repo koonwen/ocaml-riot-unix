@@ -14,7 +14,6 @@
 #include "../ocaml_event_sig/ocaml_event_sig.h"
 
 #define TCP_EVENTLOOP_PRIO (THREAD_PRIORITY_MAIN - 2)
-#define MIN_MTU (IPV6_MIN_MTU)
 
 extern sock_ip_ep_t tcp_local;
 extern sock_ip_ep_t tcp_remote;
@@ -26,14 +25,8 @@ extern ssize_t tcp_hdr_size;
 
 extern uint8_t tcpbuf[128];
 
-enum ip_origin
-{
-    src,
-    dst
-};
-
 void *raw_tcp_sock_thread(void *args);
+void get_addrs(void *buf);
 unsigned int get_ips(void *buf);
-int get_addr(void *buf, enum ip_origin mode);
 
 #endif

@@ -56,16 +56,17 @@ module IpUtils = struct
   external riot_get_mtu : unit -> int = "caml_riot_get_mtu"
 
   let ipv6_of_cs ?(off = 0) cs =
-    let pre = Cstruct.BE.get_uint64 cs ((8 * off) + 0) in
-    let mul = Cstruct.BE.get_uint64 cs ((8 * off) + 8) in
+    let pre = Cstruct.BE.get_uint64 cs off in
+    let mul = Cstruct.BE.get_uint64 cs (off + 8) in
     Ipaddr.V6.of_int64 (pre, mul)
 
+  (* Get's the ipaddr attached to the local and remote sockets respectively *)
   let get_pkt_ips () =
     let cs = Cstruct.create 32 in
     let buf = Cstruct.to_bigarray cs in
     assert (riot_get_pkt_ips buf = 0);
     let src = ipv6_of_cs ~off:0 cs in
-    let dst = ipv6_of_cs ~off:1 cs in
+    let dst = ipv6_of_cs ~off:16 cs in
     (src, dst)
 
   let ipaddr_to_cstruct_raw i cs off =
@@ -74,6 +75,14 @@ module IpUtils = struct
     Cstruct.BE.set_uint32 cs (4 + off) b;
     Cstruct.BE.set_uint32 cs (8 + off) c;
     Cstruct.BE.set_uint32 cs (12 + off) d
+
+  let get_payload () =
+    let payload_cs = Cstruct.create 128 in
+    let payload_buf = Cstruct.to_bigarray payload_cs in
+    assert (riot_get_pkt payload_buf = 0);
+    let tcp_hdr_len = riot_get_tp_hdr_size () in
+    let resized_cs = Cstruct.sub payload_cs 0 tcp_hdr_len in
+    resized_cs
 end
 
 module NetifUtils = struct

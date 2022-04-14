@@ -73,7 +73,7 @@ caml_riot_get_pkt_ips(value v_bigarray)
 {
     CAMLparam1(v_bigarray);
     void *buf_ptr = Caml_ba_data_val(v_bigarray);
-    get_addr(buf_ptr, dst);
+    get_addrs(buf_ptr);
     CAMLreturn0;
 }
 
