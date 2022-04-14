@@ -51,7 +51,7 @@ end
 
 module IpUtils = struct
   external riot_get_pkt : Cstruct.buffer -> int = "caml_riot_get_pkt"
-  external riot_get_pkt_ips : Cstruct.buffer -> unit = "caml_riot_get_pkt_ips"
+  external riot_get_pkt_ips : Cstruct.buffer -> int = "caml_riot_get_pkt_ips"
   external riot_get_tp_hdr_size : unit -> int = "caml_riot_get_tp_hdr_size"
   external riot_get_mtu : unit -> int = "caml_riot_get_mtu"
 
@@ -63,7 +63,7 @@ module IpUtils = struct
   let get_pkt_ips () =
     let cs = Cstruct.create 32 in
     let buf = Cstruct.to_bigarray cs in
-    riot_get_pkt_ips buf;
+    assert (riot_get_pkt_ips buf = 0);
     let src = ipv6_of_cs ~off:0 cs in
     let dst = ipv6_of_cs ~off:1 cs in
     (src, dst)

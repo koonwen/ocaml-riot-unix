@@ -94,32 +94,8 @@ end = struct
                !ipaddr_lst);
       }
 
-  (* let listen t ~(tcp : callback) =
-         let payload_cs = Cstruct.create 128 in
-         let payload_buf = Cstruct.to_bigarray payload_cs in
-         let open Lwt.Syntax in
-         let rec aux () =
-           Printf.printf "Looping\n%!";
-           let* _ = Lwt_condition.wait con in
-           assert (IpUtils.riot_get_pkt payload_buf = 0);
-           (* Tcp_riot.print_pkt payload_cs; *)
-           let tp_hdr_size = IpUtils.riot_get_tp_hdr_size () in
-           Printf.printf "\nResizing packet to %d\n%!" tp_hdr_size;
-           let _, dst = IpUtils.get_pkt_ips () in
-           let new_cs = Cstruct.sub payload_cs 0 (IpUtils.riot_get_tp_hdr_size ()) in
-           let src = t.ip_lst |> List.hd in
-           Lwt.async (fun () -> tcp ~src ~dst new_cs);
-           aux ()
-         in
-         aux ()
-     end *)
-
-  external riot_get_pkt : Cstruct.buffer -> int = "caml_riot_get_pkt"
-  external riot_get_pkt_ips : Cstruct.buffer -> int = "caml_riot_get_pkt_ips"
-  external riot_get_tp_hdr_size : unit -> int = "caml_riot_get_tp_hdr_size"
-
   let listen t ~(tcp : callback) =
-    let ip_cs = Cstruct.create 32 in
+    let ip_cs = Cstruct.create 16 in
     let ip_buf = Cstruct.to_bigarray ip_cs in
     let payload_cs = Cstruct.create 128 in
     let payload_buf = Cstruct.to_bigarray payload_cs in
@@ -127,13 +103,14 @@ end = struct
     let rec aux () =
       Printf.printf "Looping\n%!";
       let* _ = Lwt_condition.wait con in
-      assert (riot_get_pkt_ips ip_buf = 0);
-      assert (riot_get_pkt payload_buf = 0);
+      assert (IpUtils.riot_get_pkt_ips ip_buf = 0);
+      assert (IpUtils.riot_get_pkt payload_buf = 0);
       (* Tcp_riot.print_pkt payload_cs; *)
-      Printf.printf "\nResizing packet to %d\n%!" (riot_get_tp_hdr_size ());
-      let new_cs = Cstruct.sub payload_cs 0 (riot_get_tp_hdr_size ()) in
+      Printf.printf "\nResizing packet to %d\n%!"
+        (IpUtils.riot_get_tp_hdr_size ());
+      let new_cs = Cstruct.sub payload_cs 0 (IpUtils.riot_get_tp_hdr_size ()) in
       let src = t.ip_lst |> List.hd in
-      let dst = IpUtils.ipv6_of_cs ~off:1 ip_cs in
+      let dst = IpUtils.ipv6_of_cs ip_cs in
       Lwt.async (fun () -> tcp ~src ~dst new_cs);
       aux ()
     in
