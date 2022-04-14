@@ -1,38 +1,32 @@
 open Lwt
 
-module Abstract : sig
-  type event_ptr
+external riot_event_timeout : int64 -> int = "caml_riot_event_timeout"
 
-  val is_valid : event_ptr -> bool
-end = struct
-  type event_ptr = int64
-
-  let is_valid = function _ -> true
-end
-
-open Abstract
-
-external riot_yield : int64 -> event_ptr = "riot_event_timeout"
+let uart_ev = 01
+let net_ev = 02
+let ( & ) = Int.logand
 
 let run t =
   let rec aux () =
     Lwt.wakeup_paused ();
-    Time.restart_threads Time.Monotonic.time;
+    Riot_time.restart_threads Riot_time.Monotonic.time;
     match Lwt.poll t with
     | Some () -> Printf.printf "main () exitted"
     | None ->
         let timeout =
           (* Call enter hooks. *)
           Mirage_runtime.run_enter_iter_hooks ();
-          match Time.select_next () with
-          | None -> Int64.add (Time.Monotonic.time ()) (Duration.of_day 1)
-          | Some tm -> Int64.sub tm (Time.Monotonic.time ())
+          match Riot_time.select_next () with
+          | None -> Int64.add (Riot_time.Monotonic.time ()) (Duration.of_day 1)
+          | Some tm -> Int64.sub tm (Riot_time.Monotonic.time ())
         in
         (* sleep remaining_time; *)
-        let event = riot_yield timeout in
-        (* NEED TO DEFINE READY SET EVENTS *)
-        if is_valid event then Riot_ip.resolve ()
-        else failwith "event_ptr error";
+        let event_flags = riot_event_timeout timeout in
+        Printf.printf "I got %d for my event_flags\n" event_flags;
+        if (event_flags & net_ev) > 0 then Riot_ip.resolve ();
+
+        (* if (event_flags & uart_ev) > 0 then Riot_uart.resolve (); *)
+
         (* Call leave hooks. *)
         Mirage_runtime.run_leave_iter_hooks ();
         aux ()

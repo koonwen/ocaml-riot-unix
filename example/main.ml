@@ -31,7 +31,8 @@ module RIOT_stack = struct
   module IP = Riot_ip.S
 
   module TCP =
-    Tcp.Flow.Make (Riot_ip.S) (Time) (Riot_clock) (Mirage_random_stdlib)
+    Tcp.Flow.Make (Riot_ip.S) (Riot_time.S) (Riot_clock.MCLOCK)
+      (Mirage_random_stdlib)
 
   let listen ip tcp = Riot_ip.S.listen ip ~tcp:(TCP.input tcp)
 end
@@ -45,7 +46,7 @@ let echo_cb (flow : RIOT_stack.TCP.flow) =
     let* write_out =
       match data_in with
       | `Data d -> RIOT_stack.TCP.write_nodelay flow d
-      | `Eof -> failwith "End of file!"
+      | `Eof -> return_ok ()
     in
     match write_out with Ok _ -> aux flow | _ -> failwith "Write Error!"
   in

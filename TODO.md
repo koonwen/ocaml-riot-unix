@@ -8,3 +8,7 @@
 7. Move headers to a common include directory
 8. Fuzzing
 9. Document stubs
+10. Investigate double ACK
+11. Add random module
+12. Change ipaddr to type Ipaddr.V4V6
+13. Make GNRC branch
