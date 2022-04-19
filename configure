@@ -1,0 +1,4 @@
+cd ocamlclean
+make
+cd ../RIOT/dist/tools/tapsetup
+#sudo ./tapsetup -c 1

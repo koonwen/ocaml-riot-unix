@@ -38,7 +38,8 @@ USEMODULE += ocaml_runtime
 USEMODULE += stubs
 EXTERNAL_MODULE_DIRS += external_modules
 
-all: runtime.c stubs runtimelib
+all: stubs runtimelib
+#runtime.c
 
 include $(RIOTBASE)/Makefile.include
 
@@ -49,6 +50,8 @@ runtime.c: example/*
 	cd example && dune build --profile release
 	rm -f ./external_modules/ocaml_runtime/runtime.c
 	cp _build/default/example/main.bc.c ./external_modules/ocaml_runtime/runtime.c
+	chmod +w ./external_modules/ocaml_runtime/runtime.c
+	dune exec -- ocamlclean ./external_modules/ocaml_runtime/runtime.c -o ./external_modules/ocaml_runtime/runtime.c
 
 ocaml/Makefile:
 	sed -i -e 's/oc_cflags="/oc_cflags="$$OC_CFLAGS /g' ocaml/configure
