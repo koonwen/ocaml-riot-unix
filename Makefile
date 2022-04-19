@@ -2,8 +2,8 @@
 APPLICATION = ocaml
 
 # If no BOARD is found in the environment, use this default:
-# BOARD ?= nrf52840-mdk
-BOARD ?= native 
+BOARD ?= nrf52840-mdk
+# BOARD ?= native 
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/RIOT
@@ -62,11 +62,15 @@ CFLAGS := $(subst ',,$(CFLAGS))
 CFLAGS := $(subst -Wstrict-prototypes,,$(CFLAGS))
 CFLAGS := $(subst -Werror,,$(CFLAGS))
 CFLAGS := $(subst -Wold-style-definition,,$(CFLAGS))
+CFLAGS := $(subst -Wformat-overflow,,$(CFLAGS))
+CFLAGS := $(subst -Wformat-truncation,,$(CFLAGS))
+CFLAGS := $(subst -gz,,$(CFLAGS))
+
 
 OCAML_CFLAGS := $(CFLAGS)
 OCAML_LIBS := $(LINKFLAGS)
-# RIOTBUILD_H_FILE := $(CURDIR)/bin/nrf52840-mdk/riotbuild/riotbuild.h
-RIOTBUILD_H_FILE := $(CURDIR)/bin/native/riotbuild/riotbuild.h
+RIOTBUILD_H_FILE := $(CURDIR)/bin/nrf52840-mdk/riotbuild/riotbuild.h
+# RIOTBUILD_H_FILE := $(CURDIR)/bin/native/riotbuild/riotbuild.h
 .PHONY: runtimelib
 runtimelib: $(RIOTBUILD_H_FILE)
 	CC="$(CC)" \
@@ -78,7 +82,7 @@ runtimelib: $(RIOTBUILD_H_FILE)
 	dune build include/ ./external_modules/ocaml_runtime/libcamlrun.a --verbose
 
 CFLAGS += -I$(CURDIR)/include/
-CFLAGS += -mrdrnd -mrdseed #for x86
+# CFLAGS += -mrdrnd -mrdseed #for x86
 LINKFLAGS += -L$(CURDIR) -L$(CURDIR)/external_modules/ocaml_runtime -lcamlrun -lm
 
 print :
