@@ -35,11 +35,12 @@ USEMODULE += gnrc_sock_ip
 USEMODULE += shared
 USEMODULE += raw_tcp_sock
 USEMODULE += ocaml_runtime
+USEMODULE += ocaml_event_sig
 USEMODULE += stubs
 EXTERNAL_MODULE_DIRS += external_modules
 
-all: stubs runtimelib
-#runtime.c
+all: stubs runtimelib 
+# runtime.c
 
 include $(RIOTBASE)/Makefile.include
 
@@ -66,7 +67,6 @@ CFLAGS := $(subst -Wformat-overflow,,$(CFLAGS))
 CFLAGS := $(subst -Wformat-truncation,,$(CFLAGS))
 CFLAGS := $(subst -gz,,$(CFLAGS))
 
-
 OCAML_CFLAGS := $(CFLAGS)
 OCAML_LIBS := $(LINKFLAGS)
 RIOTBUILD_H_FILE := $(CURDIR)/bin/nrf52840-mdk/riotbuild/riotbuild.h
@@ -79,7 +79,8 @@ runtimelib: $(RIOTBUILD_H_FILE)
 	ASPP="$(CC) $(OCAML_CFLAGS) -c" \
 	CPPFLAGS="$(OCAML_CFLAGS)" \
 	LIBS="$(OCAML_LIBS) --entry main" \
-	dune build include/ ./external_modules/ocaml_runtime/libcamlrun.a --verbose
+	dune build include/ libcamlrun.a --verbose
+	mv libcamlrun.a ./external_modules/ocaml_runtime
 
 CFLAGS += -I$(CURDIR)/include/
 # CFLAGS += -mrdrnd -mrdseed #for x86
