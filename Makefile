@@ -39,8 +39,7 @@ USEMODULE += ocaml_event_sig
 USEMODULE += stubs
 EXTERNAL_MODULE_DIRS += external_modules
 
-all: stubs runtimelib 
-# runtime.c
+all: stubs runtimelib runtime.c
 
 include $(RIOTBASE)/Makefile.include
 
