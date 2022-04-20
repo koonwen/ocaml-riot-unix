@@ -3,6 +3,7 @@
 
 # Build directories
 _build
+_opam
 bin
 
 # Runtime

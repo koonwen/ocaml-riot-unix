@@ -2,25 +2,8 @@
 
 (executable
  (name main)
- (libraries
-  riot_net
-  mirage-runtime
-  psq
-  lwt
-  duration
-  cstruct
-  ipaddr
-  tcpip
-  tcpip.tcp
-  mirage-clock
-  mirage-random-stdlib
-  logs.fmt)
  (forbidden_libraries unix)
- (preprocess
-  (pps ppx_cstruct))
- ;  (foreign_stubs (language c) (names stubs))
- (modes
-  (byte c)))
+ (modes (byte c)))
 
 (env
  (dev
