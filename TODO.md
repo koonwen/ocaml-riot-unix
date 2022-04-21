@@ -16,6 +16,7 @@
 15. Write script to output memory usage
 
 original runtime.o ~ 700Kb
+change caml_code to `const`
 
 513K Apr 21 00:43 runtime.o
 Need to figure out if this can be dumped onto readonly memory

@@ -2,8 +2,8 @@
 APPLICATION = ocaml
 
 # If no BOARD is found in the environment, use this default:
-BOARD ?= nrf52840-mdk
-# BOARD ?= native 
+# BOARD ?= nrf52840-mdk
+BOARD ?= native 
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/RIOT
@@ -20,6 +20,7 @@ QUIET ?= 0
 
 USEMODULE += xtimer event stdin event_callback
 # FEATURES_REQUIRED += periph_uart
+USEMODULE += shell shell_commands ps netstats_l2 netstats_ipv6
 
 # Include network device module and auto init
 USEMODULE += netdev_default
@@ -39,7 +40,14 @@ USEMODULE += ocaml_event_sig
 USEMODULE += stubs
 EXTERNAL_MODULE_DIRS += external_modules
 
-all: stubs runtimelib runtime
+all: stubs runtimelib 
+	# @if [ BOARD = "native" ]; then\
+    #     echo "native compilation";\
+	# else
+	# 	echo "nrf52840";\
+	# 	RIOTBUILD_H_FILE := $(CURDIR)/bin/nrf52840-mdk/riotbuild/riotbuild.h
+    # fi
+# runtime
 
 include $(RIOTBASE)/Makefile.include
 
@@ -50,9 +58,9 @@ runtime: example/*
 	cd example && dune build --profile release
 	rm -f ./external_modules/ocaml_runtime/runtime.c
 	cp _build/default/example/main.bc.c ./external_modules/ocaml_runtime/runtime.c
-	chmod +w ./external_modules/ocaml_runtime/runtime.c
-	dune exec -- ocamlclean ./external_modules/ocaml_runtime/runtime.c -o ./runtime.c
-	mv ./runtime.c external_modules/ocaml_runtime/runtime.c
+	# chmod +w ./external_modules/ocaml_runtime/runtime.c
+	# dune exec -- ocamlclean ./external_modules/ocaml_runtime/runtime.c -o ./runtime.c
+	# mv ./runtime.c external_modules/ocaml_runtime/runtime.c
 
 ocaml/Makefile:
 	sed -i -e 's/oc_cflags="/oc_cflags="$$OC_CFLAGS /g' ocaml/configure
@@ -69,8 +77,7 @@ CFLAGS := $(subst -gz,,$(CFLAGS))
 
 OCAML_CFLAGS := $(CFLAGS)
 OCAML_LIBS := $(LINKFLAGS)
-RIOTBUILD_H_FILE := $(CURDIR)/bin/nrf52840-mdk/riotbuild/riotbuild.h
-# RIOTBUILD_H_FILE := $(CURDIR)/bin/native/riotbuild/riotbuild.h
+RIOTBUILD_H_FILE := $(CURDIR)/bin/native/riotbuild/riotbuild.h
 .PHONY: runtimelib
 runtimelib: $(RIOTBUILD_H_FILE)
 	CC="$(CC)" \
@@ -82,8 +89,8 @@ runtimelib: $(RIOTBUILD_H_FILE)
 	dune build include/ libcamlrun.a --verbose
 	mv libcamlrun.a ./external_modules/ocaml_runtime
 
+CFLAGS += -mrdrnd -mrdseed #for x86
 CFLAGS += -I$(CURDIR)/include/
-# CFLAGS += -mrdrnd -mrdseed #for x86
 LINKFLAGS += -L$(CURDIR) -L$(CURDIR)/external_modules/ocaml_runtime -lcamlrun -lm
 
 print :

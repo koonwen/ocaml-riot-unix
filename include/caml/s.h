@@ -25,7 +25,7 @@
 
 /* 1. For the runtime system. */
 
-/* #undef POSIX_SIGNALS */
+#define POSIX_SIGNALS 1
 
 /* Define POSIX_SIGNALS if signal handling is POSIX-compliant.
    In particular, sigaction(), sigprocmask() and the operations on
@@ -53,11 +53,11 @@
 /* Define HAS_WORKING_FMA if the fma function is correctly implemented. The
    newlib library (intentionally) just has return x * y + z. */
 
-/* #undef HAS_GETRUSAGE */
+#define HAS_GETRUSAGE 1
 
-/* #undef HAS_TIMES */
+#define HAS_TIMES 1
 
-/* #undef HAS_SECURE_GETENV */
+#define HAS_SECURE_GETENV 1
 
 /* #undef HAS___SECURE_GETENV */
 
@@ -69,14 +69,14 @@
 
 /* Define HAS_SOCKETS if you have BSD sockets. */
 
-/* #undef HAS_SOCKLEN_T */
+#define HAS_SOCKLEN_T 1
 
 /* Define HAS_SOCKLEN_T if the type socklen_t is defined in
    /usr/include/sys/socket.h. */
 
-/* #undef HAS_INET_ATON */
+#define HAS_INET_ATON 1
 
-/* #undef HAS_IPV6 */
+#define HAS_IPV6 1
 
 #define HAS_STDINT_H 1
 
@@ -84,26 +84,26 @@
 
 /* Define HAS_UNISTD if you have /usr/include/unistd.h. */
 
-/* #undef HAS_DIRENT */
+#define HAS_DIRENT 1
 
 /* Define HAS_DIRENT if you have /usr/include/dirent.h and the result of
    readdir() is of type struct dirent *.
    Otherwise, we'll load /usr/include/sys/dir.h, and readdir() is expected to
    return a struct direct *. */
 
-/* #undef HAS_REWINDDIR */
+#define HAS_REWINDDIR 1
 
 /* Define HAS_REWINDDIR if you have rewinddir(). */
 
-/* #undef HAS_LOCKF */
+#define HAS_LOCKF 1
 
 /* Define HAS_LOCKF if the library provides the lockf() function. */
 
-/* #undef HAS_MKFIFO */
+#define HAS_MKFIFO 1
 
 /* Define HAS_MKFIFO if the library provides the mkfifo() function. */
 
-/* #undef HAS_GETCWD */
+#define HAS_GETCWD 1
 
 /* Define HAS_GETCWD if the library provides the getcwd() function. */
 
@@ -111,22 +111,22 @@
 
 /* Define HAS_SYSTEM if the library provides the system() function. */
 
-/* #undef HAS_UTIME */
-/* #undef HAS_UTIMES */
+#define HAS_UTIME 1
+#define HAS_UTIMES 1
 
 /* Define HAS_UTIME if you have /usr/include/utime.h and the library
    provides utime(). Define HAS_UTIMES if the library provides utimes(). */
 
-/* #undef HAS_FCHMOD */
+#define HAS_FCHMOD 1
 
 /* Define HAS_FCHMOD if you have fchmod() and fchown(). */
 
-/* #undef HAS_TRUNCATE */
+#define HAS_TRUNCATE 1
 
 /* Define HAS_TRUNCATE if you have truncate() and
    ftruncate(). */
 
-/* #undef HAS_SELECT */
+#define HAS_SELECT 1
 
 /* Define HAS_SELECT if you have select(). */
 
@@ -135,65 +135,65 @@
 /* Define HAS_SYS_SELECT_H if /usr/include/sys/select.h exists
    and should be included before using select(). */
 
-/* #undef HAS_NANOSLEEP */
+#define HAS_NANOSLEEP 1
 /* Define HAS_NANOSLEEP if you have nanosleep(). */
 
-/* #undef HAS_SYMLINK */
+#define HAS_SYMLINK 1
 
 /* Define HAS_SYMLINK if you have symlink() and readlink() and lstat(). */
 
-/* #undef HAS_WAIT4 */
-/* #undef HAS_WAITPID */
+#define HAS_WAIT4 1
+#define HAS_WAITPID 1
 
 /* Define HAS_WAIT4 if you have wait4().
    Define HAS_WAITPID if you have waitpid(). */
 
-/* #undef HAS_GETGROUPS */
+#define HAS_GETGROUPS 1
 
 /* Define HAS_GETGROUPS if you have getgroups(). */
 
-/* #undef HAS_SETGROUPS */
+#define HAS_SETGROUPS 1
 
 /* Define HAS_SETGROUPS if you have setgroups(). */
 
-/* #undef HAS_INITGROUPS */
+#define HAS_INITGROUPS 1
 
 /* Define HAS_INITGROUPS if you have initgroups(). */
 
-/* #undef HAS_TERMIOS */
+#define HAS_TERMIOS 1
 
 /* Define HAS_TERMIOS if you have /usr/include/termios.h and it is
    Posix-compliant. */
 
-/* #undef HAS_SETITIMER */
+#define HAS_SETITIMER 1
 
 /* Define HAS_SETITIMER if you have setitimer(). */
 
-/* #undef HAS_GETHOSTNAME */
+#define HAS_GETHOSTNAME 1
 
 /* Define HAS_GETHOSTNAME if you have gethostname(). */
 
-/* #undef HAS_UNAME */
+#define HAS_UNAME 1
 
 /* Define HAS_UNAME if you have uname(). */
 
-/* #undef HAS_GETTIMEOFDAY */
+#define HAS_GETTIMEOFDAY 1
 
 /* Define HAS_GETTIMEOFDAY if you have gettimeofday(). */
 
-/* #undef HAS_MKTIME */
+#define HAS_MKTIME 1
 
 /* Define HAS_MKTIME if you have mktime(). */
 
-/* #undef HAS_SETSID */
+#define HAS_SETSID 1
 
 /* Define HAS_SETSID if you have setsid(). */
 
-/* #undef HAS_PUTENV */
+#define HAS_PUTENV 1
 
 /* Define HAS_PUTENV if you have putenv(). */
 
-/* #undef HAS_SETENV_UNSETENV */
+#define HAS_SETENV_UNSETENV 1
 
 /* Define HAS_SETENV_UNSETENV if you have setenv() and unsetenv(). */
 
@@ -202,59 +202,59 @@
 /* Define HAS_LOCALE_H if you have the include file <locale.h> and the
    uselocale() function. */
 
-#define HAS_XLOCALE_H 1
+/* #undef HAS_XLOCALE_H */
 
 /* Define HAS_XLOCALE_H if you have the include file <xlocale.h> and the
    uselocale() function. */
 
-/* #undef HAS_STRTOD_L */
+#define HAS_STRTOD_L 1
 
 /* Define HAS_STRTOD_L if you have strtod_l */
 
-/* #undef HAS_MMAP */
+#define HAS_MMAP 1
 
 /* Define HAS_MMAP if you have the include file <sys/mman.h> and the
    functions mmap() and munmap(). */
 
-/* #undef HAS_PWRITE */
+#define HAS_PWRITE 1
 
-/* #undef HAS_NANOSECOND_STAT */
+#define HAS_NANOSECOND_STAT 1
 
-/* #undef HAS_GETHOSTBYNAME_R */
+#define HAS_GETHOSTBYNAME_R 6
 
 /* Define HAS_GETHOSTBYNAME_R if gethostbyname_r() is available.
    The value of this symbol is the number of arguments of
    gethostbyname_r(): either 5 or 6 depending on prototype.
    (5 is the Solaris version, 6 is the Linux version). */
 
-/* #undef HAS_GETHOSTBYADDR_R */
+#define HAS_GETHOSTBYADDR_R 8
 
 /* Define HAS_GETHOSTBYADDR_R if gethostbyname_r() is available.
    The value of this symbol is the number of arguments of
    gethostbyaddr_r(): either 7 or 8 depending on prototype.
    (7 is the Solaris version, 8 is the Linux version). */
 
-/* #undef HAS_MKSTEMP */
+#define HAS_MKSTEMP 1
 
-/* #undef HAS_NICE */
+#define HAS_NICE 1
 
 /* Define HAS_NICE if you have nice(). */
 
-/* #undef HAS_DUP3 */
+#define HAS_DUP3 1
 
-/* #undef HAS_PIPE2 */
+#define HAS_PIPE2 1
 
-/* #undef HAS_ACCEPT4 */
+#define HAS_ACCEPT4 1
 
-/* #undef HAS_GETAUXVAL */
+#define HAS_GETAUXVAL 1
 
-/* #undef HAS_SYS_SHM_H */
+#define HAS_SYS_SHM_H 1
 
-/* #undef HAS_SHMAT */
+#define HAS_SHMAT 1
 
-/* #undef HAS_EXECVPE */
+#define HAS_EXECVPE 1
 
-/* #undef HAS_POSIX_SPAWN */
+#define HAS_POSIX_SPAWN 1
 
 #define HAS_FFS 1
 /* #undef HAS_BITSCANFORWARD */
@@ -271,7 +271,7 @@
 
 /* #undef HAS_STRERROR */
 
-/* #undef HAS_POSIX_MONOTONIC_CLOCK */
+#define HAS_POSIX_MONOTONIC_CLOCK 1
 
 /* #undef HAS_MACH_ABSOLUTE_TIME */
 #undef HAS_SOCKETS
