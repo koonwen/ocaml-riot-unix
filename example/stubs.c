@@ -67,7 +67,7 @@ caml_riot_get_pkt(value v_bigarray)
     CAMLparam1(v_bigarray);
     uint8_t *ptr = (uint8_t *)Caml_ba_data_val(v_bigarray);
     memcpy(ptr, tcpbuf, sizeof(tcpbuf));
-    CAMLreturn(0);
+    CAMLreturn(Val_int(0));
 }
 
 CAMLprim value
@@ -76,7 +76,7 @@ caml_riot_get_pkt_ips(value v_bigarray)
     CAMLparam1(v_bigarray);
     void *buf_ptr = Caml_ba_data_val(v_bigarray);
     get_addrs(buf_ptr);
-    CAMLreturn0;
+    CAMLreturn(Val_int(0));
 }
 
 CAMLprim value

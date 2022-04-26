@@ -40,13 +40,13 @@ USEMODULE += ocaml_event_sig
 USEMODULE += stubs
 EXTERNAL_MODULE_DIRS += external_modules
 
-all: stubs runtimelib 
-	# @if [ BOARD = "native" ]; then\
-    #     echo "native compilation";\
-	# else
-	# 	echo "nrf52840";\
-	# 	RIOTBUILD_H_FILE := $(CURDIR)/bin/nrf52840-mdk/riotbuild/riotbuild.h
-    # fi
+all: stubs runtimelib runtime
+# @if [ BOARD = "native" ]; then\
+#     echo "native compilation";\
+# else
+# 	echo "nrf52840";\
+# 	RIOTBUILD_H_FILE := $(CURDIR)/bin/nrf52840-mdk/riotbuild/riotbuild.h
+# fi
 # runtime
 
 include $(RIOTBASE)/Makefile.include
@@ -58,9 +58,9 @@ runtime: example/*
 	cd example && dune build --profile release
 	rm -f ./external_modules/ocaml_runtime/runtime.c
 	cp _build/default/example/main.bc.c ./external_modules/ocaml_runtime/runtime.c
-	# chmod +w ./external_modules/ocaml_runtime/runtime.c
-	# dune exec -- ocamlclean ./external_modules/ocaml_runtime/runtime.c -o ./runtime.c
-	# mv ./runtime.c external_modules/ocaml_runtime/runtime.c
+	chmod +w ./external_modules/ocaml_runtime/runtime.c
+	dune exec -- ocamlclean ./external_modules/ocaml_runtime/runtime.c -o ./runtime.c
+	mv ./runtime.c external_modules/ocaml_runtime/runtime.c
 
 ocaml/Makefile:
 	sed -i -e 's/oc_cflags="/oc_cflags="$$OC_CFLAGS /g' ocaml/configure
