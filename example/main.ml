@@ -54,8 +54,6 @@ let echo_cb (flow : RIOT_stack.TCP.flow) =
 
 let () =
   Event_loop.run
-    (* (let* ip = Riot_ip.S.connect () in
-       Riot_ip.S.listen ip ~tcp:(fun ~src ~dst cs -> Lwt.return_unit)) *)
     (let* ip = RIOT_stack.IP.connect () in
      let* tcp = RIOT_stack.TCP.connect ip in
      RIOT_stack.TCP.listen tcp ~port:8000 echo_cb;
