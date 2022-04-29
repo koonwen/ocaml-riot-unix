@@ -3,19 +3,19 @@
 (executable
  (name main)
  (libraries
-  mirage-runtime
-  psq
-  lwt
-  duration
-  cstruct
-  ipaddr
-  tcpip
-  tcpip.tcp
-  mirage-clock
   mirage-random-stdlib
-  logs.fmt
+  mirage-runtime
+  mirage-clock
+  mirage-time
+  mirage-flow
   cohttp-mirage
-  mirage-flow)
+  cstruct
+  duration
+  tcpip.tcp
+  logs.fmt
+  ipaddr
+  lwt
+  psq)
  (forbidden_libraries unix)
  (preprocess
   (pps ppx_cstruct))

@@ -1,19 +1,16 @@
 # TODO #
-1. Clean up the example section `DONE`
-2. Clean up the toplevel `DONE`
-3. Write instructional on how to build including compiler download
-4. Implement an event set for the event loop `DONE`
-5. Change to ztimer
-6. Test on chip
-7. Move headers to a common include directory `Done`
-8. Fuzzing
-9. Document stubs
-10. Investigate double ACK
-11. Add random module
-12. Change ipaddr to type Ipaddr.V4V6
-13. Make GNRC branch
-14. Write some unit tests
-15. Write script to output memory usage
+1. Write instructional on how to build including compiler download
+2. Test on chip
+3. Change to ztimer
+4. Fuzzing
+5. Document stubs
+6. Investigate double ACK
+7. Add random module
+8. Change ipaddr to type Ipaddr.V4V6
+9. Make GNRC branch
+10. Write some unit tests
+11. Write script to output memory usage (memory usage)
+12. GNRC implementation
 
 original runtime.o ~ 700Kb
 change caml_code to `const`
