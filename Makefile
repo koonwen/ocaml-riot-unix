@@ -40,7 +40,8 @@ USEMODULE += ocaml_event_sig
 USEMODULE += stubs
 EXTERNAL_MODULE_DIRS += external_modules
 
-all: stubs runtimelib runtime
+all: stubs runtimelib 
+# runtime
 # @if [ BOARD = "native" ]; then\
 #     echo "native compilation";\
 # else
