@@ -31,7 +31,7 @@
    (the least significant byte comes first).
 */
 
-#define ARCH_ALIGN_DOUBLE 1
+/* #undef ARCH_ALIGN_DOUBLE */
 
 /* Define ARCH_ALIGN_DOUBLE if the processor requires doubles to be
    doubleword-aligned. Leave ARCH_ALIGN_DOUBLE undefined if the processor
@@ -70,7 +70,7 @@
    platforms and "l" on 64-bit platforms.
    Leave undefined if ARCH_INT64_TYPE is undefined.  */
 
-#define ARCH_ALIGN_INT64 1
+/* #undef ARCH_ALIGN_INT64 */
 
 /* Define ARCH_ALIGN_INT64 if the processor requires 64-bit integers to be
    doubleword-aligned. Leave ARCH_ALIGN_INT64 undefined if the processor
