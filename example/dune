@@ -1,19 +1,21 @@
-(vendored_dirs ocplib-endian)
+(vendored_dirs ocplib-endian cohttp-mirage)
 
 (executable
  (name main)
  (libraries
-  mirage-runtime
-  psq
-  lwt
-  duration
-  cstruct
-  ipaddr
-  tcpip
-  tcpip.tcp
-  mirage-clock
   mirage-random-stdlib
-  logs.fmt)
+  mirage-runtime
+  mirage-clock
+  mirage-time
+  mirage-flow
+  cohttp-mirage
+  cstruct
+  duration
+  tcpip.tcp
+  logs.fmt
+  ipaddr
+  lwt
+  psq)
  (forbidden_libraries unix)
  (preprocess
   (pps ppx_cstruct))
