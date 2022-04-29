@@ -40,7 +40,8 @@ USEMODULE += ocaml_event_sig
 USEMODULE += stubs
 EXTERNAL_MODULE_DIRS += external_modules
 
-all: stubs runtimelib runtime
+all: stubs runtimelib 
+# runtime
 # @if [ BOARD = "native" ]; then\
 #     echo "native compilation";\
 # else
@@ -58,6 +59,8 @@ runtime: example/*
 	cd example && dune build --profile release
 	rm -f ./external_modules/ocaml_runtime/runtime.c
 	cp _build/default/example/main.bc.c ./external_modules/ocaml_runtime/runtime.c
+
+optimize: external_modules/ocaml_runtime/runtime.c
 	chmod +w ./external_modules/ocaml_runtime/runtime.c
 	dune exec -- ocamlclean ./external_modules/ocaml_runtime/runtime.c -o ./runtime.c
 	mv ./runtime.c external_modules/ocaml_runtime/runtime.c
