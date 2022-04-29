@@ -44,19 +44,19 @@ end = struct
 
   let write t ?(fragment = false) ?(ttl = 1) ?(src = List.hd t.ip_lst) ipaddr
       proto ?(size = default_payload_size) headerf payloads =
-    if size > default_payload_size then Lwt.return_error `Would_fragment
-    else
-      let cs = Cstruct.create size in
-      let i = headerf cs in
-      let cs = Cstruct.sub cs 0 i in
-      let pkt = cs :: payloads in
-      let buf = Cstruct.concat pkt in
-      match proto with
-      | `TCP ->
-          if TcpUtils.riot_write (buf |> Cstruct.to_bigarray) i > 0 then
-            Lwt.return_ok ()
-          else Lwt.return_error `Unimplemented
-      | _ -> Lwt.return_error `Unimplemented
+    (* if size > default_payload_size then Lwt.return_error `Would_fragment
+       else *)
+    let cs = Cstruct.create size in
+    let i = headerf cs in
+    let cs = Cstruct.sub cs 0 i in
+    let pkt = cs :: payloads in
+    let buf = Cstruct.concat pkt in
+    match proto with
+    | `TCP ->
+        if TcpUtils.riot_write (buf |> Cstruct.to_bigarray) i > 0 then
+          Lwt.return_ok ()
+        else Lwt.return_error `Unimplemented
+    | _ -> Lwt.return_error `Unimplemented
 
   let pseudoheader t ?(src = List.hd t.ip_lst) dst proto len =
     let ph = Cstruct.create (16 + 16 + 8) in
