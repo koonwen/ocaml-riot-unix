@@ -28,11 +28,10 @@ end = struct
     ip_lst : ipaddr list;
   }
 
-  let default_payload_size = 128
-
-  type error = [ Tcpip.Ip.error | `Unimplemented ]
+  type error = [ Tcpip.Ip.error | `Unimplemented | `Exceeded_MTU ]
 
   let pp_error ppf = function
+    | `Exceeded_MTU -> Fmt.pf ppf "Exceeded MTU"
     | `Unimplemented -> Fmt.pf ppf "Unimplemented"
     | (`No_route _ | `Would_fragment) as v -> Tcpip.Ip.pp_error ppf v
 
@@ -41,20 +40,22 @@ end = struct
   type callback = src:ipaddr -> dst:ipaddr -> Cstruct.t -> unit Lwt.t
 
   let input t ~tcp ~udp ~default buf = failwith "Not required for RIOT stack"
+  let maximum_transfer_unit = Netutils.IpUtils.riot_get_mtu ()
 
-  let write t ?(fragment = false) ?(ttl = 1) ?(src = List.hd t.ip_lst) ipaddr
-      proto ?(size = default_payload_size) headerf payloads =
-    if size > default_payload_size then Lwt.return_error `Would_fragment
+  let write t ?(fragment = true) ?(ttl = 1) ?(src = List.hd t.ip_lst) ipaddr
+      proto ?(size = 0) headerf payloads =
+    let cs = Cstruct.create size in
+    let ip_hdr_len = headerf cs in
+    if size + ip_hdr_len > maximum_transfer_unit then
+      Lwt.return_error `Exceeded_MTU
     else
-      let cs = Cstruct.create size in
-      let i = headerf cs in
-      let cs = Cstruct.sub cs 0 i in
+      let cs = Cstruct.sub cs 0 ip_hdr_len in
       let pkt = cs :: payloads in
       let buf = Cstruct.concat pkt in
       match proto with
       | `TCP ->
-          if TcpUtils.riot_write (buf |> Cstruct.to_bigarray) i > 0 then
-            Lwt.return_ok ()
+          if TcpUtils.riot_write (buf |> Cstruct.to_bigarray) ip_hdr_len > 0
+          then Lwt.return_ok ()
           else Lwt.return_error `Unimplemented
       | _ -> Lwt.return_error `Unimplemented
 

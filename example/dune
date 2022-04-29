@@ -1,4 +1,4 @@
-(vendored_dirs ocplib-endian)
+(vendored_dirs ocplib-endian cohttp-mirage)
 
 (executable
  (name main)
@@ -13,7 +13,9 @@
   tcpip.tcp
   mirage-clock
   mirage-random-stdlib
-  logs.fmt)
+  logs.fmt
+  cohttp-mirage
+  mirage-flow)
  (forbidden_libraries unix)
  (preprocess
   (pps ppx_cstruct))
