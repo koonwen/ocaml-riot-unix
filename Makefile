@@ -16,29 +16,33 @@ DEVELHELP ?= 1
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 0
 
-# Our own modules that perform event handling
+# LOGGING
+LOG_LEVEL=LOG_ALL
 
 USEMODULE += xtimer event stdin event_callback
-# FEATURES_REQUIRED += periph_uart
 USEMODULE += shell shell_commands ps netstats_l2 netstats_ipv6
 
 # Include network device module and auto init
 USEMODULE += netdev_default
 USEMODULE += auto_init_gnrc_netif
 # # Include RIOT gnrc network layer
-USEMODULE += gnrc_ipv6_default
 USEMODULE += gnrc_icmpv6_echo
-# # Add a routing protocol
-# USEMODULE += gnrc_rpl
-# USEMODULE += auto_init_gnrc_rpl
-USEMODULE += gnrc_sock_ip
+USEMODULE += gnrc_ipv6_default
+USEMODULE += gnrc_nettype_tcp
 
+# Our own modules that perform event handling
 USEMODULE += shared
-USEMODULE += raw_tcp_sock
+USEMODULE += custom_tcp
 USEMODULE += ocaml_runtime
 USEMODULE += ocaml_event_sig
 USEMODULE += stubs
 EXTERNAL_MODULE_DIRS += external_modules
+
+# Uncomment the following 2 lines to specify static link lokal IPv6 address
+# this might be useful for testing, in cases where you cannot or do not want to
+# run a shell with ifconfig to get the real link lokal address.
+#IPV6_STATIC_LLADDR ?= '"fe80::cafe:cafe:cafe:1"'
+#CFLAGS += -DGNRC_IPV6_STATIC_LLADDR=$(IPV6_STATIC_LLADDR)
 
 all: stubs runtimelib 
 # runtime

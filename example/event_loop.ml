@@ -2,8 +2,7 @@ open Lwt
 
 external riot_event_timeout : int64 -> int = "caml_riot_event_timeout"
 
-let uart_ev = 01
-let net_ev = 02
+let net_ev = 01
 let ( & ) = Int.logand
 
 let run t =
@@ -23,9 +22,6 @@ let run t =
         (* sleep remaining_time; *)
         let event_flags = riot_event_timeout timeout in
         if (event_flags & net_ev) > 0 then Riot_ip.resolve ();
-
-        (* if (event_flags & uart_ev) > 0 then Riot_uart.resolve (); *)
-
         (* Call leave hooks. *)
         Mirage_runtime.run_leave_iter_hooks ();
         aux ()
