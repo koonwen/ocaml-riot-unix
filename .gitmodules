@@ -1,6 +1,6 @@
 [submodule "RIOT"]
 	path = RIOT
-	url = git@github.com:RIOT-OS/RIOT.git
+	url = https://github.com/RIOT-OS/RIOT.git
 [submodule "ocamlclean"]
 	path = ocamlclean
-	url = git@github.com:koonwen/ocamlclean.git
+	url = https://github.com/koonwen/ocamlclean.git
