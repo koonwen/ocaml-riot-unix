@@ -5,7 +5,7 @@ open Netutils
 
 let protocol_to_int = function `ICMP -> 58 | `TCP -> 6 | `UDP -> 17
 let of_origin = function `Src -> 0 | `Dst -> 1
-let cs = ref (Cstruct.create 128)
+let cs = ref (Cstruct.create 255)
 let con = Lwt_condition.create ()
 
 module S : sig

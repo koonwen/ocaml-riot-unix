@@ -31,15 +31,17 @@ let () =
 module RIOT_stack = struct
   module IP = Riot_ip.S
 
-  module TCP = struct
-    include
-      Tcp.Flow.Make (Riot_ip.S) (Riot_time.S) (Riot_clock.MCLOCK)
-        (Mirage_random_stdlib)
+  module TCP =
+    Tcp.Flow.Make (Riot_ip.S) (Riot_time.S) (Riot_clock.MCLOCK)
+      (Mirage_random_stdlib)
+
+  module Http_server = struct
+    include Cohttp_mirage.Server.Flow (TCP)
+
+    let create ip tcp ~port http =
+      TCP.listen tcp ~port (callback http);
+      IP.listen ip ~tcp:(TCP.input tcp)
   end
-
-  let listen ip tcp = IP.listen ip ~tcp:(TCP.input tcp)
-
-  module Http_server = Cohttp_mirage.Server.Flow (TCP)
 end
 
 let server =
@@ -48,34 +50,17 @@ let server =
     let meth = req |> Request.meth |> Code.string_of_method in
     let headers = req |> Request.headers |> Header.to_string in
     ( body |> Cohttp_lwt.Body.to_string >|= fun body ->
-      Printf.sprintf "Uri: %s\nMethod: %s\nHeaders\nHeaders: %s\nBody: %s" uri
+      Printf.sprintf "Uri: %s\nMethod: %s\nHeaders\nHeaders: %s\nBody: %s\n" uri
         meth headers body )
     >>= fun body -> RIOT_stack.Http_server.respond_string ~status:`OK ~body ()
   in
-  RIOT_stack.Http_server.make ~callback ()
-
-let echo_cb (flow : RIOT_stack.TCP.flow) =
-  let rec aux flow =
-    let* res = RIOT_stack.TCP.read flow in
-    let data_in =
-      match res with Ok v -> v | Error e -> failwith "Failed to read data"
-    in
-    let* write_out =
-      match data_in with
-      | `Data d -> RIOT_stack.TCP.write_nodelay flow d
-      | `Eof -> return_ok ()
-    in
-    match write_out with Ok _ -> aux flow | _ -> failwith "Write Error!"
-  in
-  aux flow
+  RIOT_stack.Http_server.make ?conn_closed:None ~callback ()
 
 let () =
   Event_loop.run
     (let* ip = RIOT_stack.IP.connect () in
      let* tcp = RIOT_stack.TCP.connect ip in
-     RIOT_stack.TCP.listen tcp ~port:8000
-       (RIOT_stack.Http_server.callback server);
-     RIOT_stack.listen ip tcp >>= fun _ -> return_unit)
+     RIOT_stack.Http_server.create ip tcp ~port:8000 server)
 
 (* let () =
    at_exit (fun () ->

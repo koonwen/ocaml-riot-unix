@@ -77,11 +77,12 @@ module IpUtils = struct
     Cstruct.BE.set_uint32 cs (12 + off) d
 
   let get_payload () =
-    let payload_cs = Cstruct.create 128 in
+    let payload_cs = Cstruct.create 255 in
     let payload_buf = Cstruct.to_bigarray payload_cs in
     assert (riot_get_pkt payload_buf = 0);
     let tcp_hdr_len = riot_get_tp_hdr_size () in
     let resized_cs = Cstruct.sub payload_cs 0 tcp_hdr_len in
+    Printf.printf "RESIZED CS = %d\n" tcp_hdr_len;
     resized_cs
 end
 

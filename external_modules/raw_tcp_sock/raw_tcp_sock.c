@@ -1,6 +1,6 @@
 #include "raw_tcp_sock.h"
 
-uint8_t tcpbuf[128];
+uint8_t tcpbuf[255];
 
 sock_ip_t tcp_sock;
 sock_ip_ep_t tcp_local = SOCK_IPV6_EP_ANY;

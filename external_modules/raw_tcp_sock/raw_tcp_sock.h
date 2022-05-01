@@ -24,7 +24,7 @@ extern ssize_t tcp_hdr_size;
 // Add sock_buffer_queue
 // extern glb_tcp_queue_buf;
 
-extern uint8_t tcpbuf[128];
+extern uint8_t tcpbuf[255];
 
 void *raw_tcp_sock_thread(void *args);
 void get_addrs(void *buf);

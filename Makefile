@@ -13,32 +13,42 @@ RIOTBASE ?= $(CURDIR)/RIOT
 # development process:
 DEVELHELP ?= 1
 
+# LOG_NONE
+#     Lowest log level, will output nothing. 
+# LOG_ERROR
+#     Error log level, will print only critical, non-recoverable errors like hardware initialization failures. 
+# LOG_WARNING
+#     Warning log level, will print warning messages for temporary errors. 
+# LOG_INFO
+#     Informational log level, will print purely informational messages like successful system bootup, network link state, … 
+# LOG_DEBUG
+#     Debug log level, printing developer stuff considered too verbose for production use. 
+# LOG_ALL
+LOG_LEVEL = LOG_ALL
+
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 0
 
-# Our own modules that perform event handling
-
 USEMODULE += xtimer event stdin event_callback
 # FEATURES_REQUIRED += periph_uart
-USEMODULE += shell shell_commands ps netstats_l2 netstats_ipv6
+# USEMODULE += shell shell_commands ps netstats_l2 netstats_ipv6
 
 # Include network device module and auto init
 USEMODULE += netdev_default
 USEMODULE += auto_init_gnrc_netif
-# # Include RIOT gnrc network layer
+# Include RIOT gnrc network layer
 USEMODULE += gnrc_ipv6_default
 USEMODULE += gnrc_icmpv6_echo
-# # Add a routing protocol
-# USEMODULE += gnrc_rpl
-# USEMODULE += auto_init_gnrc_rpl
+# Include sock API
 USEMODULE += gnrc_sock_ip
 
+# Our external modules for the translation layer
+EXTERNAL_MODULE_DIRS += external_modules
 USEMODULE += shared
 USEMODULE += raw_tcp_sock
 USEMODULE += ocaml_runtime
 USEMODULE += ocaml_event_sig
 USEMODULE += stubs
-EXTERNAL_MODULE_DIRS += external_modules
 
 all: stubs runtimelib 
 # runtime
@@ -95,6 +105,3 @@ runtimelib: $(RIOTBUILD_H_FILE)
 CFLAGS += -mrdrnd -mrdseed #for x86
 CFLAGS += -I$(CURDIR)/include/
 LINKFLAGS += -L$(CURDIR) -L$(CURDIR)/external_modules/ocaml_runtime -lcamlrun -lm
-
-print :
-	echo $(BASELIBS)

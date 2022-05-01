@@ -28,3 +28,13 @@ $ opam install dune mirage-random-stdlib mirage-runtime mirage-clock mirage-time
 $ eval $(opam env)
 ```
 4. Now to build the application just run `make`. If you want to include deadcode elmination in the build, use `make optimize && make all`
+5. If you're running linux, set up a tap interface using RIOT scripts
+```
+sudo RIOT/dist/tools/tapsetup/tapsetup -c 1
+```
+
+## Test
+To send HTTP request to the server
+```
+$ curl -g -6 'http://[<Your tap0 ipv6 address>%tapbr0]:8000/' -d "Hello Mirage-tcpip-riot"
+```
