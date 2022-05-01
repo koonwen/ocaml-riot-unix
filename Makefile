@@ -24,7 +24,7 @@ DEVELHELP ?= 1
 # LOG_DEBUG
 #     Debug log level, printing developer stuff considered too verbose for production use. 
 # LOG_ALL
-LOG_LEVEL = LOG_ALL
+LOG_LEVEL ?= LOG_ALL
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 0

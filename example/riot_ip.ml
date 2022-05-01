@@ -5,7 +5,6 @@ open Netutils
 
 let protocol_to_int = function `ICMP -> 58 | `TCP -> 6 | `UDP -> 17
 let of_origin = function `Src -> 0 | `Dst -> 1
-let cs = ref (Cstruct.create 255)
 let con = Lwt_condition.create ()
 
 module S : sig
@@ -109,7 +108,11 @@ end = struct
     aux ()
 end
 
-let resolve () =
-  let get_data () = IpUtils.riot_get_pkt (Cstruct.to_bigarray !cs) in
-  (match get_data () with 0 -> () | _ -> raise Not_found);
-  Lwt_condition.signal con 1
+let resolve =
+  let cs = ref (Cstruct.create IpUtils.bufsiz) in
+  let resolve_helper () =
+    let get_data () = IpUtils.riot_get_pkt (Cstruct.to_bigarray !cs) in
+    (match get_data () with 0 -> () | _ -> raise Not_found);
+    Lwt_condition.signal con 1
+  in
+  resolve_helper

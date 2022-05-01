@@ -103,3 +103,10 @@ caml_riot_get_host_ips(value v_bigarray)
     unsigned int n = get_ips(data_ptr);
     CAMLreturn(Val_int(n));
 }
+
+CAMLprim value
+caml_riot_get_bufsiz(value v_unit)
+{
+    CAMLparam0();
+    CAMLreturn(Val_int(TCPBUFSIZ));
+}

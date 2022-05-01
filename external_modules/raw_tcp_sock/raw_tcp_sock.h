@@ -15,16 +15,14 @@
 #include "shared.h"
 
 #define TCP_EVENTLOOP_PRIO (THREAD_PRIORITY_MAIN - 2)
+#define TCPBUFSIZ 255
 
+// The size of this buffer needs to match the size of the CStruct created in OCaml
+extern uint8_t tcpbuf[TCPBUFSIZ];
 extern sock_ip_ep_t tcp_local;
 extern sock_ip_ep_t tcp_remote;
 extern sock_ip_t tcp_sock;
 extern ssize_t tcp_hdr_size;
-
-// Add sock_buffer_queue
-// extern glb_tcp_queue_buf;
-
-extern uint8_t tcpbuf[255];
 
 void *raw_tcp_sock_thread(void *args);
 void get_addrs(void *buf);

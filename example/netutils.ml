@@ -54,6 +54,9 @@ module IpUtils = struct
   external riot_get_pkt_ips : Cstruct.buffer -> int = "caml_riot_get_pkt_ips"
   external riot_get_tp_hdr_size : unit -> int = "caml_riot_get_tp_hdr_size"
   external riot_get_mtu : unit -> int = "caml_riot_get_mtu"
+  external riot_get_bufsiz : unit -> int = "caml_riot_get_bufsiz"
+
+  let bufsiz = riot_get_bufsiz ()
 
   let ipv6_of_cs ?(off = 0) cs =
     let pre = Cstruct.BE.get_uint64 cs off in
@@ -77,12 +80,11 @@ module IpUtils = struct
     Cstruct.BE.set_uint32 cs (12 + off) d
 
   let get_payload () =
-    let payload_cs = Cstruct.create 255 in
+    let payload_cs = Cstruct.create bufsiz in
     let payload_buf = Cstruct.to_bigarray payload_cs in
     assert (riot_get_pkt payload_buf = 0);
     let tcp_hdr_len = riot_get_tp_hdr_size () in
     let resized_cs = Cstruct.sub payload_cs 0 tcp_hdr_len in
-    Printf.printf "RESIZED CS = %d\n" tcp_hdr_len;
     resized_cs
 end
 
