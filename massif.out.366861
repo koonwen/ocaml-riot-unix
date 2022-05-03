@@ -1,0 +1,1569 @@
+desc: (none)
+cmd: bin/native/ocaml.elf tap0
+time_unit: i
+#-----------
+snapshot=0
+#-----------
+time=0
+mem_heap_B=0
+mem_heap_extra_B=0
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=1
+#-----------
+time=227890
+mem_heap_B=309992
+mem_heap_extra_B=8
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=2
+#-----------
+time=365645
+mem_heap_B=309992
+mem_heap_extra_B=8
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=3
+#-----------
+time=577781
+mem_heap_B=428628
+mem_heap_extra_B=172
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=4
+#-----------
+time=11287247
+mem_heap_B=428640
+mem_heap_extra_B=184
+mem_stacks_B=0
+heap_tree=detailed
+n3: 428640 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n1: 309992 0x42429FE: monstartup (gmon.c:153)
+  n1: 309992 0x804A9DB: __gmon_start__ (in /home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf)
+   n0: 309992 0x404001E: ??? (in /usr/libexec/valgrind/vgpreload_massif-x86-linux.so)
+ n4: 118648 0x805DE9C: caml_stat_alloc_noexc (memory.c:883)
+  n3: 82968 0x805DECE: caml_stat_alloc_aligned_noexc (memory.c:843)
+   n1: 62488 0x805DF38: caml_alloc_for_heap (memory.c:299)
+    n1: 62488 0x807F277: caml_init_major_heap (major_gc.c:1022)
+     n1: 62488 0x8070881: caml_init_gc (gc_ctrl.c:695)
+      n1: 62488 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+       n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+        n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+         n0: 62488 0x804AB5D: main (startup.c:25)
+   n1: 17408 0x805D6FE: caml_set_minor_heap_size (minor_gc.c:156)
+    n1: 17408 0x8070857: caml_init_gc (gc_ctrl.c:691)
+     n1: 17408 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+      n1: 17408 0x805CCB3: caml_startup_code (startup_byt.c:588)
+       n1: 17408 0x8059D07: caml_startup (runtime.c:53233)
+        n0: 17408 0x804AB5D: main (startup.c:25)
+   n0: 3072 in 1 place, below massif's threshold (1.00%)
+  n2: 16728 0x805DF91: caml_stat_alloc (memory.c:907)
+   n1: 16384 0x805C457: caml_init_stack (stacks.c:33)
+    n1: 16384 0x805CBBF: caml_startup_code_exn (startup_byt.c:548)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+   n0: 344 in 4 places, all below massif's threshold (1.00%)
+  n1: 16384 0x807F335: caml_init_major_heap (major_gc.c:1046)
+   n1: 16384 0x8070881: caml_init_gc (gc_ctrl.c:695)
+    n1: 16384 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+  n0: 2568 in 6 places, all below massif's threshold (1.00%)
+ n0: 0 in 1 place, below massif's threshold (1.00%)
+#-----------
+snapshot=5
+#-----------
+time=11313677
+mem_heap_B=707240
+mem_heap_extra_B=248
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=6
+#-----------
+time=12140461
+mem_heap_B=707240
+mem_heap_extra_B=248
+mem_stacks_B=0
+heap_tree=detailed
+n3: 707240 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n5: 394176 0x805DE9C: caml_stat_alloc_noexc (memory.c:883)
+  n3: 327728 0x805DECE: caml_stat_alloc_aligned_noexc (memory.c:843)
+   n2: 307248 0x805DF38: caml_alloc_for_heap (memory.c:299)
+    n1: 244760 0x805E396: expand_heap (memory.c:398)
+     n1: 244760 0x805E5A4: caml_alloc_shr_aux (memory.c:521)
+      n1: 244760 0x805E5A4: caml_alloc_shr_no_track_noexc (memory.c:604)
+       n1: 244760 0x806B9EE: intern_alloc (intern.c:637)
+        n1: 244760 0x806C79F: input_val_from_block (intern.c:852)
+         n1: 244760 0x806CBAB: caml_input_value_from_block (intern.c:879)
+          n1: 244760 0x805CC05: caml_startup_code_exn (startup_byt.c:563)
+           n1: 244760 0x805CCB3: caml_startup_code (startup_byt.c:588)
+            n1: 244760 0x8059D07: caml_startup (runtime.c:53233)
+             n0: 244760 0x804AB5D: main (startup.c:25)
+    n1: 62488 0x807F277: caml_init_major_heap (major_gc.c:1022)
+     n1: 62488 0x8070881: caml_init_gc (gc_ctrl.c:695)
+      n1: 62488 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+       n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+        n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+         n0: 62488 0x804AB5D: main (startup.c:25)
+   n1: 17408 0x805D6FE: caml_set_minor_heap_size (minor_gc.c:156)
+    n1: 17408 0x8070857: caml_init_gc (gc_ctrl.c:691)
+     n1: 17408 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+      n1: 17408 0x805CCB3: caml_startup_code (startup_byt.c:588)
+       n1: 17408 0x8059D07: caml_startup (runtime.c:53233)
+        n0: 17408 0x804AB5D: main (startup.c:25)
+   n0: 3072 in 1 place, below massif's threshold (1.00%)
+  n1: 30732 0x806BA14: intern_alloc (intern.c:654)
+   n1: 30732 0x806C79F: input_val_from_block (intern.c:852)
+    n1: 30732 0x806CBAB: caml_input_value_from_block (intern.c:879)
+     n1: 30732 0x805CC05: caml_startup_code_exn (startup_byt.c:563)
+      n1: 30732 0x805CCB3: caml_startup_code (startup_byt.c:588)
+       n1: 30732 0x8059D07: caml_startup (runtime.c:53233)
+        n0: 30732 0x804AB5D: main (startup.c:25)
+  n2: 16764 0x805DF91: caml_stat_alloc (memory.c:907)
+   n1: 16384 0x805C457: caml_init_stack (stacks.c:33)
+    n1: 16384 0x805CBBF: caml_startup_code_exn (startup_byt.c:548)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+   n0: 380 in 6 places, all below massif's threshold (1.00%)
+  n1: 16384 0x807F335: caml_init_major_heap (major_gc.c:1046)
+   n1: 16384 0x8070881: caml_init_gc (gc_ctrl.c:695)
+    n1: 16384 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+  n0: 2568 in 6 places, all below massif's threshold (1.00%)
+ n1: 309992 0x42429FE: monstartup (gmon.c:153)
+  n1: 309992 0x804A9DB: __gmon_start__ (in /home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf)
+   n0: 309992 0x404001E: ??? (in /usr/libexec/valgrind/vgpreload_massif-x86-linux.so)
+ n0: 3072 in 2 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=7
+#-----------
+time=12231878
+mem_heap_B=692157
+mem_heap_extra_B=331
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=8
+#-----------
+time=12439277
+mem_heap_B=692215
+mem_heap_extra_B=353
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=9
+#-----------
+time=13431137
+mem_heap_B=692227
+mem_heap_extra_B=365
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=10
+#-----------
+time=13660934
+mem_heap_B=692222
+mem_heap_extra_B=370
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=11
+#-----------
+time=13686091
+mem_heap_B=692215
+mem_heap_extra_B=361
+mem_stacks_B=0
+heap_tree=detailed
+n3: 692215 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n5: 379151 0x805DE9C: caml_stat_alloc_noexc (memory.c:883)
+  n3: 327728 0x805DECE: caml_stat_alloc_aligned_noexc (memory.c:843)
+   n2: 307248 0x805DF38: caml_alloc_for_heap (memory.c:299)
+    n1: 244760 0x805E396: expand_heap (memory.c:398)
+     n1: 244760 0x805E5A4: caml_alloc_shr_aux (memory.c:521)
+      n1: 244760 0x805E5A4: caml_alloc_shr_no_track_noexc (memory.c:604)
+       n1: 244760 0x806B9EE: intern_alloc (intern.c:637)
+        n1: 244760 0x806C79F: input_val_from_block (intern.c:852)
+         n1: 244760 0x806CBAB: caml_input_value_from_block (intern.c:879)
+          n1: 244760 0x805CC05: caml_startup_code_exn (startup_byt.c:563)
+           n1: 244760 0x805CCB3: caml_startup_code (startup_byt.c:588)
+            n1: 244760 0x8059D07: caml_startup (runtime.c:53233)
+             n0: 244760 0x804AB5D: main (startup.c:25)
+    n1: 62488 0x807F277: caml_init_major_heap (major_gc.c:1022)
+     n1: 62488 0x8070881: caml_init_gc (gc_ctrl.c:695)
+      n1: 62488 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+       n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+        n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+         n0: 62488 0x804AB5D: main (startup.c:25)
+   n1: 17408 0x805D6FE: caml_set_minor_heap_size (minor_gc.c:156)
+    n1: 17408 0x8070857: caml_init_gc (gc_ctrl.c:691)
+     n1: 17408 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+      n1: 17408 0x805CCB3: caml_startup_code (startup_byt.c:588)
+       n1: 17408 0x8059D07: caml_startup (runtime.c:53233)
+        n0: 17408 0x804AB5D: main (startup.c:25)
+   n0: 3072 in 1 place, below massif's threshold (1.00%)
+  n2: 20183 0x805DF91: caml_stat_alloc (memory.c:907)
+   n1: 16384 0x805C457: caml_init_stack (stacks.c:33)
+    n1: 16384 0x805CBBF: caml_startup_code_exn (startup_byt.c:548)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+   n0: 3799 in 8 places, all below massif's threshold (1.00%)
+  n1: 16384 0x807F335: caml_init_major_heap (major_gc.c:1046)
+   n1: 16384 0x8070881: caml_init_gc (gc_ctrl.c:695)
+    n1: 16384 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+  n1: 12288 0x805CD78: alloc_generic_table (minor_gc.c:95)
+   n2: 12288 0x805CF16: realloc_generic_table (minor_gc.c:591)
+    n1: 9216 0x805DAE0: caml_realloc_custom_table (minor_gc.c:639)
+     n1: 9216 0x8074CFA: add_to_custom_table (minor_gc.h:128)
+      n1: 9216 0x8074CFA: alloc_custom_gen (custom.c:58)
+       n1: 9216 0x8074E12: caml_alloc_custom_mem (custom.c:106)
+        n1: 9216 0x8068E60: caml_alloc_channel (io.c:492)
+         n1: 9216 0x8068EA4: caml_ml_open_descriptor_in (io.c:502)
+          n1: 9216 0x807B28D: caml_interprete (interp.c:1033)
+           n1: 9216 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+            n1: 9216 0x805CCB3: caml_startup_code (startup_byt.c:588)
+             n1: 9216 0x8059D07: caml_startup (runtime.c:53233)
+              n0: 9216 0x804AB5D: main (startup.c:25)
+    n0: 3072 in 1 place, below massif's threshold (1.00%)
+  n0: 2568 in 8 places, all below massif's threshold (1.00%)
+ n1: 309992 0x42429FE: monstartup (gmon.c:153)
+  n1: 309992 0x804A9DB: __gmon_start__ (in /home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf)
+   n0: 309992 0x404001E: ??? (in /usr/libexec/valgrind/vgpreload_massif-x86-linux.so)
+ n0: 3072 in 3 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=12
+#-----------
+time=17152978
+mem_heap_B=692215
+mem_heap_extra_B=369
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=13
+#-----------
+time=20106312
+mem_heap_B=698359
+mem_heap_extra_B=377
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=14
+#-----------
+time=20873314
+mem_heap_B=698359
+mem_heap_extra_B=385
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=15
+#-----------
+time=20904986
+mem_heap_B=698359
+mem_heap_extra_B=409
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=16
+#-----------
+time=21358372
+mem_heap_B=698359
+mem_heap_extra_B=401
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=17
+#-----------
+time=21467940
+mem_heap_B=698614
+mem_heap_extra_B=386
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=18
+#-----------
+time=21744780
+mem_heap_B=698646
+mem_heap_extra_B=394
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=19
+#-----------
+time=21791866
+mem_heap_B=698660
+mem_heap_extra_B=428
+mem_stacks_B=0
+heap_tree=detailed
+n3: 698660 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n5: 385295 0x805DE9C: caml_stat_alloc_noexc (memory.c:883)
+  n3: 327728 0x805DECE: caml_stat_alloc_aligned_noexc (memory.c:843)
+   n2: 307248 0x805DF38: caml_alloc_for_heap (memory.c:299)
+    n1: 244760 0x805E396: expand_heap (memory.c:398)
+     n1: 244760 0x805E5A4: caml_alloc_shr_aux (memory.c:521)
+      n1: 244760 0x805E5A4: caml_alloc_shr_no_track_noexc (memory.c:604)
+       n1: 244760 0x806B9EE: intern_alloc (intern.c:637)
+        n1: 244760 0x806C79F: input_val_from_block (intern.c:852)
+         n1: 244760 0x806CBAB: caml_input_value_from_block (intern.c:879)
+          n1: 244760 0x805CC05: caml_startup_code_exn (startup_byt.c:563)
+           n1: 244760 0x805CCB3: caml_startup_code (startup_byt.c:588)
+            n1: 244760 0x8059D07: caml_startup (runtime.c:53233)
+             n0: 244760 0x804AB5D: main (startup.c:25)
+    n1: 62488 0x807F277: caml_init_major_heap (major_gc.c:1022)
+     n1: 62488 0x8070881: caml_init_gc (gc_ctrl.c:695)
+      n1: 62488 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+       n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+        n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+         n0: 62488 0x804AB5D: main (startup.c:25)
+   n1: 17408 0x805D6FE: caml_set_minor_heap_size (minor_gc.c:156)
+    n1: 17408 0x8070857: caml_init_gc (gc_ctrl.c:691)
+     n1: 17408 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+      n1: 17408 0x805CCB3: caml_startup_code (startup_byt.c:588)
+       n1: 17408 0x8059D07: caml_startup (runtime.c:53233)
+        n0: 17408 0x804AB5D: main (startup.c:25)
+   n0: 3072 in 1 place, below massif's threshold (1.00%)
+  n2: 20183 0x805DF91: caml_stat_alloc (memory.c:907)
+   n1: 16384 0x805C457: caml_init_stack (stacks.c:33)
+    n1: 16384 0x805CBBF: caml_startup_code_exn (startup_byt.c:548)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+   n0: 3799 in 8 places, all below massif's threshold (1.00%)
+  n1: 18432 0x805CD78: alloc_generic_table (minor_gc.c:95)
+   n2: 18432 0x805CF16: realloc_generic_table (minor_gc.c:591)
+    n0: 9216 in 2 places, all below massif's threshold (1.00%)
+    n1: 9216 0x805DAE0: caml_realloc_custom_table (minor_gc.c:639)
+     n1: 9216 0x8074CFA: add_to_custom_table (minor_gc.h:128)
+      n1: 9216 0x8074CFA: alloc_custom_gen (custom.c:58)
+       n1: 9216 0x8074E12: caml_alloc_custom_mem (custom.c:106)
+        n1: 9216 0x8068E60: caml_alloc_channel (io.c:492)
+         n1: 9216 0x8068EA4: caml_ml_open_descriptor_in (io.c:502)
+          n1: 9216 0x807B28D: caml_interprete (interp.c:1033)
+           n1: 9216 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+            n1: 9216 0x805CCB3: caml_startup_code (startup_byt.c:588)
+             n1: 9216 0x8059D07: caml_startup (runtime.c:53233)
+              n0: 9216 0x804AB5D: main (startup.c:25)
+  n1: 16384 0x807F335: caml_init_major_heap (major_gc.c:1046)
+   n1: 16384 0x8070881: caml_init_gc (gc_ctrl.c:695)
+    n1: 16384 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+  n0: 2568 in 8 places, all below massif's threshold (1.00%)
+ n1: 309992 0x42429FE: monstartup (gmon.c:153)
+  n1: 309992 0x804A9DB: __gmon_start__ (in /home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf)
+   n0: 309992 0x404001E: ??? (in /usr/libexec/valgrind/vgpreload_massif-x86-linux.so)
+ n0: 3373 in 4 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=20
+#-----------
+time=22108518
+mem_heap_B=698760
+mem_heap_extra_B=440
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=21
+#-----------
+time=22216753
+mem_heap_B=699015
+mem_heap_extra_B=489
+mem_stacks_B=0
+heap_tree=detailed
+n3: 699015 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n5: 385295 0x805DE9C: caml_stat_alloc_noexc (memory.c:883)
+  n3: 327728 0x805DECE: caml_stat_alloc_aligned_noexc (memory.c:843)
+   n2: 307248 0x805DF38: caml_alloc_for_heap (memory.c:299)
+    n1: 244760 0x805E396: expand_heap (memory.c:398)
+     n1: 244760 0x805E5A4: caml_alloc_shr_aux (memory.c:521)
+      n1: 244760 0x805E5A4: caml_alloc_shr_no_track_noexc (memory.c:604)
+       n1: 244760 0x806B9EE: intern_alloc (intern.c:637)
+        n1: 244760 0x806C79F: input_val_from_block (intern.c:852)
+         n1: 244760 0x806CBAB: caml_input_value_from_block (intern.c:879)
+          n1: 244760 0x805CC05: caml_startup_code_exn (startup_byt.c:563)
+           n1: 244760 0x805CCB3: caml_startup_code (startup_byt.c:588)
+            n1: 244760 0x8059D07: caml_startup (runtime.c:53233)
+             n0: 244760 0x804AB5D: main (startup.c:25)
+    n1: 62488 0x807F277: caml_init_major_heap (major_gc.c:1022)
+     n1: 62488 0x8070881: caml_init_gc (gc_ctrl.c:695)
+      n1: 62488 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+       n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+        n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+         n0: 62488 0x804AB5D: main (startup.c:25)
+   n1: 17408 0x805D6FE: caml_set_minor_heap_size (minor_gc.c:156)
+    n1: 17408 0x8070857: caml_init_gc (gc_ctrl.c:691)
+     n1: 17408 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+      n1: 17408 0x805CCB3: caml_startup_code (startup_byt.c:588)
+       n1: 17408 0x8059D07: caml_startup (runtime.c:53233)
+        n0: 17408 0x804AB5D: main (startup.c:25)
+   n0: 3072 in 1 place, below massif's threshold (1.00%)
+  n2: 20183 0x805DF91: caml_stat_alloc (memory.c:907)
+   n1: 16384 0x805C457: caml_init_stack (stacks.c:33)
+    n1: 16384 0x805CBBF: caml_startup_code_exn (startup_byt.c:548)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+   n0: 3799 in 8 places, all below massif's threshold (1.00%)
+  n1: 18432 0x805CD78: alloc_generic_table (minor_gc.c:95)
+   n2: 18432 0x805CF16: realloc_generic_table (minor_gc.c:591)
+    n0: 9216 in 2 places, all below massif's threshold (1.00%)
+    n1: 9216 0x805DAE0: caml_realloc_custom_table (minor_gc.c:639)
+     n1: 9216 0x8074CFA: add_to_custom_table (minor_gc.h:128)
+      n1: 9216 0x8074CFA: alloc_custom_gen (custom.c:58)
+       n1: 9216 0x8074E12: caml_alloc_custom_mem (custom.c:106)
+        n1: 9216 0x8068E60: caml_alloc_channel (io.c:492)
+         n1: 9216 0x8068EA4: caml_ml_open_descriptor_in (io.c:502)
+          n1: 9216 0x807B28D: caml_interprete (interp.c:1033)
+           n1: 9216 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+            n1: 9216 0x805CCB3: caml_startup_code (startup_byt.c:588)
+             n1: 9216 0x8059D07: caml_startup (runtime.c:53233)
+              n0: 9216 0x804AB5D: main (startup.c:25)
+  n1: 16384 0x807F335: caml_init_major_heap (major_gc.c:1046)
+   n1: 16384 0x8070881: caml_init_gc (gc_ctrl.c:695)
+    n1: 16384 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+  n0: 2568 in 8 places, all below massif's threshold (1.00%)
+ n1: 309992 0x42429FE: monstartup (gmon.c:153)
+  n1: 309992 0x804A9DB: __gmon_start__ (in /home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf)
+   n0: 309992 0x404001E: ??? (in /usr/libexec/valgrind/vgpreload_massif-x86-linux.so)
+ n0: 3728 in 5 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=22
+#-----------
+time=22373817
+mem_heap_B=699019
+mem_heap_extra_B=501
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=23
+#-----------
+time=22560166
+mem_heap_B=761507
+mem_heap_extra_B=509
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=24
+#-----------
+time=22636150
+mem_heap_B=761773
+mem_heap_extra_B=443
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=25
+#-----------
+time=22872532
+mem_heap_B=761773
+mem_heap_extra_B=451
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=26
+#-----------
+time=23029630
+mem_heap_B=761801
+mem_heap_extra_B=463
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=27
+#-----------
+time=23169664
+mem_heap_B=761953
+mem_heap_extra_B=495
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=28
+#-----------
+time=23293058
+mem_heap_B=762148
+mem_heap_extra_B=508
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=29
+#-----------
+time=23735859
+mem_heap_B=762116
+mem_heap_extra_B=500
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=30
+#-----------
+time=24096530
+mem_heap_B=762105
+mem_heap_extra_B=503
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=31
+#-----------
+time=24101025
+mem_heap_B=762106
+mem_heap_extra_B=518
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=32
+#-----------
+time=24573901
+mem_heap_B=762105
+mem_heap_extra_B=503
+mem_stacks_B=0
+heap_tree=detailed
+n3: 762105 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n5: 448143 0x805DE9C: caml_stat_alloc_noexc (memory.c:883)
+  n3: 390216 0x805DECE: caml_stat_alloc_aligned_noexc (memory.c:843)
+   n2: 369736 0x805DF38: caml_alloc_for_heap (memory.c:299)
+    n2: 307248 0x805E396: expand_heap (memory.c:398)
+     n1: 244760 0x805E5A4: caml_alloc_shr_aux (memory.c:521)
+      n1: 244760 0x805E5A4: caml_alloc_shr_no_track_noexc (memory.c:604)
+       n1: 244760 0x806B9EE: intern_alloc (intern.c:637)
+        n1: 244760 0x806C79F: input_val_from_block (intern.c:852)
+         n1: 244760 0x806CBAB: caml_input_value_from_block (intern.c:879)
+          n1: 244760 0x805CC05: caml_startup_code_exn (startup_byt.c:563)
+           n1: 244760 0x805CCB3: caml_startup_code (startup_byt.c:588)
+            n1: 244760 0x8059D07: caml_startup (runtime.c:53233)
+             n0: 244760 0x804AB5D: main (startup.c:25)
+     n1: 62488 0x805E67D: caml_alloc_shr_aux (memory.c:521)
+      n1: 62488 0x805E67D: caml_alloc_shr_for_minor_gc (memory.c:593)
+       n1: 62488 0x805D0D2: caml_oldify_one (minor_gc.c:209)
+        n1: 62488 0x805D313: caml_oldify_mopup (minor_gc.c:319)
+         n1: 62488 0x805D4E8: caml_empty_minor_heap (minor_gc.c:377)
+          n1: 62488 0x805D868: caml_gc_dispatch (minor_gc.c:492)
+           n1: 62488 0x805D9B2: caml_alloc_small_dispatch (minor_gc.c:539)
+            n1: 62488 0x805EA2C: caml_alloc (alloc.c:46)
+             n1: 62488 0x805EE05: caml_alloc_dummy (alloc.c:192)
+              n1: 62488 0x807B28D: caml_interprete (interp.c:1033)
+               n1: 62488 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+                n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+                 n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+                  n0: 62488 0x804AB5D: main (startup.c:25)
+    n1: 62488 0x807F277: caml_init_major_heap (major_gc.c:1022)
+     n1: 62488 0x8070881: caml_init_gc (gc_ctrl.c:695)
+      n1: 62488 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+       n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+        n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+         n0: 62488 0x804AB5D: main (startup.c:25)
+   n1: 17408 0x805D6FE: caml_set_minor_heap_size (minor_gc.c:156)
+    n1: 17408 0x8070857: caml_init_gc (gc_ctrl.c:691)
+     n1: 17408 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+      n1: 17408 0x805CCB3: caml_startup_code (startup_byt.c:588)
+       n1: 17408 0x8059D07: caml_startup (runtime.c:53233)
+        n0: 17408 0x804AB5D: main (startup.c:25)
+   n0: 3072 in 1 place, below massif's threshold (1.00%)
+  n2: 20543 0x805DF91: caml_stat_alloc (memory.c:907)
+   n1: 16384 0x805C457: caml_init_stack (stacks.c:33)
+    n1: 16384 0x805CBBF: caml_startup_code_exn (startup_byt.c:548)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+   n0: 4159 in 9 places, all below massif's threshold (1.00%)
+  n1: 18432 0x805CD78: alloc_generic_table (minor_gc.c:95)
+   n2: 18432 0x805CF16: realloc_generic_table (minor_gc.c:591)
+    n0: 9216 in 2 places, all below massif's threshold (1.00%)
+    n1: 9216 0x805DAE0: caml_realloc_custom_table (minor_gc.c:639)
+     n1: 9216 0x8074CFA: add_to_custom_table (minor_gc.h:128)
+      n1: 9216 0x8074CFA: alloc_custom_gen (custom.c:58)
+       n1: 9216 0x8074E12: caml_alloc_custom_mem (custom.c:106)
+        n1: 9216 0x8068E60: caml_alloc_channel (io.c:492)
+         n1: 9216 0x8068EA4: caml_ml_open_descriptor_in (io.c:502)
+          n1: 9216 0x807B28D: caml_interprete (interp.c:1033)
+           n1: 9216 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+            n1: 9216 0x805CCB3: caml_startup_code (startup_byt.c:588)
+             n1: 9216 0x8059D07: caml_startup (runtime.c:53233)
+              n0: 9216 0x804AB5D: main (startup.c:25)
+  n1: 16384 0x807F335: caml_init_major_heap (major_gc.c:1046)
+   n1: 16384 0x8070881: caml_init_gc (gc_ctrl.c:695)
+    n1: 16384 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+  n0: 2568 in 8 places, all below massif's threshold (1.00%)
+ n1: 309992 0x42429FE: monstartup (gmon.c:153)
+  n1: 309992 0x804A9DB: __gmon_start__ (in /home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf)
+   n0: 309992 0x404001E: ??? (in /usr/libexec/valgrind/vgpreload_massif-x86-linux.so)
+ n0: 3970 in 5 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=33
+#-----------
+time=24872255
+mem_heap_B=762105
+mem_heap_extra_B=503
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=34
+#-----------
+time=25035567
+mem_heap_B=762110
+mem_heap_extra_B=530
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=35
+#-----------
+time=25171353
+mem_heap_B=762178
+mem_heap_extra_B=558
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=36
+#-----------
+time=25371958
+mem_heap_B=766274
+mem_heap_extra_B=566
+mem_stacks_B=0
+heap_tree=detailed
+n3: 766274 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n5: 448143 0x805DE9C: caml_stat_alloc_noexc (memory.c:883)
+  n3: 390216 0x805DECE: caml_stat_alloc_aligned_noexc (memory.c:843)
+   n2: 369736 0x805DF38: caml_alloc_for_heap (memory.c:299)
+    n2: 307248 0x805E396: expand_heap (memory.c:398)
+     n1: 244760 0x805E5A4: caml_alloc_shr_aux (memory.c:521)
+      n1: 244760 0x805E5A4: caml_alloc_shr_no_track_noexc (memory.c:604)
+       n1: 244760 0x806B9EE: intern_alloc (intern.c:637)
+        n1: 244760 0x806C79F: input_val_from_block (intern.c:852)
+         n1: 244760 0x806CBAB: caml_input_value_from_block (intern.c:879)
+          n1: 244760 0x805CC05: caml_startup_code_exn (startup_byt.c:563)
+           n1: 244760 0x805CCB3: caml_startup_code (startup_byt.c:588)
+            n1: 244760 0x8059D07: caml_startup (runtime.c:53233)
+             n0: 244760 0x804AB5D: main (startup.c:25)
+     n1: 62488 0x805E67D: caml_alloc_shr_aux (memory.c:521)
+      n1: 62488 0x805E67D: caml_alloc_shr_for_minor_gc (memory.c:593)
+       n1: 62488 0x805D0D2: caml_oldify_one (minor_gc.c:209)
+        n1: 62488 0x805D313: caml_oldify_mopup (minor_gc.c:319)
+         n1: 62488 0x805D4E8: caml_empty_minor_heap (minor_gc.c:377)
+          n1: 62488 0x805D868: caml_gc_dispatch (minor_gc.c:492)
+           n1: 62488 0x805D9B2: caml_alloc_small_dispatch (minor_gc.c:539)
+            n1: 62488 0x805EA2C: caml_alloc (alloc.c:46)
+             n1: 62488 0x805EE05: caml_alloc_dummy (alloc.c:192)
+              n1: 62488 0x807B28D: caml_interprete (interp.c:1033)
+               n1: 62488 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+                n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+                 n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+                  n0: 62488 0x804AB5D: main (startup.c:25)
+    n1: 62488 0x807F277: caml_init_major_heap (major_gc.c:1022)
+     n1: 62488 0x8070881: caml_init_gc (gc_ctrl.c:695)
+      n1: 62488 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+       n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+        n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+         n0: 62488 0x804AB5D: main (startup.c:25)
+   n1: 17408 0x805D6FE: caml_set_minor_heap_size (minor_gc.c:156)
+    n1: 17408 0x8070857: caml_init_gc (gc_ctrl.c:691)
+     n1: 17408 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+      n1: 17408 0x805CCB3: caml_startup_code (startup_byt.c:588)
+       n1: 17408 0x8059D07: caml_startup (runtime.c:53233)
+        n0: 17408 0x804AB5D: main (startup.c:25)
+   n0: 3072 in 1 place, below massif's threshold (1.00%)
+  n2: 20543 0x805DF91: caml_stat_alloc (memory.c:907)
+   n1: 16384 0x805C457: caml_init_stack (stacks.c:33)
+    n1: 16384 0x805CBBF: caml_startup_code_exn (startup_byt.c:548)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+   n0: 4159 in 9 places, all below massif's threshold (1.00%)
+  n1: 18432 0x805CD78: alloc_generic_table (minor_gc.c:95)
+   n2: 18432 0x805CF16: realloc_generic_table (minor_gc.c:591)
+    n0: 9216 in 2 places, all below massif's threshold (1.00%)
+    n1: 9216 0x805DAE0: caml_realloc_custom_table (minor_gc.c:639)
+     n1: 9216 0x8074CFA: add_to_custom_table (minor_gc.h:128)
+      n1: 9216 0x8074CFA: alloc_custom_gen (custom.c:58)
+       n1: 9216 0x8074E12: caml_alloc_custom_mem (custom.c:106)
+        n1: 9216 0x8068E60: caml_alloc_channel (io.c:492)
+         n1: 9216 0x8068EA4: caml_ml_open_descriptor_in (io.c:502)
+          n1: 9216 0x807B28D: caml_interprete (interp.c:1033)
+           n1: 9216 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+            n1: 9216 0x805CCB3: caml_startup_code (startup_byt.c:588)
+             n1: 9216 0x8059D07: caml_startup (runtime.c:53233)
+              n0: 9216 0x804AB5D: main (startup.c:25)
+  n1: 16384 0x807F335: caml_init_major_heap (major_gc.c:1046)
+   n1: 16384 0x8070881: caml_init_gc (gc_ctrl.c:695)
+    n1: 16384 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+  n0: 2568 in 8 places, all below massif's threshold (1.00%)
+ n1: 309992 0x42429FE: monstartup (gmon.c:153)
+  n1: 309992 0x804A9DB: __gmon_start__ (in /home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf)
+   n0: 309992 0x404001E: ??? (in /usr/libexec/valgrind/vgpreload_massif-x86-linux.so)
+ n0: 8139 in 5 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=37
+#-----------
+time=25569133
+mem_heap_B=774513
+mem_heap_extra_B=575
+mem_stacks_B=0
+heap_tree=detailed
+n4: 774513 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n5: 448143 0x805DE9C: caml_stat_alloc_noexc (memory.c:883)
+  n3: 390216 0x805DECE: caml_stat_alloc_aligned_noexc (memory.c:843)
+   n2: 369736 0x805DF38: caml_alloc_for_heap (memory.c:299)
+    n2: 307248 0x805E396: expand_heap (memory.c:398)
+     n1: 244760 0x805E5A4: caml_alloc_shr_aux (memory.c:521)
+      n1: 244760 0x805E5A4: caml_alloc_shr_no_track_noexc (memory.c:604)
+       n1: 244760 0x806B9EE: intern_alloc (intern.c:637)
+        n1: 244760 0x806C79F: input_val_from_block (intern.c:852)
+         n1: 244760 0x806CBAB: caml_input_value_from_block (intern.c:879)
+          n1: 244760 0x805CC05: caml_startup_code_exn (startup_byt.c:563)
+           n1: 244760 0x805CCB3: caml_startup_code (startup_byt.c:588)
+            n1: 244760 0x8059D07: caml_startup (runtime.c:53233)
+             n0: 244760 0x804AB5D: main (startup.c:25)
+     n1: 62488 0x805E67D: caml_alloc_shr_aux (memory.c:521)
+      n1: 62488 0x805E67D: caml_alloc_shr_for_minor_gc (memory.c:593)
+       n1: 62488 0x805D0D2: caml_oldify_one (minor_gc.c:209)
+        n1: 62488 0x805D313: caml_oldify_mopup (minor_gc.c:319)
+         n1: 62488 0x805D4E8: caml_empty_minor_heap (minor_gc.c:377)
+          n1: 62488 0x805D868: caml_gc_dispatch (minor_gc.c:492)
+           n1: 62488 0x805D9B2: caml_alloc_small_dispatch (minor_gc.c:539)
+            n1: 62488 0x805EA2C: caml_alloc (alloc.c:46)
+             n1: 62488 0x805EE05: caml_alloc_dummy (alloc.c:192)
+              n1: 62488 0x807B28D: caml_interprete (interp.c:1033)
+               n1: 62488 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+                n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+                 n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+                  n0: 62488 0x804AB5D: main (startup.c:25)
+    n1: 62488 0x807F277: caml_init_major_heap (major_gc.c:1022)
+     n1: 62488 0x8070881: caml_init_gc (gc_ctrl.c:695)
+      n1: 62488 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+       n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+        n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+         n0: 62488 0x804AB5D: main (startup.c:25)
+   n1: 17408 0x805D6FE: caml_set_minor_heap_size (minor_gc.c:156)
+    n1: 17408 0x8070857: caml_init_gc (gc_ctrl.c:691)
+     n1: 17408 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+      n1: 17408 0x805CCB3: caml_startup_code (startup_byt.c:588)
+       n1: 17408 0x8059D07: caml_startup (runtime.c:53233)
+        n0: 17408 0x804AB5D: main (startup.c:25)
+   n0: 3072 in 1 place, below massif's threshold (1.00%)
+  n2: 20543 0x805DF91: caml_stat_alloc (memory.c:907)
+   n1: 16384 0x805C457: caml_init_stack (stacks.c:33)
+    n1: 16384 0x805CBBF: caml_startup_code_exn (startup_byt.c:548)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+   n0: 4159 in 9 places, all below massif's threshold (1.00%)
+  n1: 18432 0x805CD78: alloc_generic_table (minor_gc.c:95)
+   n2: 18432 0x805CF16: realloc_generic_table (minor_gc.c:591)
+    n0: 9216 in 2 places, all below massif's threshold (1.00%)
+    n1: 9216 0x805DAE0: caml_realloc_custom_table (minor_gc.c:639)
+     n1: 9216 0x8074CFA: add_to_custom_table (minor_gc.h:128)
+      n1: 9216 0x8074CFA: alloc_custom_gen (custom.c:58)
+       n1: 9216 0x8074E12: caml_alloc_custom_mem (custom.c:106)
+        n1: 9216 0x8068E60: caml_alloc_channel (io.c:492)
+         n1: 9216 0x8068EA4: caml_ml_open_descriptor_in (io.c:502)
+          n1: 9216 0x807B28D: caml_interprete (interp.c:1033)
+           n1: 9216 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+            n1: 9216 0x805CCB3: caml_startup_code (startup_byt.c:588)
+             n1: 9216 0x8059D07: caml_startup (runtime.c:53233)
+              n0: 9216 0x804AB5D: main (startup.c:25)
+  n1: 16384 0x807F335: caml_init_major_heap (major_gc.c:1046)
+   n1: 16384 0x8070881: caml_init_gc (gc_ctrl.c:695)
+    n1: 16384 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+  n0: 2568 in 8 places, all below massif's threshold (1.00%)
+ n1: 309992 0x42429FE: monstartup (gmon.c:153)
+  n1: 309992 0x804A9DB: __gmon_start__ (in /home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf)
+   n0: 309992 0x404001E: ??? (in /usr/libexec/valgrind/vgpreload_massif-x86-linux.so)
+ n1: 13130 0x8076865: caml_ba_alloc (bigarray.c:111)
+  n1: 13130 0x8076937: caml_ba_create (bigarray.c:520)
+   n1: 13130 0x807B32E: caml_interprete (interp.c:1044)
+    n1: 13130 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+     n1: 13130 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 13130 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 13130 0x804AB5D: main (startup.c:25)
+ n0: 3248 in 4 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=38
+#-----------
+time=25777788
+mem_heap_B=775169
+mem_heap_extra_B=639
+mem_stacks_B=0
+heap_tree=peak
+n4: 775169 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n5: 448143 0x805DE9C: caml_stat_alloc_noexc (memory.c:883)
+  n3: 390216 0x805DECE: caml_stat_alloc_aligned_noexc (memory.c:843)
+   n2: 369736 0x805DF38: caml_alloc_for_heap (memory.c:299)
+    n2: 307248 0x805E396: expand_heap (memory.c:398)
+     n1: 244760 0x805E5A4: caml_alloc_shr_aux (memory.c:521)
+      n1: 244760 0x805E5A4: caml_alloc_shr_no_track_noexc (memory.c:604)
+       n1: 244760 0x806B9EE: intern_alloc (intern.c:637)
+        n1: 244760 0x806C79F: input_val_from_block (intern.c:852)
+         n1: 244760 0x806CBAB: caml_input_value_from_block (intern.c:879)
+          n1: 244760 0x805CC05: caml_startup_code_exn (startup_byt.c:563)
+           n1: 244760 0x805CCB3: caml_startup_code (startup_byt.c:588)
+            n1: 244760 0x8059D07: caml_startup (runtime.c:53233)
+             n0: 244760 0x804AB5D: main (startup.c:25)
+     n1: 62488 0x805E67D: caml_alloc_shr_aux (memory.c:521)
+      n1: 62488 0x805E67D: caml_alloc_shr_for_minor_gc (memory.c:593)
+       n1: 62488 0x805D0D2: caml_oldify_one (minor_gc.c:209)
+        n1: 62488 0x805D313: caml_oldify_mopup (minor_gc.c:319)
+         n1: 62488 0x805D4E8: caml_empty_minor_heap (minor_gc.c:377)
+          n1: 62488 0x805D868: caml_gc_dispatch (minor_gc.c:492)
+           n1: 62488 0x805D9B2: caml_alloc_small_dispatch (minor_gc.c:539)
+            n1: 62488 0x805EA2C: caml_alloc (alloc.c:46)
+             n1: 62488 0x805EE05: caml_alloc_dummy (alloc.c:192)
+              n1: 62488 0x807B28D: caml_interprete (interp.c:1033)
+               n1: 62488 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+                n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+                 n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+                  n0: 62488 0x804AB5D: main (startup.c:25)
+    n1: 62488 0x807F277: caml_init_major_heap (major_gc.c:1022)
+     n1: 62488 0x8070881: caml_init_gc (gc_ctrl.c:695)
+      n1: 62488 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+       n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+        n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+         n0: 62488 0x804AB5D: main (startup.c:25)
+   n1: 17408 0x805D6FE: caml_set_minor_heap_size (minor_gc.c:156)
+    n1: 17408 0x8070857: caml_init_gc (gc_ctrl.c:691)
+     n1: 17408 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+      n1: 17408 0x805CCB3: caml_startup_code (startup_byt.c:588)
+       n1: 17408 0x8059D07: caml_startup (runtime.c:53233)
+        n0: 17408 0x804AB5D: main (startup.c:25)
+   n0: 3072 in 1 place, below massif's threshold (1.00%)
+  n2: 20543 0x805DF91: caml_stat_alloc (memory.c:907)
+   n1: 16384 0x805C457: caml_init_stack (stacks.c:33)
+    n1: 16384 0x805CBBF: caml_startup_code_exn (startup_byt.c:548)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+   n0: 4159 in 9 places, all below massif's threshold (1.00%)
+  n1: 18432 0x805CD78: alloc_generic_table (minor_gc.c:95)
+   n2: 18432 0x805CF16: realloc_generic_table (minor_gc.c:591)
+    n0: 9216 in 2 places, all below massif's threshold (1.00%)
+    n1: 9216 0x805DAE0: caml_realloc_custom_table (minor_gc.c:639)
+     n1: 9216 0x8074CFA: add_to_custom_table (minor_gc.h:128)
+      n1: 9216 0x8074CFA: alloc_custom_gen (custom.c:58)
+       n1: 9216 0x8074E12: caml_alloc_custom_mem (custom.c:106)
+        n1: 9216 0x8068E60: caml_alloc_channel (io.c:492)
+         n1: 9216 0x8068EA4: caml_ml_open_descriptor_in (io.c:502)
+          n1: 9216 0x807B28D: caml_interprete (interp.c:1033)
+           n1: 9216 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+            n1: 9216 0x805CCB3: caml_startup_code (startup_byt.c:588)
+             n1: 9216 0x8059D07: caml_startup (runtime.c:53233)
+              n0: 9216 0x804AB5D: main (startup.c:25)
+  n1: 16384 0x807F335: caml_init_major_heap (major_gc.c:1046)
+   n1: 16384 0x8070881: caml_init_gc (gc_ctrl.c:695)
+    n1: 16384 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+  n0: 2568 in 8 places, all below massif's threshold (1.00%)
+ n1: 309992 0x42429FE: monstartup (gmon.c:153)
+  n1: 309992 0x804A9DB: __gmon_start__ (in /home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf)
+   n0: 309992 0x404001E: ??? (in /usr/libexec/valgrind/vgpreload_massif-x86-linux.so)
+ n1: 13674 0x8076865: caml_ba_alloc (bigarray.c:111)
+  n1: 13674 0x8076937: caml_ba_create (bigarray.c:520)
+   n1: 13674 0x807B32E: caml_interprete (interp.c:1044)
+    n1: 13674 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+     n1: 13674 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 13674 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 13674 0x804AB5D: main (startup.c:25)
+ n0: 3360 in 4 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=39
+#-----------
+time=25812911
+mem_heap_B=775193
+mem_heap_extra_B=679
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=40
+#-----------
+time=26761370
+mem_heap_B=775205
+mem_heap_extra_B=691
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=41
+#-----------
+time=26849358
+mem_heap_B=775516
+mem_heap_extra_B=732
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=42
+#-----------
+time=27088663
+mem_heap_B=766906
+mem_heap_extra_B=622
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=43
+#-----------
+time=27943694
+mem_heap_B=766894
+mem_heap_extra_B=626
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=44
+#-----------
+time=28053684
+mem_heap_B=767066
+mem_heap_extra_B=670
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=45
+#-----------
+time=28212310
+mem_heap_B=767381
+mem_heap_extra_B=755
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=46
+#-----------
+time=28775716
+mem_heap_B=767341
+mem_heap_extra_B=747
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=47
+#-----------
+time=28776397
+mem_heap_B=767205
+mem_heap_extra_B=667
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=48
+#-----------
+time=29245273
+mem_heap_B=767293
+mem_heap_extra_B=675
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=49
+#-----------
+time=29253837
+mem_heap_B=767293
+mem_heap_extra_B=675
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=50
+#-----------
+time=29254981
+mem_heap_B=767193
+mem_heap_extra_B=655
+mem_stacks_B=0
+heap_tree=detailed
+n3: 767193 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n5: 448143 0x805DE9C: caml_stat_alloc_noexc (memory.c:883)
+  n3: 390216 0x805DECE: caml_stat_alloc_aligned_noexc (memory.c:843)
+   n2: 369736 0x805DF38: caml_alloc_for_heap (memory.c:299)
+    n2: 307248 0x805E396: expand_heap (memory.c:398)
+     n1: 244760 0x805E5A4: caml_alloc_shr_aux (memory.c:521)
+      n1: 244760 0x805E5A4: caml_alloc_shr_no_track_noexc (memory.c:604)
+       n1: 244760 0x806B9EE: intern_alloc (intern.c:637)
+        n1: 244760 0x806C79F: input_val_from_block (intern.c:852)
+         n1: 244760 0x806CBAB: caml_input_value_from_block (intern.c:879)
+          n1: 244760 0x805CC05: caml_startup_code_exn (startup_byt.c:563)
+           n1: 244760 0x805CCB3: caml_startup_code (startup_byt.c:588)
+            n1: 244760 0x8059D07: caml_startup (runtime.c:53233)
+             n0: 244760 0x804AB5D: main (startup.c:25)
+     n1: 62488 0x805E67D: caml_alloc_shr_aux (memory.c:521)
+      n1: 62488 0x805E67D: caml_alloc_shr_for_minor_gc (memory.c:593)
+       n1: 62488 0x805D0D2: caml_oldify_one (minor_gc.c:209)
+        n1: 62488 0x805D313: caml_oldify_mopup (minor_gc.c:319)
+         n1: 62488 0x805D4E8: caml_empty_minor_heap (minor_gc.c:377)
+          n1: 62488 0x805D868: caml_gc_dispatch (minor_gc.c:492)
+           n1: 62488 0x805D9B2: caml_alloc_small_dispatch (minor_gc.c:539)
+            n1: 62488 0x805EA2C: caml_alloc (alloc.c:46)
+             n1: 62488 0x805EE05: caml_alloc_dummy (alloc.c:192)
+              n1: 62488 0x807B28D: caml_interprete (interp.c:1033)
+               n1: 62488 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+                n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+                 n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+                  n0: 62488 0x804AB5D: main (startup.c:25)
+    n1: 62488 0x807F277: caml_init_major_heap (major_gc.c:1022)
+     n1: 62488 0x8070881: caml_init_gc (gc_ctrl.c:695)
+      n1: 62488 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+       n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+        n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+         n0: 62488 0x804AB5D: main (startup.c:25)
+   n1: 17408 0x805D6FE: caml_set_minor_heap_size (minor_gc.c:156)
+    n1: 17408 0x8070857: caml_init_gc (gc_ctrl.c:691)
+     n1: 17408 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+      n1: 17408 0x805CCB3: caml_startup_code (startup_byt.c:588)
+       n1: 17408 0x8059D07: caml_startup (runtime.c:53233)
+        n0: 17408 0x804AB5D: main (startup.c:25)
+   n0: 3072 in 1 place, below massif's threshold (1.00%)
+  n2: 20543 0x805DF91: caml_stat_alloc (memory.c:907)
+   n1: 16384 0x805C457: caml_init_stack (stacks.c:33)
+    n1: 16384 0x805CBBF: caml_startup_code_exn (startup_byt.c:548)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+   n0: 4159 in 9 places, all below massif's threshold (1.00%)
+  n1: 18432 0x805CD78: alloc_generic_table (minor_gc.c:95)
+   n2: 18432 0x805CF16: realloc_generic_table (minor_gc.c:591)
+    n0: 9216 in 2 places, all below massif's threshold (1.00%)
+    n1: 9216 0x805DAE0: caml_realloc_custom_table (minor_gc.c:639)
+     n1: 9216 0x8074CFA: add_to_custom_table (minor_gc.h:128)
+      n1: 9216 0x8074CFA: alloc_custom_gen (custom.c:58)
+       n1: 9216 0x8074E12: caml_alloc_custom_mem (custom.c:106)
+        n1: 9216 0x8068E60: caml_alloc_channel (io.c:492)
+         n1: 9216 0x8068EA4: caml_ml_open_descriptor_in (io.c:502)
+          n1: 9216 0x807B28D: caml_interprete (interp.c:1033)
+           n1: 9216 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+            n1: 9216 0x805CCB3: caml_startup_code (startup_byt.c:588)
+             n1: 9216 0x8059D07: caml_startup (runtime.c:53233)
+              n0: 9216 0x804AB5D: main (startup.c:25)
+  n1: 16384 0x807F335: caml_init_major_heap (major_gc.c:1046)
+   n1: 16384 0x8070881: caml_init_gc (gc_ctrl.c:695)
+    n1: 16384 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+  n0: 2568 in 8 places, all below massif's threshold (1.00%)
+ n1: 309992 0x42429FE: monstartup (gmon.c:153)
+  n1: 309992 0x804A9DB: __gmon_start__ (in /home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf)
+   n0: 309992 0x404001E: ??? (in /usr/libexec/valgrind/vgpreload_massif-x86-linux.so)
+ n0: 9058 in 5 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=51
+#-----------
+time=29263582
+mem_heap_B=767448
+mem_heap_extra_B=664
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=52
+#-----------
+time=29264827
+mem_heap_B=767460
+mem_heap_extra_B=676
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=53
+#-----------
+time=29266230
+mem_heap_B=767492
+mem_heap_extra_B=684
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=54
+#-----------
+time=29267417
+mem_heap_B=767504
+mem_heap_extra_B=696
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=55
+#-----------
+time=29401501
+mem_heap_B=767504
+mem_heap_extra_B=712
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=56
+#-----------
+time=29404845
+mem_heap_B=767524
+mem_heap_extra_B=724
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=57
+#-----------
+time=29406253
+mem_heap_B=767564
+mem_heap_extra_B=732
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=58
+#-----------
+time=29431696
+mem_heap_B=767576
+mem_heap_extra_B=744
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=59
+#-----------
+time=29491346
+mem_heap_B=767676
+mem_heap_extra_B=756
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=60
+#-----------
+time=29492972
+mem_heap_B=767576
+mem_heap_extra_B=744
+mem_stacks_B=0
+heap_tree=detailed
+n3: 767576 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n5: 448143 0x805DE9C: caml_stat_alloc_noexc (memory.c:883)
+  n3: 390216 0x805DECE: caml_stat_alloc_aligned_noexc (memory.c:843)
+   n2: 369736 0x805DF38: caml_alloc_for_heap (memory.c:299)
+    n2: 307248 0x805E396: expand_heap (memory.c:398)
+     n1: 244760 0x805E5A4: caml_alloc_shr_aux (memory.c:521)
+      n1: 244760 0x805E5A4: caml_alloc_shr_no_track_noexc (memory.c:604)
+       n1: 244760 0x806B9EE: intern_alloc (intern.c:637)
+        n1: 244760 0x806C79F: input_val_from_block (intern.c:852)
+         n1: 244760 0x806CBAB: caml_input_value_from_block (intern.c:879)
+          n1: 244760 0x805CC05: caml_startup_code_exn (startup_byt.c:563)
+           n1: 244760 0x805CCB3: caml_startup_code (startup_byt.c:588)
+            n1: 244760 0x8059D07: caml_startup (runtime.c:53233)
+             n0: 244760 0x804AB5D: main (startup.c:25)
+     n1: 62488 0x805E67D: caml_alloc_shr_aux (memory.c:521)
+      n1: 62488 0x805E67D: caml_alloc_shr_for_minor_gc (memory.c:593)
+       n1: 62488 0x805D0D2: caml_oldify_one (minor_gc.c:209)
+        n1: 62488 0x805D313: caml_oldify_mopup (minor_gc.c:319)
+         n1: 62488 0x805D4E8: caml_empty_minor_heap (minor_gc.c:377)
+          n1: 62488 0x805D868: caml_gc_dispatch (minor_gc.c:492)
+           n1: 62488 0x805D9B2: caml_alloc_small_dispatch (minor_gc.c:539)
+            n1: 62488 0x805EA2C: caml_alloc (alloc.c:46)
+             n1: 62488 0x805EE05: caml_alloc_dummy (alloc.c:192)
+              n1: 62488 0x807B28D: caml_interprete (interp.c:1033)
+               n1: 62488 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+                n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+                 n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+                  n0: 62488 0x804AB5D: main (startup.c:25)
+    n1: 62488 0x807F277: caml_init_major_heap (major_gc.c:1022)
+     n1: 62488 0x8070881: caml_init_gc (gc_ctrl.c:695)
+      n1: 62488 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+       n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+        n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+         n0: 62488 0x804AB5D: main (startup.c:25)
+   n1: 17408 0x805D6FE: caml_set_minor_heap_size (minor_gc.c:156)
+    n1: 17408 0x8070857: caml_init_gc (gc_ctrl.c:691)
+     n1: 17408 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+      n1: 17408 0x805CCB3: caml_startup_code (startup_byt.c:588)
+       n1: 17408 0x8059D07: caml_startup (runtime.c:53233)
+        n0: 17408 0x804AB5D: main (startup.c:25)
+   n0: 3072 in 1 place, below massif's threshold (1.00%)
+  n2: 20543 0x805DF91: caml_stat_alloc (memory.c:907)
+   n1: 16384 0x805C457: caml_init_stack (stacks.c:33)
+    n1: 16384 0x805CBBF: caml_startup_code_exn (startup_byt.c:548)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+   n0: 4159 in 9 places, all below massif's threshold (1.00%)
+  n1: 18432 0x805CD78: alloc_generic_table (minor_gc.c:95)
+   n2: 18432 0x805CF16: realloc_generic_table (minor_gc.c:591)
+    n0: 9216 in 2 places, all below massif's threshold (1.00%)
+    n1: 9216 0x805DAE0: caml_realloc_custom_table (minor_gc.c:639)
+     n1: 9216 0x8074CFA: add_to_custom_table (minor_gc.h:128)
+      n1: 9216 0x8074CFA: alloc_custom_gen (custom.c:58)
+       n1: 9216 0x8074E12: caml_alloc_custom_mem (custom.c:106)
+        n1: 9216 0x8068E60: caml_alloc_channel (io.c:492)
+         n1: 9216 0x8068EA4: caml_ml_open_descriptor_in (io.c:502)
+          n1: 9216 0x807B28D: caml_interprete (interp.c:1033)
+           n1: 9216 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+            n1: 9216 0x805CCB3: caml_startup_code (startup_byt.c:588)
+             n1: 9216 0x8059D07: caml_startup (runtime.c:53233)
+              n0: 9216 0x804AB5D: main (startup.c:25)
+  n1: 16384 0x807F335: caml_init_major_heap (major_gc.c:1046)
+   n1: 16384 0x8070881: caml_init_gc (gc_ctrl.c:695)
+    n1: 16384 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+  n0: 2568 in 8 places, all below massif's threshold (1.00%)
+ n1: 309992 0x42429FE: monstartup (gmon.c:153)
+  n1: 309992 0x804A9DB: __gmon_start__ (in /home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf)
+   n0: 309992 0x404001E: ??? (in /usr/libexec/valgrind/vgpreload_massif-x86-linux.so)
+ n0: 9441 in 5 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=61
+#-----------
+time=29499910
+mem_heap_B=767676
+mem_heap_extra_B=756
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=62
+#-----------
+time=29501054
+mem_heap_B=767576
+mem_heap_extra_B=744
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=63
+#-----------
+time=29509663
+mem_heap_B=767831
+mem_heap_extra_B=753
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=64
+#-----------
+time=29510908
+mem_heap_B=767843
+mem_heap_extra_B=773
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=65
+#-----------
+time=29512319
+mem_heap_B=767875
+mem_heap_extra_B=781
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=66
+#-----------
+time=29513506
+mem_heap_B=767887
+mem_heap_extra_B=793
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=67
+#-----------
+time=29560370
+mem_heap_B=767632
+mem_heap_extra_B=784
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=68
+#-----------
+time=29561129
+mem_heap_B=767472
+mem_heap_extra_B=696
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=69
+#-----------
+time=29678319
+mem_heap_B=767460
+mem_heap_extra_B=700
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=70
+#-----------
+time=29681663
+mem_heap_B=767480
+mem_heap_extra_B=712
+mem_stacks_B=0
+heap_tree=detailed
+n3: 767480 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n5: 448143 0x805DE9C: caml_stat_alloc_noexc (memory.c:883)
+  n3: 390216 0x805DECE: caml_stat_alloc_aligned_noexc (memory.c:843)
+   n2: 369736 0x805DF38: caml_alloc_for_heap (memory.c:299)
+    n2: 307248 0x805E396: expand_heap (memory.c:398)
+     n1: 244760 0x805E5A4: caml_alloc_shr_aux (memory.c:521)
+      n1: 244760 0x805E5A4: caml_alloc_shr_no_track_noexc (memory.c:604)
+       n1: 244760 0x806B9EE: intern_alloc (intern.c:637)
+        n1: 244760 0x806C79F: input_val_from_block (intern.c:852)
+         n1: 244760 0x806CBAB: caml_input_value_from_block (intern.c:879)
+          n1: 244760 0x805CC05: caml_startup_code_exn (startup_byt.c:563)
+           n1: 244760 0x805CCB3: caml_startup_code (startup_byt.c:588)
+            n1: 244760 0x8059D07: caml_startup (runtime.c:53233)
+             n0: 244760 0x804AB5D: main (startup.c:25)
+     n1: 62488 0x805E67D: caml_alloc_shr_aux (memory.c:521)
+      n1: 62488 0x805E67D: caml_alloc_shr_for_minor_gc (memory.c:593)
+       n1: 62488 0x805D0D2: caml_oldify_one (minor_gc.c:209)
+        n1: 62488 0x805D313: caml_oldify_mopup (minor_gc.c:319)
+         n1: 62488 0x805D4E8: caml_empty_minor_heap (minor_gc.c:377)
+          n1: 62488 0x805D868: caml_gc_dispatch (minor_gc.c:492)
+           n1: 62488 0x805D9B2: caml_alloc_small_dispatch (minor_gc.c:539)
+            n1: 62488 0x805EA2C: caml_alloc (alloc.c:46)
+             n1: 62488 0x805EE05: caml_alloc_dummy (alloc.c:192)
+              n1: 62488 0x807B28D: caml_interprete (interp.c:1033)
+               n1: 62488 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+                n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+                 n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+                  n0: 62488 0x804AB5D: main (startup.c:25)
+    n1: 62488 0x807F277: caml_init_major_heap (major_gc.c:1022)
+     n1: 62488 0x8070881: caml_init_gc (gc_ctrl.c:695)
+      n1: 62488 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+       n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+        n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+         n0: 62488 0x804AB5D: main (startup.c:25)
+   n1: 17408 0x805D6FE: caml_set_minor_heap_size (minor_gc.c:156)
+    n1: 17408 0x8070857: caml_init_gc (gc_ctrl.c:691)
+     n1: 17408 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+      n1: 17408 0x805CCB3: caml_startup_code (startup_byt.c:588)
+       n1: 17408 0x8059D07: caml_startup (runtime.c:53233)
+        n0: 17408 0x804AB5D: main (startup.c:25)
+   n0: 3072 in 1 place, below massif's threshold (1.00%)
+  n2: 20543 0x805DF91: caml_stat_alloc (memory.c:907)
+   n1: 16384 0x805C457: caml_init_stack (stacks.c:33)
+    n1: 16384 0x805CBBF: caml_startup_code_exn (startup_byt.c:548)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+   n0: 4159 in 9 places, all below massif's threshold (1.00%)
+  n1: 18432 0x805CD78: alloc_generic_table (minor_gc.c:95)
+   n2: 18432 0x805CF16: realloc_generic_table (minor_gc.c:591)
+    n0: 9216 in 2 places, all below massif's threshold (1.00%)
+    n1: 9216 0x805DAE0: caml_realloc_custom_table (minor_gc.c:639)
+     n1: 9216 0x8074CFA: add_to_custom_table (minor_gc.h:128)
+      n1: 9216 0x8074CFA: alloc_custom_gen (custom.c:58)
+       n1: 9216 0x8074E12: caml_alloc_custom_mem (custom.c:106)
+        n1: 9216 0x8068E60: caml_alloc_channel (io.c:492)
+         n1: 9216 0x8068EA4: caml_ml_open_descriptor_in (io.c:502)
+          n1: 9216 0x807B28D: caml_interprete (interp.c:1033)
+           n1: 9216 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+            n1: 9216 0x805CCB3: caml_startup_code (startup_byt.c:588)
+             n1: 9216 0x8059D07: caml_startup (runtime.c:53233)
+              n0: 9216 0x804AB5D: main (startup.c:25)
+  n1: 16384 0x807F335: caml_init_major_heap (major_gc.c:1046)
+   n1: 16384 0x8070881: caml_init_gc (gc_ctrl.c:695)
+    n1: 16384 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+  n0: 2568 in 8 places, all below massif's threshold (1.00%)
+ n1: 309992 0x42429FE: monstartup (gmon.c:153)
+  n1: 309992 0x804A9DB: __gmon_start__ (in /home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf)
+   n0: 309992 0x404001E: ??? (in /usr/libexec/valgrind/vgpreload_massif-x86-linux.so)
+ n0: 9345 in 5 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=71
+#-----------
+time=29683071
+mem_heap_B=767520
+mem_heap_extra_B=720
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=72
+#-----------
+time=29708514
+mem_heap_B=767532
+mem_heap_extra_B=732
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=73
+#-----------
+time=29768222
+mem_heap_B=767632
+mem_heap_extra_B=744
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=74
+#-----------
+time=29769848
+mem_heap_B=767532
+mem_heap_extra_B=732
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=75
+#-----------
+time=29776786
+mem_heap_B=767632
+mem_heap_extra_B=744
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=76
+#-----------
+time=29777930
+mem_heap_B=767532
+mem_heap_extra_B=732
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=77
+#-----------
+time=29786539
+mem_heap_B=767787
+mem_heap_extra_B=741
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=78
+#-----------
+time=29787784
+mem_heap_B=767799
+mem_heap_extra_B=753
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=79
+#-----------
+time=29789195
+mem_heap_B=767831
+mem_heap_extra_B=769
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=80
+#-----------
+time=29790382
+mem_heap_B=767843
+mem_heap_extra_B=781
+mem_stacks_B=0
+heap_tree=detailed
+n3: 767843 (heap allocation functions) malloc/new/new[], --alloc-fns, etc.
+ n5: 448143 0x805DE9C: caml_stat_alloc_noexc (memory.c:883)
+  n3: 390216 0x805DECE: caml_stat_alloc_aligned_noexc (memory.c:843)
+   n2: 369736 0x805DF38: caml_alloc_for_heap (memory.c:299)
+    n2: 307248 0x805E396: expand_heap (memory.c:398)
+     n1: 244760 0x805E5A4: caml_alloc_shr_aux (memory.c:521)
+      n1: 244760 0x805E5A4: caml_alloc_shr_no_track_noexc (memory.c:604)
+       n1: 244760 0x806B9EE: intern_alloc (intern.c:637)
+        n1: 244760 0x806C79F: input_val_from_block (intern.c:852)
+         n1: 244760 0x806CBAB: caml_input_value_from_block (intern.c:879)
+          n1: 244760 0x805CC05: caml_startup_code_exn (startup_byt.c:563)
+           n1: 244760 0x805CCB3: caml_startup_code (startup_byt.c:588)
+            n1: 244760 0x8059D07: caml_startup (runtime.c:53233)
+             n0: 244760 0x804AB5D: main (startup.c:25)
+     n1: 62488 0x805E67D: caml_alloc_shr_aux (memory.c:521)
+      n1: 62488 0x805E67D: caml_alloc_shr_for_minor_gc (memory.c:593)
+       n1: 62488 0x805D0D2: caml_oldify_one (minor_gc.c:209)
+        n1: 62488 0x805D313: caml_oldify_mopup (minor_gc.c:319)
+         n1: 62488 0x805D4E8: caml_empty_minor_heap (minor_gc.c:377)
+          n1: 62488 0x805D868: caml_gc_dispatch (minor_gc.c:492)
+           n1: 62488 0x805D9B2: caml_alloc_small_dispatch (minor_gc.c:539)
+            n1: 62488 0x805EA2C: caml_alloc (alloc.c:46)
+             n1: 62488 0x805EE05: caml_alloc_dummy (alloc.c:192)
+              n1: 62488 0x807B28D: caml_interprete (interp.c:1033)
+               n1: 62488 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+                n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+                 n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+                  n0: 62488 0x804AB5D: main (startup.c:25)
+    n1: 62488 0x807F277: caml_init_major_heap (major_gc.c:1022)
+     n1: 62488 0x8070881: caml_init_gc (gc_ctrl.c:695)
+      n1: 62488 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+       n1: 62488 0x805CCB3: caml_startup_code (startup_byt.c:588)
+        n1: 62488 0x8059D07: caml_startup (runtime.c:53233)
+         n0: 62488 0x804AB5D: main (startup.c:25)
+   n1: 17408 0x805D6FE: caml_set_minor_heap_size (minor_gc.c:156)
+    n1: 17408 0x8070857: caml_init_gc (gc_ctrl.c:691)
+     n1: 17408 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+      n1: 17408 0x805CCB3: caml_startup_code (startup_byt.c:588)
+       n1: 17408 0x8059D07: caml_startup (runtime.c:53233)
+        n0: 17408 0x804AB5D: main (startup.c:25)
+   n0: 3072 in 1 place, below massif's threshold (1.00%)
+  n2: 20543 0x805DF91: caml_stat_alloc (memory.c:907)
+   n1: 16384 0x805C457: caml_init_stack (stacks.c:33)
+    n1: 16384 0x805CBBF: caml_startup_code_exn (startup_byt.c:548)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+   n0: 4159 in 9 places, all below massif's threshold (1.00%)
+  n1: 18432 0x805CD78: alloc_generic_table (minor_gc.c:95)
+   n2: 18432 0x805CF16: realloc_generic_table (minor_gc.c:591)
+    n0: 9216 in 2 places, all below massif's threshold (1.00%)
+    n1: 9216 0x805DAE0: caml_realloc_custom_table (minor_gc.c:639)
+     n1: 9216 0x8074CFA: add_to_custom_table (minor_gc.h:128)
+      n1: 9216 0x8074CFA: alloc_custom_gen (custom.c:58)
+       n1: 9216 0x8074E12: caml_alloc_custom_mem (custom.c:106)
+        n1: 9216 0x8068E60: caml_alloc_channel (io.c:492)
+         n1: 9216 0x8068EA4: caml_ml_open_descriptor_in (io.c:502)
+          n1: 9216 0x807B28D: caml_interprete (interp.c:1033)
+           n1: 9216 0x805CC5E: caml_startup_code_exn (startup_byt.c:576)
+            n1: 9216 0x805CCB3: caml_startup_code (startup_byt.c:588)
+             n1: 9216 0x8059D07: caml_startup (runtime.c:53233)
+              n0: 9216 0x804AB5D: main (startup.c:25)
+  n1: 16384 0x807F335: caml_init_major_heap (major_gc.c:1046)
+   n1: 16384 0x8070881: caml_init_gc (gc_ctrl.c:695)
+    n1: 16384 0x805CBB1: caml_startup_code_exn (startup_byt.c:543)
+     n1: 16384 0x805CCB3: caml_startup_code (startup_byt.c:588)
+      n1: 16384 0x8059D07: caml_startup (runtime.c:53233)
+       n0: 16384 0x804AB5D: main (startup.c:25)
+  n0: 2568 in 8 places, all below massif's threshold (1.00%)
+ n1: 309992 0x42429FE: monstartup (gmon.c:153)
+  n1: 309992 0x804A9DB: __gmon_start__ (in /home/koonwen/tarides-internship/unorganized/ocaml-riot-unix/bin/native/ocaml.elf)
+   n0: 309992 0x404001E: ??? (in /usr/libexec/valgrind/vgpreload_massif-x86-linux.so)
+ n0: 9708 in 5 places, all below massif's threshold (1.00%)
+#-----------
+snapshot=81
+#-----------
+time=30041566
+mem_heap_B=767843
+mem_heap_extra_B=797
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=82
+#-----------
+time=30044910
+mem_heap_B=767863
+mem_heap_extra_B=809
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=83
+#-----------
+time=30046318
+mem_heap_B=767903
+mem_heap_extra_B=817
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=84
+#-----------
+time=30071761
+mem_heap_B=767915
+mem_heap_extra_B=829
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=85
+#-----------
+time=30131411
+mem_heap_B=768015
+mem_heap_extra_B=841
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=86
+#-----------
+time=30133037
+mem_heap_B=767915
+mem_heap_extra_B=829
+mem_stacks_B=0
+heap_tree=empty
+#-----------
+snapshot=87
+#-----------
+time=30668020
+mem_heap_B=457923
+mem_heap_extra_B=821
+mem_stacks_B=0
+heap_tree=empty
