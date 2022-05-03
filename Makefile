@@ -2,8 +2,8 @@
 APPLICATION = ocaml
 
 # If no BOARD is found in the environment, use this default:
-# BOARD ?= nrf52840-mdk
-BOARD ?= native 
+BOARD ?= nrf52840-mdk
+# BOARD ?= native 
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/RIOT
@@ -24,7 +24,7 @@ DEVELHELP ?= 1
 # LOG_DEBUG
 #     Debug log level, printing developer stuff considered too verbose for production use. 
 # LOG_ALL
-LOG_LEVEL ?= LOG_ALL
+LOG_LEVEL ?= LOG_NONE
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 0
@@ -60,11 +60,18 @@ all: stubs runtimelib
 # fi
 # runtime
 
+# Uncomment the following 2 lines to specify static link lokal IPv6 address
+# this might be useful for testing, in cases where you cannot or do not want to
+# run a shell with ifconfig to get the real link lokal address.
+# IPV6_STATIC_LLADDR ?= '"fe80::cafe:cafe:cafe:1"'
+# CFLAGS += -DGNRC_IPV6_STATIC_LLADDR=$(IPV6_STATIC_LLADDR)
+
 include $(RIOTBASE)/Makefile.include
 
 stubs: example/stubs.c
 	cp $(^) ./external_modules/stubs/stubs.c
 
+# build with dune and 
 runtime: example/* 
 	cd example && dune build --profile release
 	rm -f ./external_modules/ocaml_runtime/runtime.c
@@ -72,8 +79,9 @@ runtime: example/*
 
 optimize: external_modules/ocaml_runtime/runtime.c
 	chmod +w ./external_modules/ocaml_runtime/runtime.c
-	dune exec -- ocamlclean ./external_modules/ocaml_runtime/runtime.c -o ./runtime.c
+	time dune exec -- ocamlclean ./external_modules/ocaml_runtime/runtime.c -o ./runtime.c
 	mv ./runtime.c external_modules/ocaml_runtime/runtime.c
+	sed -i 's/static int caml_code/const static int caml_code/g' ./external_modules/ocaml_runtime/runtime.c
 
 ocaml/Makefile:
 	sed -i -e 's/oc_cflags="/oc_cflags="$$OC_CFLAGS /g' ocaml/configure
@@ -102,6 +110,6 @@ runtimelib: $(RIOTBUILD_H_FILE)
 	dune build include/ libcamlrun.a --verbose
 	mv libcamlrun.a ./external_modules/ocaml_runtime
 
-CFLAGS += -mrdrnd -mrdseed #for x86
+# CFLAGS += -mrdrnd -mrdseed #for x86
 CFLAGS += -I$(CURDIR)/include/
 LINKFLAGS += -L$(CURDIR) -L$(CURDIR)/external_modules/ocaml_runtime -lcamlrun -lm

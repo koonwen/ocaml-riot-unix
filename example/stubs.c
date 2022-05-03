@@ -30,7 +30,7 @@ caml_riot_event_timeout(value v_timeout)
     uint64_t timeout = Int64_val(v_timeout);
 
     event_t *new_event;
-    printf("Waiting for event for %lld microseconds\n\r", timeout);
+    DEBUG("Waiting for event for %lld microseconds\n\r", timeout);
     if (new_event = event_wait_timeout64(&QUEUE, timeout))
     {
         new_event->handler(new_event);
@@ -39,7 +39,7 @@ caml_riot_event_timeout(value v_timeout)
         CAMLreturn(Val_int(copy));
     }
     else
-        printf("No event triggered, timeout expired\n\r");
+        DEBUG("No event triggered, timeout expired\n\r");
 
     CAMLreturn(Val_int(0));
 }

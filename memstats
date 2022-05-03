@@ -4,10 +4,10 @@ BOARD=nrf52840-mdk make runtime
 sed -i 's/static int caml_code/const static int caml_code/g' ./external_modules/ocaml_runtime/runtime.c
 BOARD=nrf52840-mdk make all
 printf "Without Dead code elimination:\n" > results
-ls -lah ./bin/nrf52840-mdk/ocaml_runtime/runtime.o >> results
+size ./bin/nrf52840-mdk/ocaml_runtime/runtime.o >> results
 
 printf "\n\n\nWith Dead code elimination:\n" >> results
 BOARD=nrf52840-mdk make runtime optimize
 sed -i 's/static int caml_code/const static int caml_code/g' ./external_modules/ocaml_runtime/runtime.c
 BOARD=nrf52840-mdk make all
-ls -lah ./bin/nrf52840-mdk/ocaml_runtime/runtime.o >> results
+size ./bin/nrf52840-mdk/ocaml_runtime/runtime.o >> results

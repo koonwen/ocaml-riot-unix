@@ -97,7 +97,6 @@ end = struct
   let listen t ~(tcp : callback) =
     let open Lwt.Syntax in
     let rec aux () =
-      Printf.printf "Looping\n%!";
       let* _ = Lwt_condition.wait con in
       let payload = IpUtils.get_payload () in
       let _, dst = IpUtils.get_pkt_ips () in
