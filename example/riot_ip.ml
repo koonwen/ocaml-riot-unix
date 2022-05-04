@@ -88,7 +88,7 @@ end = struct
                let ipaddr_lst = ref [] in
                for off = 0 to n - 1 do
                  let ip = IpUtils.ipv6_of_cs ~off cs in
-                 (* Printf.printf "IP = %s\n%!" @@ Ipaddr.V6.to_string ip; *)
+                 Printf.printf "IP = %s\n%!" @@ Ipaddr.V6.to_string ip;
                  ipaddr_lst := !ipaddr_lst @ [ ip ]
                done;
                !ipaddr_lst);

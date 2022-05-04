@@ -23,7 +23,7 @@ $ opam switch create . 4.12.1
 ```bash
 $ opam pin ocplib-endian git@github.com:koonwen/ocplib-endian.git
 $ opam pin add http.5.0.0 git@github.com:koonwen/ocaml-cohttp.git
-$ opam pin add git@github.com:koonwen/ocaml-cohttp.git -y
+$ opam pin add git@github.com:koonwen/ocaml-cohttp.git -ny
 $ opam install dune mirage-random-stdlib mirage-runtime mirage-clock mirage-time mirage-flow cohttp-mirage cstruct duration tcpip logs ipaddr lwt cohttp-mirage mirage-flow psq
 $ eval $(opam env)
 ```

@@ -1,5 +1,5 @@
 # TODO #
-1. Write instructional on how to build including compiler download
+1. Static IP
 2. Test on chip
 3. Change to ztimer
 4. Fuzzing
