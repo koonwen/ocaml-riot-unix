@@ -24,9 +24,9 @@ open Lwt.Syntax
 open Lwt
 open Cohttp
 
-let () =
+(* let () =
   Logs.set_level (Some Debug);
-  Logs.set_reporter (Logs_fmt.reporter ())
+  Logs.set_reporter (Logs_fmt.reporter ()) *)
 
 module RIOT_stack = struct
   module IP = Riot_ip.S
